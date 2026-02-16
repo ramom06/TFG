@@ -49,13 +49,12 @@ public class Competidor {
             name = "categoria_competidor",
             joinColumns = @JoinColumn(name = "id_competidor"),
             inverseJoinColumns = {
-                    //Aqui es importante referenciar los nombres de las columnas en la base de datos
-                    @JoinColumn(name = "id_campeonato", referencedColumnName = "id_campeonato"),
+                    // Deben ser EXACTAMENTE los campos de CategoriaId
                     @JoinColumn(name = "modalidad", referencedColumnName = "modalidad"),
                     @JoinColumn(name = "genero", referencedColumnName = "genero"),
+                    @JoinColumn(name = "peso_minimo", referencedColumnName = "peso_minimo"),
                     @JoinColumn(name = "peso_maximo", referencedColumnName = "peso_maximo"),
                     @JoinColumn(name = "edad_maxima", referencedColumnName = "edad_maxima")
-
             }
     )
     @JsonIgnore

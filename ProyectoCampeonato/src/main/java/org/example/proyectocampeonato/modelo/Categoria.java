@@ -2,6 +2,8 @@ package org.example.proyectocampeonato.modelo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,28 +17,46 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "categoria")
+@Table(name = "categoria", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"modalidad", "genero", "peso_minimo", "peso_maximo", "edad_maxima"})
+})
 public class Categoria {
 
-    //Esto quiere decir que tiene una clave compuesta
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "modalidad", column = @Column(name = "modalidad")),
-            @AttributeOverride(name = "genero", column = @Column(name = "genero")),
-            @AttributeOverride(name = "pesoMaximo", column = @Column(name = "peso_maximo")),
-            @AttributeOverride(name = "pesoMinimo", column = @Column(name = "peso_minimo")),
-            @AttributeOverride(name = "edadMaxima", column = @Column(name = "edad_maxima"))
-    })
-    private CategoriaId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "edad_minima", nullable = false, length = 100)
+    @Column(nullable = false)
+    private String modalidad;
+
+    @Column(nullable = false)
+    private String genero;
+
+    @Column(name = "peso_minimo")
+    @Min(value = 0, message = "{categoria.peso.minimo}")
+    private Double pesoMinimo;
+
+    @Min(value = 0, message = "{categoria.peso.minimo}")
+    @Column(name = "peso_maximo")
+    private Double pesoMaximo;
+
+    @Column(name = "edad_maxima", nullable = false)
+    @Min(value = 0, message = "{categoria.edadMaxima.minimo}")
+    @Max(value = 100, message = "{categoria.edadMaxima.maximo}")
+    private int edadMaxima;
+
+    @Column(name = "edad_minima", nullable = false)
+    @Min(value = 0, message = "{categoria.edadMinima.minimo}")
+    @Max(value = 40, message = "{categoria.edadMinima.maximo}")
     private int edadMinima;
 
-    @ManyToMany(mappedBy = "categorias")
-    private Set<Campeonato> campeonatos;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_campeonato")
+    @JsonIgnore
+    private Campeonato campeonato;
 
     @ManyToMany(mappedBy = "categorias", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIgnore

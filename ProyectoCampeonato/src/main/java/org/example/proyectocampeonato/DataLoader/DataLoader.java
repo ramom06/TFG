@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,753 @@ public class DataLoader implements CommandLineRunner {
 
     private void cargarDatos() {
         System.out.println("Iniciando carga de datos del Campeonato de Karate...");
+
+
+        // 2. CREAR CATEGORÍAS (Relacionadas con el Campeonato)
+
+        // BENJAMIN
+        Categoria catBenjM = Categoria.builder()
+                .nombre("Benjamín Masculino")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(0)
+                .edadMaxima(7)
+                .build();
+
+        Categoria catBenjF = Categoria.builder()
+                .nombre("Benjamín Femenino")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(0)
+                .edadMaxima(7)
+                .build();
+
+        List<Categoria> benjamin =  new ArrayList<>();
+        benjamin.add(catBenjM);
+        benjamin.add(catBenjF);
+
+        //ALEVIN
+        Categoria catAlevKataM = Categoria.builder()
+                .nombre("Alevín Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .build();
+
+        Categoria catAlevKataF = Categoria.builder()
+                .nombre("Alevín Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .build();
+
+        Categoria catAlevKumM1 = Categoria.builder()
+                .nombre("Alevín Masculino <28kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMaximo(28.0)
+                .build();
+
+
+        Categoria catAlevKumM2 = Categoria.builder()
+                .nombre("Alevín Masculino <34kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMaximo(34.0)
+                .build();
+
+        Categoria catAlevKumM3 = Categoria
+                .builder()
+                .nombre("Alevín Masculino >34kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMinimo(34.0)
+                .build();
+
+        Categoria catAlevKumF1 = Categoria.builder()
+                .nombre("Alevín Femenino <26kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMaximo(26.0)
+                .build();
+
+        Categoria catAlevKumF2 = Categoria.builder()
+                .nombre("Alevín Femenino <32kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMaximo(32.0)
+                .build();
+
+        Categoria catAlevKumF3 = Categoria.builder()
+                .nombre("Alevín Femenino >32kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(8)
+                .edadMaxima(9)
+                .pesoMinimo(32.0)
+                .build();
+
+        List<Categoria> alevines =   new ArrayList<>();
+        alevines.add(catAlevKataM);
+        alevines.add(catAlevKataF);
+        alevines.add(catAlevKumM1);
+        alevines.add(catAlevKumM2);
+        alevines.add(catAlevKumM3);
+        alevines.add(catAlevKumF1);
+        alevines.add(catAlevKumF2);
+        alevines.add(catAlevKumF3);
+
+
+        //INFANTIL
+        Categoria catInfKataM = Categoria.builder()
+                .nombre("Infantil Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .build();
+
+        Categoria catInfKataF = Categoria.builder()
+                .nombre("Infantil Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .build();
+
+        Categoria catInfKumM1 = Categoria.builder()
+                .nombre("Infantil Masculino <30kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(30.0)
+                .build();
+
+        Categoria catInfKumM2 = Categoria.builder()
+                .nombre("Infantil Masculino <35kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(35.0)
+                .build();
+
+        Categoria catInfKumM3 = Categoria.builder()
+                .nombre("Infantil Masculino <40kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(40.0)
+                .build();
+
+        Categoria catInfKumM4 = Categoria.builder()
+                .nombre("Infantil Masculino <45kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(45.0)
+                .build();
+
+        Categoria catInfKumM5 = Categoria.builder()
+                .nombre("Infantil Masculino >45kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMinimo(45.0)
+                .build();
+
+        Categoria catInfKumF1 = Categoria.builder()
+                .nombre("Infantil Femenino <30kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(30.0)
+                .build();
+
+        Categoria catInfKumF2 = Categoria.builder()
+                .nombre("Infantil Femenino <36kg")
+                .modalidad("kumite").genero("F")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(36.0)
+                .build();
+
+        Categoria catInfKumF3 = Categoria.builder()
+                .nombre("Infantil Femenino <42kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMaximo(42.0)
+                .build();
+
+        Categoria catInfKumF4 = Categoria.builder()
+                .nombre("Infantil Femenino >42kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(10)
+                .edadMaxima(11)
+                .pesoMinimo(42.0)
+                .build();
+
+
+        //JUVENIL
+        Categoria catJuvKataM = Categoria.builder()
+                .nombre("Juvenil Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .build();
+
+        Categoria catJuvKataF = Categoria.builder()
+                .nombre("Juvenil Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .build();
+
+        Categoria catJuvKumM1 = Categoria.builder()
+                .nombre("Juvenil Masculino <36kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(36.0)
+                .build();
+
+        Categoria catJuvKumM2 = Categoria.builder()
+                .nombre("Juvenil Masculino <42kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(42.0)
+                .build();
+
+        Categoria catJuvKumM3 = Categoria.builder()
+                .nombre("Juvenil Masculino <48kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(48.0)
+                .build();
+
+        Categoria catJuvKumM4 = Categoria.builder()
+                .nombre("Juvenil Masculino <54kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(54.0)
+                .build();
+
+        Categoria catJuvKumM5 = Categoria.builder()
+                .nombre("Juvenil Masculino <60kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(60.0)
+                .build();
+
+        Categoria catJuvKumM6 = Categoria.builder()
+                .nombre("Juvenil Masculino >60kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMinimo(60.0)
+                .build();
+
+        Categoria catJuvKumF1 = Categoria.builder()
+                .nombre("Juvenil Femenino <37kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(37.0)
+                .build();
+
+        Categoria catJuvKumF2 = Categoria.builder()
+                .nombre("Juvenil Femenino <42kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(42.0)
+                .build();
+
+        Categoria catJuvKumF3 = Categoria.builder()
+                .nombre("Juvenil Femenino <47kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(47.0)
+                .build();
+
+        Categoria catJuvKumF4 = Categoria.builder()
+                .nombre("Juvenil Femenino <52kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMaximo(52.0)
+                .build();
+
+        Categoria catJuvKumF5 = Categoria.builder()
+                .nombre("Juvenil Femenino >52kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(12)
+                .edadMaxima(13)
+                .pesoMinimo(52.0)
+                .build();
+
+
+        //CADETE
+        Categoria catCadKataM = Categoria.builder()
+                .nombre("Cadete Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .build();
+
+        Categoria catCadKataF = Categoria.builder()
+                .nombre("Cadete Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .build();
+
+        Categoria catCadKumM1 = Categoria.builder()
+                .nombre("Cadete Masculino <52kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(52.0)
+                .build();
+
+        Categoria catCadKumM2 = Categoria.builder()
+                .nombre("Cadete Masculino <57kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(57.0)
+                .build();
+
+        Categoria catCadKumM3 = Categoria.builder()
+                .nombre("Cadete Masculino <63kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(63.0)
+                .build();
+
+        Categoria catCadKumM4 = Categoria.builder()
+                .nombre("Cadete Masculino <70kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(70.0)
+                .build();
+
+        Categoria catCadKumM5 = Categoria.builder()
+                .nombre("Cadete Masculino >70kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMinimo(70.0)
+                .build();
+
+        Categoria catCadKumF1 = Categoria.builder()
+                .nombre("Cadete Femenino <47kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(47.0)
+                .build();
+
+        Categoria catCadKumF2 = Categoria.builder()
+                .nombre("Cadete Femenino <54kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(54.0)
+                .build();
+
+        Categoria catCadKumF3 = Categoria.builder()
+                .nombre("Cadete Femenino <61kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMaximo(61.0)
+                .build();
+
+        Categoria catCadKumF4 = Categoria.builder()
+                .nombre("Cadete Femenino >61kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(14)
+                .edadMaxima(15)
+                .pesoMinimo(61.0)
+                .build();
+
+
+        //JUNIOR
+        Categoria catJunKatM = Categoria.builder()
+                .nombre("Junior Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .build();
+
+        Categoria catJunKatF = Categoria.builder()
+                .nombre("Junior Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .build();
+
+        Categoria catJunKumM1 = Categoria.builder()
+                .nombre("Junior Masculino <55kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(55.0)
+                .build();
+
+        Categoria catJunKumM2 = Categoria.builder()
+                .nombre("Junior Masculino <61kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(61.0)
+                .build();
+
+        Categoria catJunKumM3 = Categoria.builder()
+                .nombre("Junior Masculino <68kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(68.0)
+                .build();
+
+        Categoria catJunKumM4 = Categoria.builder()
+                .nombre("Junior Masculino <76kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(76.0)
+                .build();
+
+        Categoria catJunKumM5 = Categoria.builder()
+                .nombre("Junior Masculino >76kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMinimo(76.0)
+                .build();
+
+        Categoria catJunKumF1 = Categoria.builder()
+                .nombre("Junior Femenino <48kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(48.0)
+                .build();
+
+        Categoria catJunKumF2 = Categoria.builder()
+                .nombre("Junior Femenino <53kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(53.0)
+                .build();
+
+        Categoria catJunKumF3 = Categoria.builder()
+                .nombre("Junior Femenino <59kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(59.0)
+                .build();
+
+        Categoria catJunKumF4 = Categoria.builder()
+                .nombre("Junior Femenino <66kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMaximo(66.0)
+                .build();
+
+        Categoria catJunKumF5 = Categoria.builder()
+                .nombre("Junior Femenino >66kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(17)
+                .pesoMinimo(66.0)
+                .build();
+
+
+        //SUB-21
+        Categoria catSub21KatM = Categoria.builder()
+                .nombre("Sub21 Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .build();
+
+        Categoria catSub21KatF = Categoria.builder()
+                .nombre("Sub21 Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .build();
+
+        Categoria catSub21KumM1 = Categoria.builder()
+                .nombre("Sub21 Masculino <60kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(60.0)
+                .build();
+
+        Categoria catSub21KumM2 = Categoria.builder()
+                .nombre("Sub21 Masculino <67kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(67.0)
+                .build();
+
+        Categoria catSub21KumM3 = Categoria.builder()
+                .nombre("Sub21 Masculino <75kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(75.0)
+                .build();
+
+        Categoria catSub21KumM4 = Categoria.builder()
+                .nombre("Sub21 Masculino <84kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(84.0)
+                .build();
+
+        Categoria catSub21KumM5 = Categoria.builder()
+                .nombre("Sub21 Masculino >84kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMinimo(84.0)
+                .build();
+
+        Categoria catSub21KumF1 = Categoria.builder()
+                .nombre("Sub21 Femenino <50kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(50.0)
+                .build();
+
+        Categoria catSub21KumF2 = Categoria.builder()
+                .nombre("Sub21 Femenino <55kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(55.0)
+                .build();
+
+        Categoria catSub21KumF3 = Categoria.builder()
+                .nombre("Sub21 Femenino <61kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(61.0)
+                .build();
+
+        Categoria catSub21KumF4 = Categoria.builder()
+                .nombre("Sub21 Femenino <68kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMaximo(68.0)
+                .build();
+
+        Categoria catSub21KumF5 = Categoria.builder()
+                .nombre("Sub21 Femenino >68kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(20)
+                .pesoMinimo(68.0)
+                .build();
+
+
+        //SENIOR
+        Categoria catSenKatM = Categoria.builder()
+                .nombre("Senior Masculino Kata")
+                .modalidad("kata")
+                .genero("M")
+                .edadMinima(16)
+                .edadMaxima(99)
+                .build();
+
+        Categoria catSenKatF = Categoria.builder()
+                .nombre("Senior Femenino Kata")
+                .modalidad("kata")
+                .genero("F")
+                .edadMinima(16)
+                .edadMaxima(99)
+                .build();
+
+        Categoria catSenKumM1 = Categoria.builder()
+                .nombre("Senior Masculino <60kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(60.0)
+                .build();
+
+        Categoria catSenKumM2 = Categoria.builder()
+                .nombre("Senior Masculino <67kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(67.0)
+                .build();
+
+        Categoria catSenKumM3 = Categoria.builder()
+                .nombre("Senior Masculino <75kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(75.0)
+                .build();
+
+        Categoria catSenKumM4 = Categoria.builder()
+                .nombre("Senior Masculino <84kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(84.0)
+                .build();
+
+        Categoria catSenKumM5 = Categoria.builder()
+                .nombre("Senior Masculino >84kg")
+                .modalidad("kumite")
+                .genero("M")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMinimo(84.0)
+                .build();
+
+        Categoria catSenKumF1 = Categoria.builder()
+                .nombre("Senior Femenino <50kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(50.0)
+                .build();
+
+        Categoria catSenKumF2 = Categoria.builder()
+                .nombre("Senior Femenino <55kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(55.0)
+                .build();
+
+        Categoria catSenKumF3 = Categoria.builder()
+                .nombre("Senior Femenino <61kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(61.0)
+                .build();
+
+        Categoria catSenKumF4 = Categoria.builder()
+                .nombre("Senior Femenino <68kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMaximo(68.0)
+                .build();
+
+        Categoria catSenKumF5 = Categoria.builder()
+                .nombre("Senior Femenino >68kg")
+                .modalidad("kumite")
+                .genero("F")
+                .edadMinima(18)
+                .edadMaxima(99)
+                .pesoMinimo(68.0)
+                .build();
+
+
 
         // 1. CREAR CAMPEONATOS
         Campeonato camp1 = Campeonato.builder()
@@ -364,415 +1112,6 @@ public class DataLoader implements CommandLineRunner {
                 .descripcion("Segunda ronda Liga Nacional master")
                 .build();
         campeonatoRepository.save(camp26);
-
-
-        // 2. CREAR CATEGORÍAS (Relacionadas con el Campeonato)
-        // BENJAMIN
-        CategoriaId catId1 = new CategoriaId();
-        catId1.setIdCampeonato(camp1.getId_campeonato());
-        catId1.setModalidad("kata");
-        catId1.setGenero("M");
-        catId1.setEdadMaxima(7);
-        catId1.setPesoMaximo(0.0);
-
-        Categoria cat1 = new Categoria();
-        cat1.setId(catId1);
-        cat1.setNombre("Benjamín Masculino");
-        cat1.setEdadMinima(0);
-        cat1.setCampeonato(camp1);
-        categoriaRepository.save(cat1);
-
-        CategoriaId catId2 = new CategoriaId();
-        catId2.setIdCampeonato(camp2.getId_campeonato());
-        catId2.setModalidad("kata");
-        catId2.setGenero("F");
-        catId2.setEdadMaxima(7);
-        catId2.setPesoMaximo(0.0);
-
-        Categoria cat2 = new Categoria();
-        cat2.setId(catId2);
-        cat2.setNombre("Benjamín Femenino");
-        cat2.setEdadMinima(0);
-        cat2.setCampeonato(camp2);
-        categoriaRepository.save(cat2);
-
-        //ALEVIN MASC
-        CategoriaId catId9 = new CategoriaId();
-        catId9.setIdCampeonato(camp9.getId_campeonato());
-        catId9.setModalidad("kata");
-        catId9.setGenero("M");
-        catId9.setEdadMaxima(9);
-
-        Categoria cat9 = new Categoria();
-        cat9.setId(catId9);
-        cat9.setNombre("Alevin Mascuino");
-        cat9.setEdadMinima(8);
-        cat9.setCampeonato(camp9);
-        categoriaRepository.save(cat9);
-
-        CategoriaId catId3 = new CategoriaId();
-        catId3.setIdCampeonato(camp3.getId_campeonato());
-        catId3.setModalidad("kumite");
-        catId3.setGenero("M");
-        catId3.setEdadMaxima(9);
-        catId3.setPesoMaximo(28.000);
-
-        Categoria cat3 = new Categoria();
-        cat3.setId(catId3);
-        cat3.setNombre("Alevin Masculino Mascuino <28kg");
-        cat3.setEdadMinima(8);
-        cat3.setCampeonato(camp3);
-        categoriaRepository.save(cat3);
-
-        CategoriaId catId4 = new CategoriaId();
-        catId4.setIdCampeonato(camp4.getId_campeonato());
-        catId4.setModalidad("kumite");
-        catId4.setGenero("M");
-        catId4.setEdadMaxima(9);
-        catId4.setPesoMaximo(34.000);
-
-        Categoria cat4 = new Categoria();
-        cat4.setId(catId4);
-        cat4.setNombre("Alevin Masculino <34kg");
-        cat4.setEdadMinima(8);
-        cat4.setCampeonato(camp4);
-        categoriaRepository.save(cat4);
-
-        CategoriaId catId5 = new CategoriaId();
-        catId5.setIdCampeonato(camp5.getId_campeonato());
-        catId5.setModalidad("kumite");
-        catId5.setGenero("M");
-        catId5.setEdadMaxima(9);
-        catId5.setPesoMinimo(34.000);
-
-        Categoria cat5 = new Categoria();
-        cat5.setId(catId5);
-        cat5.setNombre("Alevin Masculino >34kg");
-        cat5.setEdadMinima(8);
-        cat5.setCampeonato(camp5);
-        categoriaRepository.save(cat5);
-
-        //ALEVIN FEMENINO
-        CategoriaId catId10 = new CategoriaId();
-        catId10.setIdCampeonato(camp10.getId_campeonato());
-        catId10.setModalidad("kata");
-        catId10.setGenero("F");
-        catId10.setEdadMaxima(9);
-
-        Categoria cat10 = new Categoria();
-        cat10.setId(catId10);
-        cat10.setNombre("Alevín Femenino");
-        cat10.setEdadMinima(8);
-        cat10.setCampeonato(camp10);
-        categoriaRepository.save(cat10);
-
-        CategoriaId catId6 = new CategoriaId();
-        catId5.setIdCampeonato(camp6.getId_campeonato());
-        catId5.setModalidad("kumite");
-        catId5.setGenero("F");
-        catId5.setEdadMaxima(9);
-        catId5.setPesoMaximo(26.000);
-
-        Categoria cat6 = new Categoria();
-        cat6.setId(catId6);
-        cat6.setNombre("Alevin Femenino <26kg");
-        cat6.setEdadMinima(8);
-        cat6.setCampeonato(camp6);
-        categoriaRepository.save(cat6);
-
-        CategoriaId catId7 = new CategoriaId();
-        catId7.setIdCampeonato(camp7.getId_campeonato());
-        catId7.setModalidad("kumite");
-        catId7.setGenero("F");
-        catId7.setEdadMaxima(9);
-        catId7.setPesoMaximo(32.0);
-
-        Categoria cat7 = new Categoria();
-        cat7.setId(catId7);
-        cat7.setNombre("Alevín Femenino <32kg");
-        cat7.setEdadMinima(8);
-        cat7.setCampeonato(camp7);
-        categoriaRepository.save(cat7);
-
-        CategoriaId catId8 = new CategoriaId();
-        catId8.setIdCampeonato(camp8.getId_campeonato());
-        catId8.setModalidad("kumite");
-        catId8.setGenero("F");
-        catId8.setEdadMaxima(9);
-        catId8.setPesoMinimo(32.0);
-
-        Categoria cat8 = new Categoria();
-        cat8.setId(catId8);
-        cat8.setNombre("Alevín Femenino >32kg");
-        cat8.setEdadMinima(8);
-        cat8.setCampeonato(camp8);
-        categoriaRepository.save(cat8);
-
-        //INFANTIL MASC
-        CategoriaId catId11 = new CategoriaId();
-        catId11.setIdCampeonato(camp11.getId_campeonato());
-        catId11.setModalidad("kata");
-        catId11.setGenero("M");
-        catId11.setEdadMaxima(11);
-        catId11.setPesoMinimo(null);
-        catId11.setPesoMaximo(null);
-
-        Categoria catInfKataM = new Categoria();
-        catInfKataM.setId(catId11);
-        catInfKataM.setNombre("Kata Infantil Masculino");
-        catInfKataM.setEdadMinima(10);
-        catInfKataM.setCampeonato(camp11);
-        categoriaRepository.save(catInfKataM);
-
-        CategoriaId catId12 = new CategoriaId();
-        catId12.setIdCampeonato(camp12.getId_campeonato());
-        catId12.setModalidad("kumite");
-        catId12.setGenero("M");
-        catId12.setEdadMaxima(11);
-        catId12.setPesoMaximo(30.0);
-
-        Categoria cat12 = new Categoria();
-        cat12.setId(catId12);
-        cat12.setNombre("Infantil Masculino <30kg");
-        cat12.setEdadMinima(10);
-        cat12.setCampeonato(camp12);
-        categoriaRepository.save(cat12);
-
-        CategoriaId catId13 = new CategoriaId();
-        catId13.setIdCampeonato(camp13.getId_campeonato());
-        catId13.setModalidad("kumite");
-        catId13.setGenero("M");
-        catId13.setEdadMaxima(11);
-        catId13.setPesoMinimo(30.0);
-        catId13.setPesoMaximo(35.0);
-
-        Categoria cat13 = new Categoria();
-        cat13.setId(catId13);
-        cat13.setNombre("Infantil Masculino <35kg");
-        cat13.setEdadMinima(10);
-        cat13.setCampeonato(camp13);
-        categoriaRepository.save(cat13);
-
-        CategoriaId catId14 = new CategoriaId();
-        catId14.setIdCampeonato(camp14.getId_campeonato());
-        catId14.setModalidad("kumite");
-        catId14.setGenero("M");
-        catId14.setEdadMaxima(11);
-        catId14.setPesoMinimo(35.0);
-        catId14.setPesoMaximo(40.0);
-
-        Categoria cat14 = new Categoria();
-        cat14.setId(catId14);
-        cat14.setNombre("Infantil Masculino <40kg");
-        cat14.setEdadMinima(10);
-        cat14.setCampeonato(camp14);
-        categoriaRepository.save(cat14);
-
-        CategoriaId catId15 = new CategoriaId();
-        catId15.setIdCampeonato(camp15.getId_campeonato());
-        catId15.setModalidad("kumite");
-        catId15.setGenero("M");
-        catId15.setEdadMaxima(11);
-        catId15.setPesoMinimo(40.0);
-        catId15.setPesoMaximo(45.0);
-
-        Categoria cat15 = new Categoria();
-        cat15.setId(catId15);
-        cat15.setNombre("Infantil Masculino <45kg");
-        cat15.setEdadMinima(10);
-        cat15.setCampeonato(camp15);
-        categoriaRepository.save(cat15);
-
-        CategoriaId catId16 = new CategoriaId();
-        catId16.setIdCampeonato(camp16.getId_campeonato());
-        catId16.setModalidad("kumite");
-        catId16.setGenero("M");
-        catId16.setEdadMaxima(11);
-        catId16.setPesoMinimo(45.0);
-
-        Categoria cat16 = new Categoria();
-        cat16.setId(catId16);
-        cat16.setNombre("Infantil Masculino >45kg");
-        cat16.setEdadMinima(10);
-        cat16.setCampeonato(camp16);
-        categoriaRepository.save(cat16);
-
-        // Kata Infantil Femenino
-        CategoriaId catId17 = new CategoriaId();
-        catId17.setIdCampeonato(camp17.getId_campeonato());
-        catId17.setModalidad("kata");
-        catId17.setGenero("F");
-        catId17.setEdadMaxima(11);
-
-        Categoria cat17 = new Categoria();
-        cat17.setId(catId17);
-        cat17.setNombre("Infantil Femenino");
-        cat17.setEdadMinima(10);
-        cat17.setCampeonato(camp17);
-        categoriaRepository.save(cat17);
-
-        CategoriaId catId18 = new CategoriaId();
-        catId18.setIdCampeonato(camp18.getId_campeonato());
-        catId18.setModalidad("kumite");
-        catId18.setGenero("F");
-        catId18.setEdadMaxima(11);
-        catId18.setPesoMaximo(30.0);
-
-        Categoria cat18 = new Categoria();
-        cat18.setId(catId18);
-        cat18.setNombre("Infantil Femenino <30kg");
-        cat18.setEdadMinima(10);
-        cat18.setCampeonato(camp18);
-        categoriaRepository.save(cat18);
-
-        CategoriaId catId19 = new CategoriaId();
-        catId19.setIdCampeonato(camp19.getId_campeonato());
-        catId19.setModalidad("kumite");
-        catId19.setGenero("F");
-        catId19.setEdadMaxima(11);
-        catId19.setPesoMinimo(30.0);
-        catId19.setPesoMaximo(36.0);
-
-        Categoria cat19 = new Categoria();
-        cat19.setId(catId19);
-        cat19.setNombre("Infantil Femenino <36kg");
-        cat19.setEdadMinima(10);
-        cat19.setCampeonato(camp19);
-        categoriaRepository.save(cat19);
-
-        CategoriaId catId20 = new CategoriaId();
-        catId20.setIdCampeonato(camp20.getId_campeonato());
-        catId20.setModalidad("kumite");
-        catId20.setGenero("F");
-        catId20.setEdadMaxima(11);
-        catId20.setPesoMinimo(36.0);
-        catId20.setPesoMaximo(42.0);
-
-        Categoria cat20 = new Categoria();
-        cat20.setId(catId20);
-        cat20.setNombre("Infantil Femenino <42kg");
-        cat20.setEdadMinima(10);
-        cat20.setCampeonato(camp20);
-        categoriaRepository.save(cat20);
-
-        CategoriaId catId21 = new CategoriaId();
-        catId21.setIdCampeonato(camp21.getId_campeonato());
-        catId21.setModalidad("kumite");
-        catId21.setGenero("F");
-        catId21.setEdadMaxima(11);
-        catId21.setPesoMinimo(42.0);
-
-        Categoria cat21 = new Categoria();
-        cat21.setId(catId21);
-        cat21.setNombre("Infantil Femenino >42kg");
-        cat21.setEdadMinima(10);
-        cat21.setCampeonato(camp21);
-        categoriaRepository.save(cat21);
-
-        //JUVENIL MASC
-        CategoriaId catId22 = new CategoriaId();
-        catId22.setIdCampeonato(camp22.getId_campeonato());
-        catId22.setModalidad("kata");
-        catId22.setGenero("M");
-        catId22.setEdadMaxima(13);
-
-        Categoria cat22 = new Categoria();
-        cat22.setId(catId22);
-        cat22.setNombre("Juvenil Masculino");
-        cat22.setEdadMinima(12);
-        cat22.setCampeonato(camp22);
-        categoriaRepository.save(cat22);
-
-        CategoriaId catId23 = new CategoriaId();
-        catId23.setIdCampeonato(camp23.getId_campeonato());
-        catId23.setModalidad("kumite");
-        catId23.setGenero("M");
-        catId23.setEdadMaxima(13);
-        catId23.setPesoMaximo(36.0);
-
-        Categoria cat23 = new Categoria();
-        cat23.setId(catId23);
-        cat23.setNombre("Juvenil Masculino <36kg");
-        cat23.setEdadMinima(12);
-        cat23.setCampeonato(camp23);
-        categoriaRepository.save(cat23);
-
-        CategoriaId catId24 = new CategoriaId();
-        catId24.setIdCampeonato(camp24.getId_campeonato());
-        catId24.setModalidad("kumite");
-        catId24.setGenero("M");
-        catId24.setEdadMaxima(13);
-        catId24.setPesoMinimo(36.0);
-        catId24.setPesoMaximo(42.0);
-
-        Categoria cat24 = new Categoria();
-        cat24.setId(catId24);
-        cat24.setNombre("Juvenil Masculino <42kg");
-        cat24.setEdadMinima(12);
-        cat24.setCampeonato(camp24);
-        categoriaRepository.save(cat24);
-
-        CategoriaId catId25 = new CategoriaId();
-        catId25.setIdCampeonato(camp25.getId_campeonato());
-        catId25.setModalidad("kumite");
-        catId25.setGenero("M");
-        catId25.setEdadMaxima(13);
-        catId25.setPesoMinimo(42.0);
-        catId25.setPesoMaximo(48.0);
-
-        Categoria cat25 = new Categoria();
-        cat25.setId(catId25);
-        cat25.setNombre("Juvenil Masculino <48kg");
-        cat25.setEdadMinima(12);
-        cat25.setCampeonato(camp25);
-        categoriaRepository.save(cat25);
-
-        CategoriaId catId26 = new CategoriaId();
-        catId26.setIdCampeonato(camp26.getId_campeonato());
-        catId26.setModalidad("kumite");
-        catId26.setGenero("M");
-        catId26.setEdadMaxima(13);
-        catId26.setPesoMinimo(48.0);
-        catId26.setPesoMaximo(54.0);
-
-        Categoria cat26 = new Categoria();
-        cat26.setId(catId26);
-        cat26.setNombre("Juvenil Masculino <54kg");
-        cat26.setEdadMinima(12);
-        cat26.setCampeonato(camp26);
-        categoriaRepository.save(cat26);
-
-        CategoriaId catId27 = new CategoriaId();
-        catId27.setIdCampeonato(camp27.getId_campeonato());
-        catId27.setModalidad("kumite");
-        catId27.setGenero("M");
-        catId27.setEdadMaxima(13);
-        catId27.setPesoMinimo(54.0);
-        catId27.setPesoMaximo(60.0);
-
-        Categoria cat27 = new Categoria();
-        cat27.setId(catId27);
-        cat27.setNombre("Juvenil Masculino <60kg");
-        cat27.setEdadMinima(12);
-        cat27.setCampeonato(camp27);
-        categoriaRepository.save(cat27);
-
-        CategoriaId catId28 = new CategoriaId();
-        catId28.setIdCampeonato(camp28.getId_campeonato());
-        catId28.setModalidad("kumite");
-        catId28.setGenero("M");
-        catId28.setEdadMaxima(13);
-        catId28.setPesoMinimo(60.0);
-
-        Categoria cat28 = new Categoria();
-        cat28.setId(catId28);
-        cat28.setNombre("Juvenil Masculino >60kg");
-        cat28.setEdadMinima(12);
-        cat28.setCampeonato(camp28);
-        categoriaRepository.save(cat28);
-
-
-
 
         // 3. CREAR COMPETIDORES
         Competidor comp1 = Competidor.builder()

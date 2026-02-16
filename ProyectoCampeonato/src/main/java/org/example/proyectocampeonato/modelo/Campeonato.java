@@ -4,6 +4,7 @@ import jakarta.persistence.*; // Importante para las anotaciones de BD
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter @Setter
@@ -34,16 +35,21 @@ public class Campeonato {
     private String estado;
 
     @Column(nullable = false)
-    private String nivel; //Regional, Nacional, Internacional
+    private String nivel; //Regional, Nacional
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descripcion;
 
-    @ManyToMany
-    @JoinTable(
-            name = "campeonato_categoria",
-            joinColumns = @JoinColumn(name = "id_campeonato"),
-            inverseJoinColumns = @JoinColumn(name = "id_categoria")
-    )
-    private Set<Categoria> categorias;
+    @OneToMany(mappedBy = "campeonato")
+    private Set<Categoria> categorias = new HashSet<>();
+
+    public void addCategoria(Categoria categoria) {
+        categorias.add(categoria);
+        categoria.setCampeonato(this);
+    }
+
+    public void removeCategoria(Categoria categoria) {
+        categorias.remove(categoria);
+        categoria.setCampeonato(null);
+    }
 }
