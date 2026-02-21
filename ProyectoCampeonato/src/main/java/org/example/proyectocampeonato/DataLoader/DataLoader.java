@@ -59,6 +59,7 @@ public class DataLoader implements CommandLineRunner {
         List<Categoria> benjamin =  new ArrayList<>();
         benjamin.add(catBenjM);
         benjamin.add(catBenjF);
+        categoriaRepository.saveAll(benjamin);
 
         //ALEVIN
         Categoria catAlevKataM = Categoria.builder()
@@ -142,6 +143,7 @@ public class DataLoader implements CommandLineRunner {
         alevines.add(catAlevKumF1);
         alevines.add(catAlevKumF2);
         alevines.add(catAlevKumF3);
+        categoriaRepository.saveAll(alevines);
 
 
         //INFANTIL
@@ -241,6 +243,19 @@ public class DataLoader implements CommandLineRunner {
                 .pesoMinimo(42.0)
                 .build();
 
+        List<Categoria> infantiles = new ArrayList<>();
+        infantiles.add(catInfKataM);
+        infantiles.add(catInfKataF);
+        infantiles.add(catInfKumF1);
+        infantiles.add(catInfKumF2);
+        infantiles.add(catInfKumF3);
+        infantiles.add(catInfKumF4);
+        infantiles.add(catInfKumM1);
+        infantiles.add(catInfKumM2);
+        infantiles.add(catInfKumM3);
+        infantiles.add(catInfKumM4);
+        infantiles.add(catInfKumM5);
+        categoriaRepository.saveAll(infantiles);
 
         //JUVENIL
         Categoria catJuvKataM = Categoria.builder()
@@ -358,6 +373,20 @@ public class DataLoader implements CommandLineRunner {
                 .pesoMinimo(52.0)
                 .build();
 
+        List<Categoria> juveniles = new ArrayList<>();
+        juveniles.add(catJuvKataF);
+        juveniles.add(catJuvKataM);
+        juveniles.add(catJuvKumF1);
+        juveniles.add(catJuvKumF2);
+        juveniles.add(catJuvKumF3);
+        juveniles.add(catJuvKumF4);
+        juveniles.add(catJuvKumF5);
+        juveniles.add(catJuvKumM1);
+        juveniles.add(catJuvKumM2);
+        juveniles.add(catJuvKumM3);
+        juveniles.add(catJuvKumM4);
+        juveniles.add(catJuvKumM5);
+        categoriaRepository.saveAll(juveniles);
 
         //CADETE
         Categoria catCadKataM = Categoria.builder()
@@ -456,6 +485,19 @@ public class DataLoader implements CommandLineRunner {
                 .edadMaxima(15)
                 .pesoMinimo(61.0)
                 .build();
+
+        List<Categoria> cadetes = new ArrayList<>();
+        cadetes.add(catCadKataM);
+        cadetes.add(catCadKataF);
+        cadetes.add(catCadKumF1);
+        cadetes.add(catCadKumF2);
+        cadetes.add(catCadKumF3);
+        cadetes.add(catCadKumF4);
+        cadetes.add(catCadKumM1);
+        cadetes.add(catCadKumM2);
+        cadetes.add(catCadKumM3);
+        cadetes.add(catCadKumM4);
+        cadetes.add(catCadKumM5);
 
 
         //JUNIOR
@@ -565,6 +607,20 @@ public class DataLoader implements CommandLineRunner {
                 .pesoMinimo(66.0)
                 .build();
 
+        List<Categoria> juniors = new ArrayList<>();
+        juniors.add(catJunKatF);
+        juniors.add(catJunKatM);
+        juniors.add(catJunKumF1);
+        juniors.add(catJunKumF2);
+        juniors.add(catJunKumF3);
+        juniors.add(catJunKumF4);
+        juniors.add(catJunKumF5);
+        juniors.add(catJunKumM1);
+        juniors.add(catJunKumM2);
+        juniors.add(catJunKumM3);
+        juniors.add(catJunKumM4);
+        juniors.add(catJunKumM5);
+        categoriaRepository.saveAll(juniors);
 
         //SUB-21
         Categoria catSub21KatM = Categoria.builder()
@@ -672,7 +728,20 @@ public class DataLoader implements CommandLineRunner {
                 .edadMaxima(20)
                 .pesoMinimo(68.0)
                 .build();
-
+        List<Categoria> sub21 = new ArrayList<>();
+        sub21.add(catSub21KatF);
+        sub21.add(catSub21KatM);
+        sub21.add(catSub21KumF1);
+        sub21.add(catSub21KumF2);
+        sub21.add(catSub21KumF3);
+        sub21.add(catSub21KumF4);
+        sub21.add(catSub21KumF5);
+        sub21.add(catSub21KumM1);
+        sub21.add(catSub21KumM2);
+        sub21.add(catSub21KumM3);
+        sub21.add(catSub21KumM4);
+        sub21.add(catSub21KumM5);
+        categoriaRepository.saveAll(sub21);
 
         //SENIOR
         Categoria catSenKatM = Categoria.builder()
@@ -780,8 +849,20 @@ public class DataLoader implements CommandLineRunner {
                 .edadMaxima(99)
                 .pesoMinimo(68.0)
                 .build();
-
-
+        List<Categoria> seniors = new ArrayList<>();
+        seniors.add(catSenKatF);
+        seniors.add(catSenKatM);
+        seniors.add(catSenKumF1);
+        seniors.add(catSenKumF2);
+        seniors.add(catSenKumF3);
+        seniors.add(catSenKumF4);
+        seniors.add(catSenKumF5);
+        seniors.add(catSenKumM1);
+        seniors.add(catSenKumM2);
+        seniors.add(catSenKumM3);
+        seniors.add(catSenKumM4);
+        seniors.add(catSenKumM5);
+        categoriaRepository.saveAll(seniors);
 
         // 1. CREAR CAMPEONATOS
         Campeonato camp1 = Campeonato.builder()

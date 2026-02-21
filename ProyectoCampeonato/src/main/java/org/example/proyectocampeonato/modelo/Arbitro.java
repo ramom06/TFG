@@ -19,7 +19,7 @@ public class Arbitro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_arbitro;
+    private Long id_arbitro;
 
     @Column(nullable = false)
     private String nombre;

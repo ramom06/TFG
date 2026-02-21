@@ -35,14 +35,14 @@ public class CampeonatoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Campeonato> one(@PathVariable("id") Integer id) {
+    public ResponseEntity<Campeonato> one(@PathVariable("id") Long id) {
         // El servicio debería lanzar una excepción si no existe, capturada por un GlobalExceptionHandler
         Campeonato campeonato = this.service.one(id);
         return ResponseEntity.ok(campeonato);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Campeonato> replacePelicula(@PathVariable("id") Integer id, @RequestBody Campeonato campeonato) {
+    public ResponseEntity<Campeonato> replacePelicula(@PathVariable("id") Long id, @RequestBody Campeonato campeonato) {
         log.info("Actualizando película con ID: {}", id);
         Campeonato actualizada = this.service.replace(id, campeonato);
         return ResponseEntity.ok(actualizada);
@@ -50,7 +50,7 @@ public class CampeonatoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Campeonato> deletePelicula(@PathVariable("id") Integer id) {
+    public ResponseEntity<Campeonato> deletePelicula(@PathVariable("id") Long id) {
         log.info("Eliminando campeonato con ID: {}", id);
         this.service.delete(id);
         return ResponseEntity.noContent().build();

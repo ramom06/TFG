@@ -17,14 +17,12 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "categoria", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"modalidad", "genero", "peso_minimo", "peso_maximo", "edad_maxima"})
-})
+@Table(name = "categoria")
 public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_categoria;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;
@@ -53,13 +51,10 @@ public class Categoria {
     @Max(value = 40, message = "{categoria.edadMinima.maximo}")
     private int edadMinima;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_campeonato")
-    @JsonIgnore
-    private Campeonato campeonato;
+    @Column(name = "grupo")
+    private String grupo;
 
     @ManyToMany(mappedBy = "categorias", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIgnore
     private Set<Competidor> competidores = new HashSet<>();
-
 }

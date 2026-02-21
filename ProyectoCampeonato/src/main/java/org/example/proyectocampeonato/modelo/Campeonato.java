@@ -17,7 +17,7 @@ public class Campeonato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_campeonato;
+    private Long id_campeonato;
 
     @Column(nullable = false)
     private String nombre;
@@ -39,17 +39,4 @@ public class Campeonato {
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
-
-    @OneToMany(mappedBy = "campeonato")
-    private Set<Categoria> categorias = new HashSet<>();
-
-    public void addCategoria(Categoria categoria) {
-        categorias.add(categoria);
-        categoria.setCampeonato(this);
-    }
-
-    public void removeCategoria(Categoria categoria) {
-        categorias.remove(categoria);
-        categoria.setCampeonato(null);
-    }
 }

@@ -25,13 +25,13 @@ public class CampeonatoService {
         return this.campeonatoRepository.save(campeonato);
     }
 
-    public Campeonato one(Integer id) {
-        return this.campeonatoRepository.findById(Math.toIntExact(id))
+    public Campeonato one(Long id) {
+        return this.campeonatoRepository.findById(id)
                 .orElseThrow(() -> new CampeonatoNotFoundException(id));
     }
 
     @Transactional
-    public Campeonato replace(Integer id, Campeonato campeonato) {
+    public Campeonato replace(Long id, Campeonato campeonato) {
         return this.campeonatoRepository.findById(id)
                 .map(p -> {
                     campeonato.setId_campeonato(id);
@@ -41,7 +41,7 @@ public class CampeonatoService {
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!this.campeonatoRepository.existsById(id)) {
             throw new CampeonatoNotFoundException(id);
         }

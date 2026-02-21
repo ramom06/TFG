@@ -24,13 +24,13 @@ public class ArbitroService {
         return this.arbitroRepository.save(arbitro);
     }
 
-    public Arbitro one(Integer id) {
-        return this.arbitroRepository.findById(Math.toIntExact(id))
+    public Arbitro one(Long id) {
+        return this.arbitroRepository.findById(id)
                 .orElseThrow(() -> new CampeonatoNotFoundException(id));
     }
 
     @Transactional
-    public Arbitro replace(Integer id, Arbitro campeonato) {
+    public Arbitro replace(Long id, Arbitro campeonato) {
         return this.arbitroRepository.findById(id)
                 .map(p -> {
 
@@ -41,7 +41,7 @@ public class ArbitroService {
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!this.arbitroRepository.existsById(id)) {
             throw new CampeonatoNotFoundException(id);
         }

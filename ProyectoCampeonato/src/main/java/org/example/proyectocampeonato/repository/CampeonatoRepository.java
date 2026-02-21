@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CampeonatoRepository extends JpaRepository<Campeonato, Integer>{
+public interface CampeonatoRepository extends JpaRepository<Campeonato, Long>{
 
     //Busca por id
 
