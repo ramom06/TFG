@@ -37,7 +37,7 @@ public class Campeonato {
     @Column(nullable = false)
     private String nivel; //Regional, Nacional
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @OneToMany(mappedBy = "campeonato")
