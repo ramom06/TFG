@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @Data
@@ -15,23 +16,25 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "campeonato_categoria")
-@IdClass(Campeonato_Categoria_Id.class)
 public class Campeonato_Categoria {
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_campeonato")
-    private Campeonato id_campeonato;
+    @EmbeddedId
+    private Campeonato_Categoria_Id id;
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @MapsId("id_campeonato")
+    @JoinColumn(name = "id_campeonato")
+    private Campeonato campeonato;
+
+    @ManyToOne
+    @MapsId("id_categoria")
     @JoinColumn(name = "id_categoria")
-    private Categoria id_categoria;
+    private Categoria categoria;
 
     @Column(name = "fecha_inicio", nullable = false)
-    private LocalDate fechaInicio;
+    private Date fechaInicio;
 
     @Column(name = "fecha_fin", nullable = false)
-    private LocalDate fechaFin;
+    private Date fechaFin;
 
 }

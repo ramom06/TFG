@@ -54,6 +54,10 @@ public class Categoria {
     @Column(name = "grupo")
     private String grupo;
 
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
+
     @ManyToMany(mappedBy = "categorias", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIgnore
     private Set<Competidor> competidores = new HashSet<>();

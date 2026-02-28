@@ -4,6 +4,7 @@ import jakarta.persistence.*; // Importante para las anotaciones de BD
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,10 +24,10 @@ public class Campeonato {
     private String nombre;
 
     @Column(name = "fecha_inicio", nullable = false)
-    private LocalDate fechaInicio;
+    private Date fechaInicio;
 
     @Column(name = "fecha_fin", nullable = false)
-    private LocalDate fechaFin;
+    private Date fechaFin;
 
     @Column(nullable = false)
     private String ubicacion;
@@ -39,4 +40,7 @@ public class Campeonato {
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
+
+    @OneToMany(mappedBy = "campeonato", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
 }

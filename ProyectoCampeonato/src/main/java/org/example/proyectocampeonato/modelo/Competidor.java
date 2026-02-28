@@ -47,15 +47,7 @@ public class Competidor {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "categoria_competidor",
-            joinColumns = @JoinColumn(name = "id_competidor"),
-            inverseJoinColumns = {
-                    // Deben ser EXACTAMENTE los campos de CategoriaId
-                    @JoinColumn(name = "modalidad", referencedColumnName = "modalidad"),
-                    @JoinColumn(name = "genero", referencedColumnName = "genero"),
-                    @JoinColumn(name = "peso_minimo", referencedColumnName = "peso_minimo"),
-                    @JoinColumn(name = "peso_maximo", referencedColumnName = "peso_maximo"),
-                    @JoinColumn(name = "edad_maxima", referencedColumnName = "edad_maxima")
-            }
+            joinColumns = @JoinColumn(name = "id_competidor")
     )
     @JsonIgnore
     private Set<Categoria> categorias = new HashSet<>();
