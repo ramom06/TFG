@@ -1,5 +1,6 @@
 package org.example.proyectocampeonato.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*; // Importante para las anotaciones de BD
 import lombok.*;
 
@@ -42,5 +43,6 @@ public class Campeonato {
     private String descripcion;
 
     @OneToMany(mappedBy = "campeonato", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
 }

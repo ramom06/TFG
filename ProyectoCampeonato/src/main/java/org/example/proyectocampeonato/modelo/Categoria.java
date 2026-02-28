@@ -48,7 +48,7 @@ public class Categoria {
 
     @Column(name = "edad_minima", nullable = false)
     @Min(value = 0, message = "{categoria.edadMinima.minimo}")
-    @Max(value = 40, message = "{categoria.edadMinima.maximo}")
+    @Max(value = 71, message = "{categoria.edadMaxima.maximo}")
     private int edadMinima;
 
     @Column(name = "grupo")
