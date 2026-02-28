@@ -21,7 +21,7 @@ public class Competidor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_competidor;
+    private Long id_competidor;
 
     @Column(nullable = false)
     private String nombre;
