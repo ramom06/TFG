@@ -51,14 +51,11 @@ public class Categoria {
     @Max(value = 71, message = "{categoria.edadMaxima.maximo}")
     private int edadMinima;
 
-    @Column(name = "grupo")
-    private String grupo;
-
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
 
-    @ManyToMany(mappedBy = "categorias", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Competidor> competidores = new HashSet<>();
+    private Set<Inscripcion> inscripciones = new HashSet<>();
 }

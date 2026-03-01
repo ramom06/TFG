@@ -2,7 +2,6 @@ package org.example.proyectocampeonato.modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "combate")
@@ -18,7 +17,7 @@ public class Combate {
             @AttributeOverride(name = "idCompetidorAzul", column = @Column(name = "competidorAzul")),
             @AttributeOverride(name = "numeroTatami", column = @Column(name = "numeroTatami"))
     })
-    private CombateId id;
+    private Combate_Id id;
 
     @Column(nullable = false)
     private String ronda;

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/campeonato")
+@RequestMapping("/api/categoriasCampeonato")
 public class CampeonatoCategoriaController {
     private final CampeonatoCategoriaService service;
 

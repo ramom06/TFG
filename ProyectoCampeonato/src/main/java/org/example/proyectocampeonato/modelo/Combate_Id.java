@@ -1,6 +1,5 @@
 package org.example.proyectocampeonato.modelo;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 import java.io.Serializable;
@@ -9,7 +8,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CombateId implements Serializable {
+public class Combate_Id implements Serializable {
 
     private Integer idCompetidorRojo;
 

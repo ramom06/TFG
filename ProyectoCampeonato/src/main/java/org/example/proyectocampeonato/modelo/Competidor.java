@@ -44,11 +44,7 @@ public class Competidor {
     @Column(name = "federacion_autonomica", nullable = false)
     private String federacionAutonomica;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "categoria_competidor",
-            joinColumns = @JoinColumn(name = "id_competidor")
-    )
+    @OneToMany(mappedBy = "competidor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Categoria> categorias = new HashSet<>();
+    private Set<Inscripcion> inscripciones = new HashSet<>();
 }

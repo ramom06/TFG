@@ -24,6 +24,7 @@ public class DataLoader implements CommandLineRunner {
     private final CombateRepository combateRepository;
     private final CompetidorRepository competidorRepository;
     private final Campeonato_CategoriaRepository campeonato_categoriaRepository;
+    private final InscripcionRepository inscripcionRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -305,33 +306,34 @@ public class DataLoader implements CommandLineRunner {
 
         // 3. CREAR COMPETIDORES
 // Lista de competidores (renombrados y desordenados)
+// Lista ampliada con mayor diversidad autonómica
         Competidor comp1 = Competidor.builder().nombre("Antonio").apellidos("Ruiz").dni("99999991A").fechaNacimiento(LocalDate.of(1985, 1, 1)).genero('M').club("Dojo 17").federacionAutonomica("Madrileña").build();
         Competidor comp2 = Competidor.builder().nombre("Pablo").apellidos("Gómez").dni("33333331A").fechaNacimiento(LocalDate.of(2015, 1, 1)).genero('M').club("Dojo 5").federacionAutonomica("Madrileña").build();
-        Competidor comp3 = Competidor.builder().nombre("Marcos").apellidos("Gil").dni("66666661A").fechaNacimiento(LocalDate.of(2009, 1, 1)).genero('M').club("Dojo 11").federacionAutonomica("Madrileña").build();
+        Competidor comp3 = Competidor.builder().nombre("Marcos").apellidos("Gil").dni("66666661A").fechaNacimiento(LocalDate.of(2009, 1, 1)).genero('M').club("Dojo 11").federacionAutonomica("Catalana").build();
         Competidor comp4 = Competidor.builder().nombre("Vega").apellidos("Sanz").dni("11111114D").fechaNacimiento(LocalDate.of(2019, 4, 4)).genero('F').club("Dojo 2").federacionAutonomica("Andaluza").build();
-        Competidor comp5 = Competidor.builder().nombre("Marc").apellidos("Pérez").dni("22222221A").fechaNacimiento(LocalDate.of(2017, 1, 1)).genero('M').club("Dojo 3").federacionAutonomica("Madrileña").build();
-        Competidor comp6 = Competidor.builder().nombre("Laura").apellidos("Ortiz").dni("55555554D").fechaNacimiento(LocalDate.of(2011, 4, 4)).genero('F').club("Dojo 10").federacionAutonomica("Andaluza").build();
+        Competidor comp5 = Competidor.builder().nombre("Marc").apellidos("Pérez").dni("22222221A").fechaNacimiento(LocalDate.of(2017, 1, 1)).genero('M').club("Dojo 3").federacionAutonomica("Catalana").build();
+        Competidor comp6 = Competidor.builder().nombre("Laura").apellidos("Ortiz").dni("55555554D").fechaNacimiento(LocalDate.of(2011, 4, 4)).genero('F').club("Dojo 10").federacionAutonomica("Valenciana").build();
         Competidor comp7 = Competidor.builder().nombre("Jorge").apellidos("Ramos").dni("77777771A").fechaNacimiento(LocalDate.of(2006, 1, 1)).genero('M').club("Dojo 13").federacionAutonomica("Madrileña").build();
         Competidor comp8 = Competidor.builder().nombre("Sara").apellidos("López").dni("11111113C").fechaNacimiento(LocalDate.of(2019, 3, 3)).genero('F').club("Dojo 2").federacionAutonomica("Andaluza").build();
         Competidor comp9 = Competidor.builder().nombre("David").apellidos("Cano").dni("88888881A").fechaNacimiento(LocalDate.of(2002, 1, 1)).genero('M').club("Dojo 15").federacionAutonomica("Madrileña").build();
-        Competidor comp10 = Competidor.builder().nombre("Inés").apellidos("Álvarez").dni("44444443C").fechaNacimiento(LocalDate.of(2013, 3, 3)).genero('F').club("Dojo 8").federacionAutonomica("Andaluza").build();
+        Competidor comp10 = Competidor.builder().nombre("Inés").apellidos("Álvarez").dni("44444443C").fechaNacimiento(LocalDate.of(2013, 3, 3)).genero('F').club("Dojo 8").federacionAutonomica("Gallega").build();
         Competidor comp11 = Competidor.builder().nombre("Julia").apellidos("Jiménez").dni("33333333C").fechaNacimiento(LocalDate.of(2015, 3, 3)).genero('F').club("Dojo 6").federacionAutonomica("Andaluza").build();
         Competidor comp12 = Competidor.builder().nombre("Silvia").apellidos("Torres").dni("99999994D").fechaNacimiento(LocalDate.of(1984, 4, 4)).genero('F').club("Dojo 18").federacionAutonomica("Andaluza").build();
-        Competidor comp13 = Competidor.builder().nombre("Iker").apellidos("Muñoz").dni("44444442B").fechaNacimiento(LocalDate.of(2013, 2, 2)).genero('M').club("Dojo 7").federacionAutonomica("Madrileña").build();
+        Competidor comp13 = Competidor.builder().nombre("Iker").apellidos("Muñoz").dni("44444442B").fechaNacimiento(LocalDate.of(2013, 2, 2)).genero('M').club("Dojo 7").federacionAutonomica("Vasca").build();
         Competidor comp14 = Competidor.builder().nombre("Paula").apellidos("Cruz").dni("77777774D").fechaNacimiento(LocalDate.of(2006, 4, 4)).genero('F').club("Dojo 14").federacionAutonomica("Andaluza").build();
         Competidor comp15 = Competidor.builder().nombre("Adrián").apellidos("Torres").dni("55555551A").fechaNacimiento(LocalDate.of(2011, 1, 1)).genero('M').club("Dojo 9").federacionAutonomica("Madrileña").build();
         Competidor comp16 = Competidor.builder().nombre("Hugo").apellidos("Ruiz").dni("11111111A").fechaNacimiento(LocalDate.of(2019, 1, 1)).genero('M').club("Dojo 1").federacionAutonomica("Madrileña").build();
-        Competidor comp17 = Competidor.builder().nombre("Alba").apellidos("Romero").dni("44444444D").fechaNacimiento(LocalDate.of(2013, 4, 4)).genero('F').club("Dojo 8").federacionAutonomica("Andaluza").build();
+        Competidor comp17 = Competidor.builder().nombre("Alba").apellidos("Romero").dni("44444444D").fechaNacimiento(LocalDate.of(2013, 4, 4)).genero('F').club("Dojo 8").federacionAutonomica("Castellano-Leonesa").build();
         Competidor comp18 = Competidor.builder().nombre("Carmen").apellidos("Garrido").dni("77777773C").fechaNacimiento(LocalDate.of(2006, 3, 3)).genero('F').club("Dojo 14").federacionAutonomica("Andaluza").build();
         Competidor comp19 = Competidor.builder().nombre("Alex").apellidos("Díaz").dni("22222222B").fechaNacimiento(LocalDate.of(2017, 2, 2)).genero('M').club("Dojo 3").federacionAutonomica("Madrileña").build();
-        Competidor comp20 = Competidor.builder().nombre("Lucía").apellidos("Pérez").dni("66666664D").fechaNacimiento(LocalDate.of(2009, 4, 4)).genero('F').club("Dojo 12").federacionAutonomica("Andaluza").build();
-        Competidor comp21 = Competidor.builder().nombre("Elena").apellidos("Navarro").dni("55555553C").fechaNacimiento(LocalDate.of(2011, 3, 3)).genero('F').club("Dojo 10").federacionAutonomica("Andaluza").build();
-        Competidor comp22 = Competidor.builder().nombre("Marta").apellidos("Reyes").dni("88888883C").fechaNacimiento(LocalDate.of(2002, 3, 3)).genero('F').club("Dojo 16").federacionAutonomica("Andaluza").build();
+        Competidor comp20 = Competidor.builder().nombre("Lucía").apellidos("Pérez").dni("66666664D").fechaNacimiento(LocalDate.of(2009, 4, 4)).genero('F').club("Dojo 12").federacionAutonomica("Aragonesa").build();
+        Competidor comp21 = Competidor.builder().nombre("Elena").apellidos("Navarro").dni("55555553C").fechaNacimiento(LocalDate.of(2011, 3, 3)).genero('F').club("Dojo 10").federacionAutonomica("Murciana").build();
+        Competidor comp22 = Competidor.builder().nombre("Marta").apellidos("Reyes").dni("88888883C").fechaNacimiento(LocalDate.of(2002, 3, 3)).genero('F').club("Dojo 16").federacionAutonomica("Canaria").build();
         Competidor comp23 = Competidor.builder().nombre("Dani").apellidos("Moreno").dni("44444441A").fechaNacimiento(LocalDate.of(2013, 1, 1)).genero('M').club("Dojo 7").federacionAutonomica("Madrileña").build();
         Competidor comp24 = Competidor.builder().nombre("Oscar").apellidos("Castro").dni("77777772B").fechaNacimiento(LocalDate.of(2006, 2, 2)).genero('M').club("Dojo 13").federacionAutonomica("Madrileña").build();
         Competidor comp25 = Competidor.builder().nombre("Ana").apellidos("Ruiz").dni("33333334D").fechaNacimiento(LocalDate.of(2015, 4, 4)).genero('F').club("Dojo 6").federacionAutonomica("Andaluza").build();
         Competidor comp26 = Competidor.builder().nombre("Javier").apellidos("Hernández").dni("33333332B").fechaNacimiento(LocalDate.of(2015, 2, 2)).genero('M').club("Dojo 5").federacionAutonomica("Madrileña").build();
-        Competidor comp27 = Competidor.builder().nombre("Abril").apellidos("Ruiz").dni("22222224D").fechaNacimiento(LocalDate.of(2017, 4, 4)).genero('F').club("Dojo 4").federacionAutonomica("Andaluza").build();
+        Competidor comp27 = Competidor.builder().nombre("Abril").apellidos("Ruiz").dni("22222224D").fechaNacimiento(LocalDate.of(2017, 4, 4)).genero('F').club("Dojo 4").federacionAutonomica("Balear").build();
         Competidor comp28 = Competidor.builder().nombre("Isabel").apellidos("Vega").dni("88888884D").fechaNacimiento(LocalDate.of(2002, 4, 4)).genero('F').club("Dojo 16").federacionAutonomica("Andaluza").build();
         Competidor comp29 = Competidor.builder().nombre("Roberto").apellidos("García").dni("99999992B").fechaNacimiento(LocalDate.of(1982, 2, 2)).genero('M').club("Dojo 17").federacionAutonomica("Madrileña").build();
         Competidor comp30 = Competidor.builder().nombre("Noa").apellidos("Martín").dni("22222223C").fechaNacimiento(LocalDate.of(2017, 3, 3)).genero('F').club("Dojo 4").federacionAutonomica("Andaluza").build();
@@ -341,8 +343,37 @@ public class DataLoader implements CommandLineRunner {
         Competidor comp34 = Competidor.builder().nombre("Diego").apellidos("Molina").dni("66666662B").fechaNacimiento(LocalDate.of(2009, 2, 2)).genero('M').club("Dojo 11").federacionAutonomica("Madrileña").build();
         Competidor comp35 = Competidor.builder().nombre("Leo").apellidos("García").dni("11111112B").fechaNacimiento(LocalDate.of(2019, 2, 2)).genero('M').club("Dojo 1").federacionAutonomica("Madrileña").build();
         Competidor comp36 = Competidor.builder().nombre("Carmen").apellidos("Sanz").dni("99999993C").fechaNacimiento(LocalDate.of(1988, 3, 3)).genero('F').club("Dojo 18").federacionAutonomica("Andaluza").build();
+        Competidor comp37 = Competidor.builder().nombre("Héctor").apellidos("Blanco").dni("12121212E").fechaNacimiento(LocalDate.of(2010, 5, 5)).genero('M').club("Dojo 19").federacionAutonomica("Asturiana").build();
+        Competidor comp38 = Competidor.builder().nombre("Mireia").apellidos("Font").dni("23232323F").fechaNacimiento(LocalDate.of(2008, 6, 6)).genero('F').club("Dojo 20").federacionAutonomica("Catalana").build();
+        Competidor comp39 = Competidor.builder().nombre("Unai").apellidos("Etxeberria").dni("34343434G").fechaNacimiento(LocalDate.of(2012, 7, 7)).genero('M').club("Dojo 21").federacionAutonomica("Vasca").build();
+        Competidor comp40 = Competidor.builder().nombre("Beatriz").apellidos("Castro").dni("45454545H").fechaNacimiento(LocalDate.of(2005, 8, 8)).genero('F').club("Dojo 22").federacionAutonomica("Extremeña").build();
+        Competidor comp41 = Competidor.builder().nombre("Pablo").apellidos("Ruiz").dni("56565656I").fechaNacimiento(LocalDate.of(2014, 9, 9)).genero('M').club("Dojo 23").federacionAutonomica("Cantabra").build();
+        Competidor comp42 = Competidor.builder().nombre("Elena").apellidos("Soler").dni("67676767J").fechaNacimiento(LocalDate.of(2016, 10, 10)).genero('F').club("Dojo 24").federacionAutonomica("Riojana").build();
+        Competidor comp43 = Competidor.builder().nombre("Sergio").apellidos("Pérez").dni("78787878K").fechaNacimiento(LocalDate.of(2003, 11, 11)).genero('M').club("Dojo 25").federacionAutonomica("Navarra").build();
+        Competidor comp44 = Competidor.builder().nombre("Lucía").apellidos("García").dni("89898989L").fechaNacimiento(LocalDate.of(2011, 12, 12)).genero('F').club("Dojo 26").federacionAutonomica("Castellano-Manchega").build();
+        Competidor comp45 = Competidor.builder().nombre("Javier").apellidos("Soto").dni("90909090M").fechaNacimiento(LocalDate.of(1995, 1, 15)).genero('M').club("Dojo 27").federacionAutonomica("Melillense").build();
 
-        competidorRepository.saveAll(List.of(comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp9, comp10, comp11, comp12, comp13, comp14, comp15, comp16, comp17, comp18, comp19, comp20, comp21, comp22, comp23, comp24, comp25, comp26, comp27, comp28, comp29, comp30, comp31, comp32, comp33, comp34, comp35, comp36));
+        competidorRepository.saveAll(List.of(comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp9, comp10, comp11, comp12, comp13, comp14, comp15, comp16, comp17, comp18, comp19, comp20, comp21, comp22, comp23, comp24, comp25, comp26, comp27, comp28, comp29, comp30, comp31, comp32, comp33, comp34, comp35, comp36, comp37, comp38, comp39, comp40, comp41, comp42, comp43, comp44, comp45
+        ));
+        // INSCRIPCIONES DE EJEMPLO
+// comp1 se inscribe en Senior Masculino <75kg en camp2
+        Inscripcion ins1 = Inscripcion.builder()
+                .id_inscripcion(new Inscripcion_Id(camp2.getId_campeonato(), catSenKumM3.getId_categoria(), comp1.getId_competidor()))
+                .campeonato(camp2)
+                .categoria(catSenKumM3)
+                .competidor(comp1)
+                .build();
+
+// comp2 se inscribe en Senior Masculino <67kg en camp2
+        Inscripcion ins2 = Inscripcion.builder()
+                .id_inscripcion(new Inscripcion_Id(camp2.getId_campeonato(), catSenKumM2.getId_categoria(), comp2.getId_competidor()))
+                .campeonato(camp2)
+                .categoria(catSenKumM2)
+                .competidor(comp2)
+                .build();
+
+        inscripcionRepository.saveAll(List.of(ins1, ins2));
+
 
         // 4. CREAR ÁRBITROS
         Arbitro arb1 = Arbitro.builder().nombre("Luis").apellidos("Gómez Juez").licencia("LIC-2026-001").fecha_nacimiento(new Date()).categoria_Arbitral("Nacional").activo(true).build();
