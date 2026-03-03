@@ -42,6 +42,9 @@ public class Campeonato {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @Column(name = "urlPortada", nullable = false)
+    private String urlPortada;
+
     @OneToMany(mappedBy = "campeonato", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
