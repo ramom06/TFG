@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CampeonatoCategoriaDTO {
+public class Campeonato_CategoriaDTO {
 
     // IDs para crear la relación (Request)
     private Long idCampeonato;

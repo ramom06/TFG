@@ -13,12 +13,10 @@ import { Campeonato, Estado, Nivel } from '../campeonato';
 })
 export class CampeonatoListComponent implements OnInit {
 
-  // ── Estado ──────────────────────────────────────────────
   campeonatos = signal<Campeonato[]>([]);
   loading     = signal(true);
   error       = signal<string | null>(null);
 
-  // ── Filtros ─────────────────────────────────────────────
   searchText  = signal('');
   filtroEstado = signal<Estado | 'todos'>('todos');
   filtroNivel  = signal<Nivel  | 'todos'>('todos');

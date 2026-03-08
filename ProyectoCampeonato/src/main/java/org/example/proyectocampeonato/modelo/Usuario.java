@@ -22,8 +22,11 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+    @Column(nullable = false)
+    private String nombre;
+
+    @Column(nullable = false)
+    private String apellidos;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -35,16 +38,12 @@ public class Usuario {
     @Column(nullable = false)
     private Rol rol;
 
-    @Column(nullable = false)
-    private boolean activo;
-
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 
     @PrePersist
     protected void onCreate() {
         this.fechaRegistro = LocalDateTime.now();
-        this.activo = true;
     }
 
     public enum Rol {

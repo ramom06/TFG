@@ -16,7 +16,7 @@ import java.util.Date;
 public class ArbitroDTO {
 
     private Long id_usuario;
-    private String username;
+    private String nombre;
     private String email;
 
     @JsonIgnore
@@ -26,7 +26,6 @@ public class ArbitroDTO {
     private LocalDateTime fechaRegistro;
 
     // Campos propios de Arbitro
-    private String nombre;
     private String apellidos;
     private String licencia;
     private String categoriaArbitral;

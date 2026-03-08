@@ -1,5 +1,6 @@
-package org.example.proyectocampeonato.dto;
+package org.example.proyectocampeonato.mapperDTO;
 
+import org.example.proyectocampeonato.dto.*;
 import org.example.proyectocampeonato.modelo.*;
 import org.springframework.stereotype.Component;
 
@@ -13,18 +14,17 @@ public class DtoMapper {
     public UsuarioDTO toUsuarioDTO(Usuario u) {
         return UsuarioDTO.builder()
                 .id_usuario(u.getId_usuario())
-                .username(u.getUsername())
+                .username(u.getNombre())
                 .email(u.getEmail())
                 // password nunca se mapea hacia el DTO de salida
                 .rol(u.getRol())
-                .activo(u.isActivo())
                 .fechaRegistro(u.getFechaRegistro())
                 .build();
     }
 
     public Usuario toUsuarioEntity(UsuarioDTO dto) {
         return Usuario.builder()
-                .username(dto.getUsername())
+                .nombre(dto.getUsername())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .rol(dto.getRol())
@@ -36,10 +36,7 @@ public class DtoMapper {
     public ArbitroDTO toArbitroDTO(Arbitro a) {
         return ArbitroDTO.builder()
                 .id_usuario(a.getId_usuario())
-                .username(a.getUsername())
                 .email(a.getEmail())
-                // password nunca se mapea hacia el DTO de salida
-                .activo(a.isActivo())
                 .fechaRegistro(a.getFechaRegistro())
                 .nombre(a.getNombre())
                 .apellidos(a.getApellidos())
@@ -51,10 +48,9 @@ public class DtoMapper {
 
     public Arbitro toArbitroEntity(ArbitroDTO dto) {
         return Arbitro.builder()
-                .username(dto.getUsername())
+                .nombre(dto.getNombre())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
-                .nombre(dto.getNombre())
                 .apellidos(dto.getApellidos())
                 .licencia(dto.getLicencia())
                 .categoriaArbitral(dto.getCategoriaArbitral())
@@ -196,8 +192,8 @@ public class DtoMapper {
 
     // ── CAMPEONATO_CATEGORIA ─────────────────────────────────────────────────
 
-    public CampeonatoCategoriaDTO toCampeonatoCategoriaDTO(Campeonato_Categoria cc) {
-        return CampeonatoCategoriaDTO.builder()
+    public Campeonato_CategoriaDTO toCampeonatoCategoriaDTO(Campeonato_Categoria cc) {
+        return Campeonato_CategoriaDTO.builder()
                 .idCampeonato(cc.getCampeonato().getId_campeonato())
                 .idCategoria(cc.getCategoria().getId_categoria())
                 .nombreCampeonato(cc.getCampeonato().getNombre())
