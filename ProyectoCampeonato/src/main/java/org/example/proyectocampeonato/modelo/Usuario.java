@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -28,6 +30,9 @@ public class Usuario {
     @Column(nullable = false)
     private String apellidos;
 
+    @Column(nullable = false)
+    private String dni;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -39,11 +44,17 @@ public class Usuario {
     private Rol rol;
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)
-    private LocalDateTime fechaRegistro;
+    private Date fechaRegistro;
+
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private Date fechaNacimiento;
+
+    @Column(nullable = false)
+    private char genero;
 
     @PrePersist
     protected void onCreate() {
-        this.fechaRegistro = LocalDateTime.now();
+        this.fechaRegistro = new Date();
     }
 
     public enum Rol {

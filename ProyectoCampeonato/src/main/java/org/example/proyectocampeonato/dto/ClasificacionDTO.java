@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ClasificacionDTO {
 
-    private Integer idClasificacion;
     private String nombreCategoria;
     private String nombreCompetidor;
     private Integer puntos;

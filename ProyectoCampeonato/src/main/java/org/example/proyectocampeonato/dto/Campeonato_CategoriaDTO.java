@@ -1,9 +1,12 @@
 package org.example.proyectocampeonato.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +18,8 @@ public class Campeonato_CategoriaDTO {
     private Long idCampeonato;
     private Long idCategoria;
 
-    // Nombres para mostrar en la vista (Response)
-    private String nombreCampeonato;
-    private String nombreCategoria;
+    private Date fechaInicioCampeonato;
+    private Date fechaFinCampeonato;
     private String modalidad;
     private String genero;
 }

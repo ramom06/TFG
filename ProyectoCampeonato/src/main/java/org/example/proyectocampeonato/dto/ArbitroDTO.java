@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.proyectocampeonato.modelo.Usuario;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -17,16 +18,17 @@ public class ArbitroDTO {
 
     private Long id_usuario;
     private String nombre;
+    private String apellidos;
     private String email;
+    private Usuario.Rol rol;
 
     @JsonIgnore
     private String password;
 
     private boolean activo;
-    private LocalDateTime fechaRegistro;
+    private Date fechaRegistro;
 
     // Campos propios de Arbitro
-    private String apellidos;
     private String licencia;
     private String categoriaArbitral;
     private Date fechaNacimiento;

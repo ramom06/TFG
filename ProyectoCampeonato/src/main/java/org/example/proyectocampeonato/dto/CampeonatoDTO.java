@@ -14,7 +14,6 @@ import java.util.List;
 @Builder
 public class CampeonatoDTO {
 
-    private Long id_campeonato;
     private String nombre;
     private Date fechaInicio;
     private Date fechaFin;
@@ -23,7 +22,4 @@ public class CampeonatoDTO {
     private String nivel;
     private String descripcion;
     private String urlPortada;
-
-    // Nombres de las categorías asociadas al campeonato
-    private List<String> categorias;
 }

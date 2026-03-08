@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Builder
 public class CompetidorDTO {
 
-    private Long id_competidor;
     private String nombre;
     private String apellidos;
     private String dni;

@@ -14,7 +14,7 @@ public class Clasificacion {
 
     @Id
     @Column(name = "id_clasificacion")
-    private Integer idClasificacion;
+    private Long idClasificacion;
 
     @Column(name = "nombre_categoria", nullable = false)
     private String nombreCategoria;

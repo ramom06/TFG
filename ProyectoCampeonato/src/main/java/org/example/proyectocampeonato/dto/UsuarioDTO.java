@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Builder
 public class    UsuarioDTO {
 
-    private Long id_usuario;
     private String username;
     private String email;
 

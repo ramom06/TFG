@@ -17,26 +17,7 @@ import java.util.Set;
 @Entity
 @Builder
 @Table(name = "competidor")
-public class Competidor {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_competidor;
-
-    @Column(nullable = false)
-    private String nombre;
-
-    @Column(nullable = false)
-    private String apellidos;
-
-    @Column(nullable = false, unique = true)
-    private String dni;
-
-    @Column(name = "fecha_nacimiento", nullable = false)
-    private LocalDate fechaNacimiento;
-
-    @Column(nullable = false)
-    private char genero;
+public class Competidor extends Usuario {
 
     @Column(nullable = false)
     private String club;

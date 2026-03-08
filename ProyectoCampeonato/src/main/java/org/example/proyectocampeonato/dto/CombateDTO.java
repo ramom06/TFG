@@ -15,20 +15,10 @@ import java.util.Date;
 @Builder
 public class CombateDTO {
 
-    // ── Clave compuesta (Combate_Id) ─────────────────────────────────────────
-    private Long idCompetidorRojo;
-    private Long idCampeonato;
-    private Long idCategoria;
     private Integer numeroTatami;
-
-    // ── Competidor azul (opcional) ───────────────────────────────────────────
     private Long idCompetidorAzul;
-
-    // ── Datos informativos de los competidores (solo lectura) ────────────────
     private String nombreCompetidorRojo;
     private String nombreCompetidorAzul;
-
-    // ── Datos del combate ────────────────────────────────────────────────────
     private String ronda;
     private Integer puntuacionRojo;
     private Integer puntuacionAzul;

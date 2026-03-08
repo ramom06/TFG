@@ -24,7 +24,4 @@ public class Arbitro extends Usuario {
 
     @Column(name = "categoria_arbitral", nullable = false)
     private String categoriaArbitral;
-
-    @Column(name = "fecha_nacimiento", nullable = false)
-    private Date fechaNacimiento;
 }
