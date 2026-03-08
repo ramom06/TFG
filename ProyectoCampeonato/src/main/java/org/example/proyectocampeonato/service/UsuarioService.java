@@ -1,6 +1,6 @@
 package org.example.proyectocampeonato.service;
 
-import org.example.proyectocampeonato.dto.DtoMapper;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.dto.UsuarioDTO;
 import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.UsuarioRepository;
@@ -37,11 +37,11 @@ public class UsuarioService {
         );
     }
 
-    public UsuarioDTO findByUsername(String username) {
+    public UsuarioDTO findByNombre(String nombre) {
         return mapper.toUsuarioDTO(
-                usuarioRepository.findByUsername(username)
+                usuarioRepository.findByNombre(nombre)
                         .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Usuario '" + username + "' no encontrado"))
+                                HttpStatus.NOT_FOUND, "Usuario '" + nombre + "' no encontrado"))
         );
     }
 
@@ -53,7 +53,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDTO save(UsuarioDTO dto) {
-        validarUsernameUnico(dto.getUsername());
+        validarNombreUnico(dto.getNombre());
         validarEmailUnico(dto.getEmail());
         Usuario entidad = mapper.toUsuarioEntity(dto);
         return mapper.toUsuarioDTO(usuarioRepository.save(entidad));
@@ -63,28 +63,19 @@ public class UsuarioService {
     public UsuarioDTO replace(Long id, UsuarioDTO dto) {
         return usuarioRepository.findById(id)
                 .map(existing -> {
-                    if (!existing.getUsername().equals(dto.getUsername())) {
-                        validarUsernameUnico(dto.getUsername());
+                    if (!existing.getNombre().equals(dto.getNombre())) {
+                        validarNombreUnico(dto.getNombre());
                     }
                     if (!existing.getEmail().equals(dto.getEmail())) {
                         validarEmailUnico(dto.getEmail());
                     }
                     Usuario entidad = mapper.toUsuarioEntity(dto);
-                    entidad.setId_usuario(id);
+                    entidad.setIdUsuario(id);
                     entidad.setFechaRegistro(existing.getFechaRegistro());
                     return mapper.toUsuarioDTO(usuarioRepository.save(entidad));
                 })
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
-    }
-
-    @Transactional
-    public UsuarioDTO toggleActivo(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
-        usuario.setActivo(!usuario.isActivo());
-        return mapper.toUsuarioDTO(usuarioRepository.save(usuario));
     }
 
     @Transactional
@@ -98,10 +89,10 @@ public class UsuarioService {
 
     // ── helpers ───────────────────────────────────────────────────────────────
 
-    private void validarUsernameUnico(String username) {
-        if (usuarioRepository.existsByUsername(username)) {
+    private void validarNombreUnico(String nombre) {
+        if (usuarioRepository.existsByNombre(nombre)) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "El username '" + username + "' ya está en uso");
+                    HttpStatus.CONFLICT, "El nombre '" + nombre + "' ya está en uso");
         }
     }
 

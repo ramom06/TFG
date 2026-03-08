@@ -11,12 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InscripcionDTO {
 
-    // IDs para crear la inscripción (Request)
     private Long idCampeonato;
     private Long idCategoria;
     private Long idCompetidor;
-
-    // Nombres para mostrar en la vista (Response)
     private String nombreCampeonato;
     private String nombreCategoria;
     private String nombreCompetidor;

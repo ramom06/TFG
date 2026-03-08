@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.dto.CombateDTO;
-import org.example.proyectocampeonato.dto.DtoMapper;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.*;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class    CombateService {
+public class CombateService {
 
     private final CombateRepository combateRepository;
     private final CompetidorRepository competidorRepository;
@@ -52,7 +52,7 @@ public class    CombateService {
     public CombateDTO one(Combate_Id id) {
         return mapper.toCombateDTO(
                 combateRepository.findById(id)
-                        .orElseThrow(() -> new CampeonatoNotFoundException(id.getId_campeonato()))
+                        .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()))
         );
     }
 
@@ -70,13 +70,13 @@ public class    CombateService {
                     entidad.setId(id);
                     return mapper.toCombateDTO(combateRepository.save(entidad));
                 })
-                .orElseThrow(() -> new CampeonatoNotFoundException(id.getId_campeonato()));
+                .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()));
     }
 
     @Transactional
     public void delete(Combate_Id id) {
         if (!combateRepository.existsById(id)) {
-            throw new CampeonatoNotFoundException(id.getId_campeonato());
+            throw new CampeonatoNotFoundException(id.getIdCampeonato());
         }
         combateRepository.deleteById(id);
     }
@@ -100,6 +100,8 @@ public class    CombateService {
                 dto.getNumeroTatami()
         );
 
+        // horaProgramada y horaInicioReal ya son LocalTime/LocalDateTime en el DTO,
+        // igual que en el modelo — no hace falta conversión
         Combate.CombateBuilder builder = Combate.builder()
                 .id(id)
                 .ronda(dto.getRonda())
@@ -114,7 +116,6 @@ public class    CombateService {
                 .competidorRojo(rojo)
                 .campeonatoCategoria(campeonatoCategoria);
 
-        // Competidor azul es nullable (bye)
         if (dto.getIdCompetidorAzul() != null) {
             Competidor azul = competidorRepository.findById(dto.getIdCompetidorAzul())
                     .orElseThrow(() -> new ResponseStatusException(

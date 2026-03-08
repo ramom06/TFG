@@ -13,13 +13,3 @@ export interface Campeonato {
   descripcion: string | null;
   urlPortada: string;
 }
-
-export interface CampeonatoDTO {
-  nombre:      string;
-  fechaInicio: string;
-  fechaFin:    string;
-  ubicacion:   string;
-  estado:      Estado;
-  nivel:       Nivel;
-  descripcion: string | null;
-}

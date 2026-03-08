@@ -4,7 +4,7 @@ import {CampeonatoListComponent} from './campeonato-list/campeonato-list';
 
 @Component({
   selector: 'app-root',
-  imports: [CampeonatoListComponent],
+  imports: [ RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

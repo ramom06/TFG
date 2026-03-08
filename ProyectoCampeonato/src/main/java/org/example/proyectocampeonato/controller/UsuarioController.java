@@ -39,7 +39,7 @@ public class UsuarioController {
     @GetMapping("/username/{username}")
     public ResponseEntity<UsuarioDTO> byUsername(@PathVariable String username) {
         log.info("Obteniendo usuario por username: {}", username);
-        return ResponseEntity.ok(service.findByUsername(username));
+        return ResponseEntity.ok(service.findByNombre(username));
     }
 
     // GET /api/usuarios/rol/{rol}  →  ej: /api/usuarios/rol/ADMIN
@@ -52,7 +52,7 @@ public class UsuarioController {
     // POST /api/usuarios
     @PostMapping
     public ResponseEntity<UsuarioDTO> save(@RequestBody UsuarioDTO dto) {
-        log.info("Creando usuario: {}", dto.getUsername());
+        log.info("Creando usuario: {}", dto.getNombre());
         return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 
@@ -61,13 +61,6 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDTO> replace(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
         log.info("Actualizando usuario con id: {}", id);
         return ResponseEntity.ok(service.replace(id, dto));
-    }
-
-    // PATCH /api/usuarios/{id}/toggle-activo
-    @PatchMapping("/{id}/toggle-activo")
-    public ResponseEntity<UsuarioDTO> toggleActivo(@PathVariable Long id) {
-        log.info("Cambiando estado activo del usuario con id: {}", id);
-        return ResponseEntity.ok(service.toggleActivo(id));
     }
 
     // DELETE /api/usuarios/{id}

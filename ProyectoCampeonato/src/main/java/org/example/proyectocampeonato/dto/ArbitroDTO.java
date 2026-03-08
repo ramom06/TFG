@@ -1,13 +1,13 @@
 package org.example.proyectocampeonato.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.proyectocampeonato.modelo.Usuario;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -16,7 +16,8 @@ import java.util.Date;
 @Builder
 public class ArbitroDTO {
 
-    private Long id_usuario;
+    private Long id;
+
     private String nombre;
     private String apellidos;
     private String email;
@@ -25,10 +26,8 @@ public class ArbitroDTO {
     @JsonIgnore
     private String password;
 
-    private boolean activo;
     private Date fechaRegistro;
 
-    // Campos propios de Arbitro
     private String licencia;
     private String categoriaArbitral;
     private Date fechaNacimiento;

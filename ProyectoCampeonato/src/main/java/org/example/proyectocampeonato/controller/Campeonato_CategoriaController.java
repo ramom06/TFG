@@ -1,6 +1,7 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.proyectocampeonato.dto.Campeonato_CategoriaDTO;
 import org.example.proyectocampeonato.dto.CategoriaDTO;
 import org.example.proyectocampeonato.service.CampeonatoCategoriaService;
 import org.springframework.http.HttpStatus;
@@ -29,12 +30,12 @@ public class Campeonato_CategoriaController {
 
     // POST /api/campeonatos/{idCampeonato}/categorias/{idCategoria}
     @PostMapping("/{idCategoria}")
-    public ResponseEntity<Void> asignar(
+    public ResponseEntity<Campeonato_CategoriaDTO> asignar(
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria) {
         log.info("Asignando categoría {} al campeonato {}", idCategoria, idCampeonato);
-        service.asignarCategoria(idCampeonato, idCategoria);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.asignarCategoria(idCampeonato, idCategoria));
     }
 
     // DELETE /api/campeonatos/{idCampeonato}/categorias/{idCategoria}

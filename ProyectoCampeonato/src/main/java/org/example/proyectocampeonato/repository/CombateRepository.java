@@ -12,13 +12,11 @@ import java.util.List;
 @Repository
 public interface CombateRepository extends JpaRepository<Combate, Combate_Id> {
 
-    // Combates de una categoría concreta dentro de un campeonato
     List<Combate> findByIdIdCampeonatoAndIdIdCategoria(Long idCampeonato, Long idCategoria);
 
-    // Combates en los que participa un competidor (como rojo o azul)
-    @Query("SELECT c FROM Combate c WHERE c.competidorRojo.id_competidor = :id OR c.competidorAzul.id_competidor = :id")
-    List<Combate> findByCompetidor(@Param("id") Long idCompetidor);
-
-    // Combates de un tatami concreto dentro de un campeonato
     List<Combate> findByIdIdCampeonatoAndIdNumeroTatami(Long idCampeonato, Integer numeroTatami);
+
+    // id_usuario es el PK heredado de Usuario en Competidor
+    @Query("SELECT c FROM Combate c WHERE c.competidorRojo.idUsuario = :id OR c.competidorAzul.idUsuario = :id")
+    List<Combate> findByCompetidor(@Param("id") Long idCompetidor);
 }

@@ -4,42 +4,39 @@ import org.example.proyectocampeonato.dto.*;
 import org.example.proyectocampeonato.modelo.*;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 public class DtoMapper {
 
-    // ── USUARIO ──────────────────────────────────────────────────────────────
-
     public UsuarioDTO toUsuarioDTO(Usuario u) {
         return UsuarioDTO.builder()
-                .id_usuario(u.getId_usuario())
-                .username(u.getNombre())
+                .id(u.getIdUsuario())
+                .nombre(u.getNombre())
+                .apellidos(u.getApellidos())
                 .email(u.getEmail())
-                // password nunca se mapea hacia el DTO de salida
                 .rol(u.getRol())
                 .fechaRegistro(u.getFechaRegistro())
+                // password nunca se mapea hacia el DTO de salida
                 .build();
     }
 
     public Usuario toUsuarioEntity(UsuarioDTO dto) {
         return Usuario.builder()
-                .nombre(dto.getUsername())
+                .nombre(dto.getNombre())
+                .apellidos(dto.getApellidos())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .rol(dto.getRol())
                 .build();
     }
 
-    // ── ARBITRO ──────────────────────────────────────────────────────────────
-
     public ArbitroDTO toArbitroDTO(Arbitro a) {
         return ArbitroDTO.builder()
-                .id_usuario(a.getId_usuario())
-                .email(a.getEmail())
-                .fechaRegistro(a.getFechaRegistro())
+                .id(a.getIdUsuario())
                 .nombre(a.getNombre())
                 .apellidos(a.getApellidos())
+                .email(a.getEmail())
+                .rol(a.getRol())
+                .fechaRegistro(a.getFechaRegistro())
                 .licencia(a.getLicencia())
                 .categoriaArbitral(a.getCategoriaArbitral())
                 .fechaNacimiento(a.getFechaNacimiento())
@@ -49,20 +46,19 @@ public class DtoMapper {
     public Arbitro toArbitroEntity(ArbitroDTO dto) {
         return Arbitro.builder()
                 .nombre(dto.getNombre())
+                .apellidos(dto.getApellidos())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
-                .apellidos(dto.getApellidos())
+                .rol(dto.getRol())
+                .fechaNacimiento(dto.getFechaNacimiento())
                 .licencia(dto.getLicencia())
                 .categoriaArbitral(dto.getCategoriaArbitral())
-                .fechaNacimiento(dto.getFechaNacimiento())
                 .build();
     }
 
-    // ── CAMPEONATO ───────────────────────────────────────────────────────────
-
     public CampeonatoDTO toCampeonatoDTO(Campeonato c) {
         return CampeonatoDTO.builder()
-                .id_campeonato(c.getId_campeonato())
+                .id(c.getId_campeonato())
                 .nombre(c.getNombre())
                 .fechaInicio(c.getFechaInicio())
                 .fechaFin(c.getFechaFin())
@@ -71,11 +67,6 @@ public class DtoMapper {
                 .nivel(c.getNivel())
                 .descripcion(c.getDescripcion())
                 .urlPortada(c.getUrlPortada())
-                .categorias(
-                    c.getCampeonatoCategorias().stream()
-                        .map(cc -> cc.getCategoria().getNombre())
-                        .collect(Collectors.toList())
-                )
                 .build();
     }
 
@@ -92,11 +83,9 @@ public class DtoMapper {
                 .build();
     }
 
-    // ── CATEGORIA ────────────────────────────────────────────────────────────
-
     public CategoriaDTO toCategoriaDTO(Categoria c) {
         return CategoriaDTO.builder()
-                .id_categoria(c.getId_categoria())
+                .id(c.getId_categoria())
                 .nombre(c.getNombre())
                 .modalidad(c.getModalidad())
                 .genero(c.getGenero())
@@ -119,15 +108,19 @@ public class DtoMapper {
                 .build();
     }
 
-    // ── COMPETIDOR ───────────────────────────────────────────────────────────
-
     public CompetidorDTO toCompetidorDTO(Competidor c) {
+        java.time.LocalDate fechaNac = null;
+        if (c.getFechaNacimiento() != null) {
+            fechaNac = c.getFechaNacimiento().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate();
+        }
         return CompetidorDTO.builder()
-                .id_competidor(c.getId_competidor())
+                .id(c.getIdUsuario())
                 .nombre(c.getNombre())
                 .apellidos(c.getApellidos())
                 .dni(c.getDni())
-                .fechaNacimiento(c.getFechaNacimiento())
+                .fechaNacimiento(fechaNac)
                 .genero(c.getGenero())
                 .club(c.getClub())
                 .federacionAutonomica(c.getFederacionAutonomica())
@@ -135,24 +128,31 @@ public class DtoMapper {
     }
 
     public Competidor toCompetidorEntity(CompetidorDTO dto) {
+        java.util.Date fechaNac = null;
+        if (dto.getFechaNacimiento() != null) {
+            fechaNac = java.util.Date.from(
+                    dto.getFechaNacimiento()
+                            .atStartOfDay(java.time.ZoneId.systemDefault())
+                            .toInstant()
+            );
+        }
         return Competidor.builder()
                 .nombre(dto.getNombre())
                 .apellidos(dto.getApellidos())
                 .dni(dto.getDni())
-                .fechaNacimiento(dto.getFechaNacimiento())
+                .fechaNacimiento(fechaNac)
                 .genero(dto.getGenero())
                 .club(dto.getClub())
                 .federacionAutonomica(dto.getFederacionAutonomica())
                 .build();
     }
 
-    // ── INSCRIPCION ──────────────────────────────────────────────────────────
 
     public InscripcionDTO toInscripcionDTO(Inscripcion i) {
         return InscripcionDTO.builder()
                 .idCampeonato(i.getCampeonato().getId_campeonato())
                 .idCategoria(i.getCategoria().getId_categoria())
-                .idCompetidor(i.getCompetidor().getId_competidor())
+                .idCompetidor(i.getCompetidor().getIdUsuario())
                 .nombreCampeonato(i.getCampeonato().getNombre())
                 .nombreCategoria(i.getCategoria().getNombre())
                 .nombreCompetidor(i.getCompetidor().getNombre() + " " + i.getCompetidor().getApellidos())
@@ -160,37 +160,34 @@ public class DtoMapper {
                 .build();
     }
 
-    // ── COMBATE ──────────────────────────────────────────────────────────────
-
     public CombateDTO toCombateDTO(Combate c) {
         CombateDTO.CombateDTOBuilder builder = CombateDTO.builder()
-                .idCompetidorRojo(c.getCompetidorRojo().getId_competidor())
-                .idCampeonato(c.getId().getId_campeonato())
-                .idCategoria(c.getId().getId_categoria())
+                .idCompetidorRojo(c.getId().getIdCompetidorRojo())
+                .idCampeonato(c.getId().getIdCampeonato())
+                .idCategoria(c.getId().getIdCategoria())
                 .numeroTatami(c.getId().getNumeroTatami())
                 .ronda(c.getRonda())
-                .estado(c.getEstado())
-                .senshu(c.getSenshu())
                 .puntuacionRojo(c.getPuntuacionRojo())
                 .puntuacionAzul(c.getPuntuacionAzul())
-                .horaProgramada(c.getHoraProgramada())
-                .horaInicioReal(c.getHoraInicioReal())
+                .senshu(c.getSenshu())
+                .estado(c.getEstado())
                 .duracionSegundos(c.getDuracionSegundos())
                 .observaciones(c.getObservaciones())
-                .nombreCampeonato(c.getCampeonatoCategoria().getCampeonato().getNombre())
-                .nombreCategoria(c.getCampeonatoCategoria().getCategoria().getNombre())
-                .nombreCompletoRojo(c.getCompetidorRojo().getNombre() + " " + c.getCompetidorRojo().getApellidos());
+                .horaProgramada(c.getHoraProgramada())
+                .horaInicioReal(c.getHoraInicioReal())
+                .nombreCompetidorRojo(
+                        c.getCompetidorRojo().getNombre() + " " + c.getCompetidorRojo().getApellidos()
+                );
 
-        // Competidor azul es nullable (bye)
         if (c.getCompetidorAzul() != null) {
-            builder.idCompetidorAzul(c.getCompetidorAzul().getId_competidor())
-                   .nombreCompletoAzul(c.getCompetidorAzul().getNombre() + " " + c.getCompetidorAzul().getApellidos());
+            builder.idCompetidorAzul(c.getCompetidorAzul().getIdUsuario())
+                    .nombreCompetidorAzul(
+                            c.getCompetidorAzul().getNombre() + " " + c.getCompetidorAzul().getApellidos()
+                    );
         }
 
         return builder.build();
     }
-
-    // ── CAMPEONATO_CATEGORIA ─────────────────────────────────────────────────
 
     public Campeonato_CategoriaDTO toCampeonatoCategoriaDTO(Campeonato_Categoria cc) {
         return Campeonato_CategoriaDTO.builder()
@@ -198,16 +195,15 @@ public class DtoMapper {
                 .idCategoria(cc.getCategoria().getId_categoria())
                 .nombreCampeonato(cc.getCampeonato().getNombre())
                 .nombreCategoria(cc.getCategoria().getNombre())
+                .fechaInicioCampeonato(cc.getCampeonato().getFechaInicio())
+                .fechaFinCampeonato(cc.getCampeonato().getFechaFin())
                 .modalidad(cc.getCategoria().getModalidad())
                 .genero(cc.getCategoria().getGenero())
                 .build();
     }
 
-    // ── CLASIFICACION ────────────────────────────────────────────────────────
-
     public ClasificacionDTO toClasificacionDTO(Clasificacion cl) {
         return ClasificacionDTO.builder()
-                .idClasificacion(cl.getIdClasificacion())
                 .nombreCategoria(cl.getNombreCategoria())
                 .nombreCompetidor(cl.getNombreCompetidor())
                 .puntos(cl.getPuntos())

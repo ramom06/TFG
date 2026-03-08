@@ -54,15 +54,14 @@ public class Combate {
 
     // Competidor azul (puede ser null en el caso de 1 solo competidor)
     @ManyToOne
-    @MapsId("idCompetidorAzul")
     @JoinColumn(name = "id_competidor_azul", nullable = true)
     private Competidor competidorAzul;
 
     // Un combate pertenece a una categoría de un campeonato
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "id_campeonato", referencedColumnName = "id_campeonato", insertable = false, updatable = false),
-            @JoinColumn(name = "id_categoria",  referencedColumnName = "id_categoria",  insertable = false, updatable = false)
+            @JoinColumn(name = "idCampeonato", referencedColumnName = "id_campeonato", insertable = false, updatable = false),
+            @JoinColumn(name = "idCategoria",  referencedColumnName = "id_categoria",  insertable = false, updatable = false)
     })
     private Campeonato_Categoria campeonatoCategoria;
 }

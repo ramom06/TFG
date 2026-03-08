@@ -1,12 +1,12 @@
 package org.example.proyectocampeonato.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,6 +14,8 @@ import java.util.List;
 @Builder
 public class CampeonatoDTO {
 
+    @JsonProperty("id_campeonato")
+    private Long id;
     private String nombre;
     private Date fechaInicio;
     private Date fechaFin;

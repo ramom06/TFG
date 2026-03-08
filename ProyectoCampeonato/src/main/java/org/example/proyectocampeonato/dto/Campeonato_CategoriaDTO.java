@@ -1,6 +1,6 @@
 package org.example.proyectocampeonato.dto;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +14,14 @@ import java.util.Date;
 @Builder
 public class Campeonato_CategoriaDTO {
 
-    // IDs para crear la relación (Request)
     private Long idCampeonato;
     private Long idCategoria;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String nombreCampeonato;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String nombreCategoria;
 
     private Date fechaInicioCampeonato;
     private Date fechaFinCampeonato;

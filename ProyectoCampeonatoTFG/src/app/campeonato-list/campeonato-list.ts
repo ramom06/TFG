@@ -3,11 +3,12 @@ import { CommonModule }       from '@angular/common';
 import { FormsModule }        from '@angular/forms';
 import { CampeonatoService }  from '../campeonato-service';
 import { Campeonato, Estado, Nivel } from '../campeonato';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-campeonato-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './campeonato-list.html',
   styleUrl: './campeonato-list.css',
 })

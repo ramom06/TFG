@@ -1,164 +1,48 @@
-<section class="min-h-screen bg-gray-950 text-gray-100 px-4 py-8">
-  <div class="max-w-7xl mx-auto">
+<section class="campeonato-section">
+  <div class="container">
 
-    <!-- ── FILTROS ── -->
-    <div class="bg-gray-900 border border-white/10 rounded-xl p-5 mb-8 shadow-2xl">
-      <div class="flex flex-wrap gap-4 items-end">
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label class="filter-label">Buscar</label>
+        <input type="text" class="filter-input" placeholder="Nombre o ciudad..." [value]="searchText()" (input)="searchText.set($any($event.target).value)"/>
+      </div>
 
-        <!-- Búsqueda -->
-        <div class="flex-1 min-w-48">
-          <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Buscar</label>
-          <input
-            type="text"
-            class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-600 transition-colors"
-            placeholder="Nombre o ciudad..."
-            [value]="searchText()"
-            (input)="searchText.set($any($event.target).value)"
-          />
-        </div>
+      <div>
+        <label class="filter-label">Estado</label>
+        <select class="filter-input" [value]="filtroEstado()" (change)="filtroEstado.set($any($event.target).value)">
+          <option value="todos">Todos</option>
+          <option value="futuro">Próximo</option>
+          <option value="activo">En curso</option>
+          <option value="pasado">Finalizado</option>
+        </select>
+      </div>
 
-        <!-- Estado -->
-        <div>
-          <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Estado</label>
-          <select
-            class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-600 transition-colors"
-            [value]="filtroEstado()"
-            (change)="filtroEstado.set($any($event.target).value)">
-            <option value="todos"   class="bg-gray-900">Todos</option>
-            <option value="futuro"  class="bg-gray-900">Próximo</option>
-            <option value="activo"  class="bg-gray-900">En curso</option>
-            <option value="pasado"  class="bg-gray-900">Finalizado</option>
-          </select>
-        </div>
-
-        <!-- Nivel -->
-        <div>
-          <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Nivel</label>
-          <select
-            class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-600 transition-colors"
-            [value]="filtroNivel()"
-            (change)="filtroNivel.set($any($event.target).value)">
-            <option value="todos"        class="bg-gray-900">Todos</option>
-            <option value="provincial"   class="bg-gray-900">Provincial</option>
-            <option value="regional"     class="bg-gray-900">Regional</option>
-            <option value="nacional"     class="bg-gray-900">Nacional</option>
-          </select>
-        </div>
-
-        <!-- Ordenar por -->
-        <div>
-          <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Ordenar por</label>
-          <select
-            class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-600 transition-colors"
-            [value]="sortField()"
-            (change)="sortField.set($any($event.target).value)">
-            <option value="fechaInicio" class="bg-gray-900">Fecha</option>
-            <option value="nombre"      class="bg-gray-900">Nombre</option>
-          </select>
-        </div>
-
-        <!-- Dirección -->
-        <button
-          class="px-4 py-2 rounded-lg text-sm border border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-gray-900 transition-colors uppercase tracking-wider"
-          (click)="toggleDir()">
-          {{ sortDir() === 'asc' ? '↑ Asc' : '↓ Desc' }}
-        </button>
-
-        <!-- Reset -->
-        <button
-          class="text-sm text-gray-500 hover:text-gray-200 uppercase tracking-wider transition-colors"
-          (click)="resetFiltros()">
-          Limpiar
-        </button>
+      <div>
+        <label class="filter-label">Nivel</label>
+        <select class="filter-input" [value]="filtroNivel()" (change)="filtroNivel.set($any($event.target).value)">
+          <option value="todos">Todos</option>
+          <option value="provincial">Provincial</option>
+          <option value="nacional">Nacional</option>
+        </select>
       </div>
     </div>
 
-    <!-- ── CONTADOR ── -->
-    <p class="text-sm text-gray-500 uppercase tracking-widest mb-6">
-      {{ filtered().length }} campeonatos encontrados
-    </p>
-
-    <!-- ── LOADING ── -->
-    @if (loading()) {
-      <div class="flex justify-center py-20">
-        <div class="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    }
-
-    <!-- ── ERROR ── -->
-    @if (error()) {
-      <div class="bg-red-950 border border-red-700 rounded-xl p-6 text-center">
-        <p class="text-red-400 font-semibold">{{ error() }}</p>
-        <p class="text-sm text-gray-500 mt-1">Comprueba que el servidor está en marcha en localhost:8080</p>
-      </div>
-    }
-
-    <!-- ── GRID ── -->
     @if (!loading() && !error()) {
-      @if (filtered().length > 0) {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          @for (c of filtered(); track c.id_campeonato) {
-
-            <div class="bg-gray-900 border border-white/10 rounded-2xl overflow-hidden
-                        hover:border-red-600 hover:-translate-y-1 hover:shadow-2xl
-                        transition-all duration-200 cursor-pointer">
-
-              <!-- Header -->
-              <div class="px-5 pt-5 flex items-start justify-between">
-
-                <!-- Badge estado -->
-                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border"
-                      [ngClass]="{
-                    'bg-yellow-500/10 text-yellow-400 border-yellow-500': c.estado === 'futuro',
-                    'bg-green-500/10  text-green-400  border-green-500':  c.estado === 'activo',
-                    'bg-gray-500/10   text-gray-400   border-gray-500':   c.estado === 'pasado'
-                  }">
-                  {{ estadoLabel(c.estado) }}
-                </span>
-
-                <!-- Nivel -->
-                <span class="text-xs text-gray-500 uppercase tracking-widest">{{ c.nivel }}</span>
-              </div>
-
-              <!-- Body -->
-              <div class="p-5 pt-3">
-
-                <!-- Nombre -->
-                <h3 class="text-base font-semibold leading-snug mb-3 text-gray-100">
-                  {{ c.nombre }}
-                </h3>
-
-                <!-- Fechas y ubicación -->
-                <div class="space-y-1 text-sm text-gray-400 mb-4">
-                  <p>📅 {{ formatDate(c.fechaInicio) }} → {{ formatDate(c.fechaFin) }}</p>
-                  <p>📍 {{ c.ubicacion }}</p>
-                </div>
-
-                <!-- Descripción -->
-                @if (c.descripcion) {
-                  <p class="text-xs text-gray-500 line-clamp-2 mb-4">{{ c.descripcion }}</p>
-                }
-
-                <!-- Botón -->
-                <button class="w-full py-2 rounded-lg text-sm font-semibold uppercase tracking-wider
-                               bg-red-700 hover:bg-red-800 text-white transition-colors">
-                  Ver detalles
-                </button>
+      <div class="campeonatos-grid">
+        @for (c of filtered(); track c.id_campeonato) {
+          <div class="card" [routerLink]="['/campeonato', c.id_campeonato]">
+            <div class="card-image">
+              <div class="placeholder-img">
+                <img src="{{c.urlPortada}}">
+                <p></p>
               </div>
             </div>
-
-          }
-        </div>
-
-      } @else {
-        <!-- Vacío -->
-        <div class="text-center py-20 text-gray-600">
-          <p class="text-5xl mb-4">🥋</p>
-          <p class="text-lg font-semibold">Sin resultados</p>
-          <p class="text-sm mt-1">Prueba con otros filtros</p>
-        </div>
-      }
+            <div class="card-title">
+              <h3>{{ c.nombre }}</h3>
+            </div>
+          </div>
+        }
+      </div>
     }
-
   </div>
 </section>

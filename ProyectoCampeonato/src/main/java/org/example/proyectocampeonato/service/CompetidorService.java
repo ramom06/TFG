@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.dto.CompetidorDTO;
-import org.example.proyectocampeonato.dto.DtoMapper;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.excepcion.CompetidorNotFoundException;
 import org.example.proyectocampeonato.modelo.Competidor;
 import org.example.proyectocampeonato.repository.CompetidorRepository;
@@ -46,7 +46,7 @@ public class CompetidorService {
         return competidorRepository.findById(id)
                 .map(existing -> {
                     Competidor entidad = mapper.toCompetidorEntity(dto);
-                    entidad.setId_competidor(id);
+                    entidad.setIdUsuario(id);
                     return mapper.toCompetidorDTO(competidorRepository.save(entidad));
                 })
                 .orElseThrow(() -> new CompetidorNotFoundException(id));

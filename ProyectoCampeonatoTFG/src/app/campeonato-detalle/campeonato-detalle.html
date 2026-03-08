@@ -1,0 +1,33 @@
+<section class="detalle-section">
+  <div class="container">
+    <a routerLink="/" class="back-btn">← Volver al listado</a>
+
+    @if (campeonato()) {
+      <div class="detalle-grid">
+        <div class="img-container">
+          <img [src]="campeonato()!.urlPortada" [alt]="campeonato()!.nombre">
+        </div>
+
+        <div class="info-card">
+          <span class="badge">{{ campeonato()!.nivel }}</span>
+          <h1 class="title">{{ campeonato()!.nombre }}</h1>
+
+          <div class="meta-info">
+            <p>
+              <strong>📅 Fechas:</strong>
+              {{ campeonato()!.fechaInicio | date:'dd/MM/yyyy' : 'UTC' : 'es-ES' }}            </p>
+            <p><strong>📍 Ubicación:</strong> {{ campeonato()!.ubicacion }}</p>
+            <p><strong>Estado:</strong> {{ campeonato()!.estado }}</p>
+          </div>
+
+          <div class="description">
+            <h3>Descripción</h3>
+            <p>{{ campeonato()!.descripcion || 'Sin descripción disponible.' }}</p>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="loading">Cargando detalles del campeonato...</div>
+    }
+  </div>
+</section>

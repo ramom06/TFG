@@ -1,8 +1,8 @@
 package org.example.proyectocampeonato.service;
 
-import org.example.proyectocampeonato.dto.DtoMapper;
 import org.example.proyectocampeonato.dto.InscripcionDTO;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
@@ -44,7 +44,7 @@ public class InscripcionService {
     }
 
     public List<InscripcionDTO> getByCampeonatoAndCategoria(Long idCampeonato, Long idCategoria) {
-        return inscripcionRepository.findByCampeonatoAndCategoria(idCampeonato, idCategoria).stream()
+        return inscripcionRepository.findByCampeonatoAndCategoria(Math.toIntExact(idCampeonato), idCategoria).stream()
                 .map(mapper::toInscripcionDTO)
                 .collect(Collectors.toList());
     }

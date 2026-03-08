@@ -13,8 +13,10 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")         // afecta a todos tus endpoints
-                        .allowedOrigins("http://localhost:4200")  // tu Angular
+                // Para todos los endpoints
+                registry.addMapping("/api/**")
+                        //Ruta de angular
+                        .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
             }

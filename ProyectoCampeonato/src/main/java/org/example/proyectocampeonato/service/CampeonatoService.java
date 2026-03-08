@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.dto.CampeonatoDTO;
-import org.example.proyectocampeonato.dto.DtoMapper;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
 import org.example.proyectocampeonato.modelo.Campeonato;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;

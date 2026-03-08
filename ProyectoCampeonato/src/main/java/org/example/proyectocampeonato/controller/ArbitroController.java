@@ -62,13 +62,6 @@ public class ArbitroController {
         return ResponseEntity.ok(service.replace(id, dto));
     }
 
-    // PATCH /api/arbitros/{id}/toggle-activo
-    @PatchMapping("/{id}/toggle-activo")
-    public ResponseEntity<ArbitroDTO> toggleActivo(@PathVariable Long id) {
-        log.info("Cambiando estado activo del árbitro con id: {}", id);
-        return ResponseEntity.ok(service.toggleActivo(id));
-    }
-
     // DELETE /api/arbitros/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.dto.ArbitroDTO;
-import org.example.proyectocampeonato.dto.DtoMapper;
+import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.modelo.Arbitro;
 import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.ArbitroRepository;
@@ -59,8 +59,7 @@ public class ArbitroService {
 
     @Transactional
     public ArbitroDTO save(ArbitroDTO dto) {
-        // El rol siempre es ARBITRO independientemente de lo que venga en el DTO
-        validarUsernameUnico(dto.getUsername());
+        validarNombreUnico(dto.getNombre());
         validarEmailUnico(dto.getEmail());
         validarLicenciaUnica(dto.getLicencia());
 
@@ -73,8 +72,8 @@ public class ArbitroService {
     public ArbitroDTO replace(Long id, ArbitroDTO dto) {
         return arbitroRepository.findById(id)
                 .map(existing -> {
-                    if (!existing.getUsername().equals(dto.getUsername())) {
-                        validarUsernameUnico(dto.getUsername());
+                    if (!existing.getNombre().equals(dto.getNombre())) {
+                        validarNombreUnico(dto.getNombre());
                     }
                     if (!existing.getEmail().equals(dto.getEmail())) {
                         validarEmailUnico(dto.getEmail());
@@ -83,22 +82,13 @@ public class ArbitroService {
                         validarLicenciaUnica(dto.getLicencia());
                     }
                     Arbitro entidad = mapper.toArbitroEntity(dto);
-                    entidad.setId_usuario(id);
+                    entidad.setIdUsuario(id);
                     entidad.setRol(Usuario.Rol.ARBITRO);
                     entidad.setFechaRegistro(existing.getFechaRegistro());
                     return mapper.toArbitroDTO(arbitroRepository.save(entidad));
                 })
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Árbitro con id " + id + " no encontrado"));
-    }
-
-    @Transactional
-    public ArbitroDTO toggleActivo(Long id) {
-        Arbitro arbitro = arbitroRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Árbitro con id " + id + " no encontrado"));
-        arbitro.setActivo(!arbitro.isActivo());
-        return mapper.toArbitroDTO(arbitroRepository.save(arbitro));
     }
 
     @Transactional
@@ -112,10 +102,10 @@ public class ArbitroService {
 
     // ── helpers ───────────────────────────────────────────────────────────────
 
-    private void validarUsernameUnico(String username) {
-        if (usuarioRepository.existsByUsername(username)) {
+    private void validarNombreUnico(String nombre) {
+        if (usuarioRepository.existsByNombre(nombre)) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "El username '" + username + "' ya está en uso");
+                    HttpStatus.CONFLICT, "El nombre '" + nombre + "' ya está en uso");
         }
     }
 
