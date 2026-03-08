@@ -1,7 +1,10 @@
 package org.example.proyectocampeonato.modelo;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "combate")
@@ -13,9 +16,10 @@ public class Combate {
 
     @EmbeddedId
     @AttributeOverrides({
-            @AttributeOverride(name = "idCompetidorRojo", column = @Column(name = "competidorRojo")),
-            @AttributeOverride(name = "idCompetidorAzul", column = @Column(name = "competidorAzul")),
-            @AttributeOverride(name = "numeroTatami", column = @Column(name = "numeroTatami"))
+            @AttributeOverride(name = "idCompetidorRojo", column = @Column(name = "id_competidor_rojo")),
+            @AttributeOverride(name = "id_campeonato",    column = @Column(name = "id_campeonato")),
+            @AttributeOverride(name = "id_categoria",     column = @Column(name = "id_categoria")),
+            @AttributeOverride(name = "numeroTatami",     column = @Column(name = "numero_tatami"))
     })
     private Combate_Id id;
 
@@ -42,13 +46,23 @@ public class Combate {
 
     private String observaciones;
 
+    // Competidor rojo (siempre hay al menos uno)
     @ManyToOne
-    @MapsId("idCompetidorRojo") // Nombre exacto del campo dentro de CombateId
-    @JoinColumn(name = "id_competidor_rojo")
+    @MapsId("idCompetidorRojo")
+    @JoinColumn(name = "id_competidor_rojo", nullable = false)
     private Competidor competidorRojo;
 
+    // Competidor azul (puede ser null en el caso de 1 solo competidor)
     @ManyToOne
-    @MapsId("idCompetidorAzul") // Nombre exacto del campo dentro de CombateId
-    @JoinColumn(name = "id_competidor_azul")
+    @MapsId("idCompetidorAzul")
+    @JoinColumn(name = "id_competidor_azul", nullable = true)
     private Competidor competidorAzul;
+
+    // Un combate pertenece a una categoría de un campeonato
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "id_campeonato", referencedColumnName = "id_campeonato", insertable = false, updatable = false),
+            @JoinColumn(name = "id_categoria",  referencedColumnName = "id_categoria",  insertable = false, updatable = false)
+    })
+    private Campeonato_Categoria campeonatoCategoria;
 }
