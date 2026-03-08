@@ -2,39 +2,29 @@ package org.example.proyectocampeonato.modelo;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Entity
-@Builder
 @Table(name = "arbitro")
-public class Arbitro {
+@DiscriminatorValue("ARBITRO")
+public class Arbitro extends Usuario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_arbitro;
-
-    @Column(nullable = false)
-    private String nombre;
-
-    @Column(nullable = false)
-    private String apellidos;
-
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String licencia;
 
-    @Column(nullable = false)
-    private String categoria_Arbitral;
+    @Column(name = "categoria_arbitral", nullable = false)
+    private String categoriaArbitral;
 
-    private boolean activo;
-
-    @Column(nullable = false)
-    private Date fecha_nacimiento;
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private Date fechaNacimiento;
 }

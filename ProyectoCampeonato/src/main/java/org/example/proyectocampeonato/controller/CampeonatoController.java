@@ -1,14 +1,13 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.proyectocampeonato.modelo.Campeonato;
+import org.example.proyectocampeonato.dto.CampeonatoDTO;
 import org.example.proyectocampeonato.service.CampeonatoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @Slf4j
 @RestController
@@ -17,44 +16,43 @@ public class CampeonatoController {
 
     private final CampeonatoService service;
 
-    private CampeonatoController(CampeonatoService service){this.service=service;}
+    public CampeonatoController(CampeonatoService service) {
+        this.service = service;
+    }
 
+    // GET /api/campeonatos
     @GetMapping
-    public ResponseEntity<List<Campeonato>> all() {
-        log.info("Accediendo a todos los campeonatos");
-        List<Campeonato> lista = this.service.getAll();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<CampeonatoDTO>> all() {
+        log.info("Obteniendo todos los campeonatos");
+        return ResponseEntity.ok(service.getAll());
     }
 
-    @PostMapping
-    public ResponseEntity<Campeonato> newPelicula(@RequestBody Campeonato campeonato) {
-        log.info("Creando nuevo campeonato: {}", campeonato.getNombre());
-        Campeonato campeonatoGuardado = this.service.save(campeonato);
-
-        return new ResponseEntity<>(campeonatoGuardado, HttpStatus.CREATED);
-    }
-
+    // GET /api/campeonatos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Campeonato> one(@PathVariable("id") Long id) {
-        // El servicio debería lanzar una excepción si no existe, capturada por un GlobalExceptionHandler
-        Campeonato campeonato = this.service.one(id);
-        return ResponseEntity.ok(campeonato);
+    public ResponseEntity<CampeonatoDTO> one(@PathVariable Long id) {
+        log.info("Obteniendo campeonato con id: {}", id);
+        return ResponseEntity.ok(service.one(id));
     }
 
+    // POST /api/campeonatos
+    @PostMapping
+    public ResponseEntity<CampeonatoDTO> save(@RequestBody CampeonatoDTO dto) {
+        log.info("Creando campeonato: {}", dto.getNombre());
+        return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
+    }
+
+    // PUT /api/campeonatos/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<Campeonato> replacePelicula(@PathVariable("id") Long id, @RequestBody Campeonato campeonato) {
-        log.info("Actualizando película con ID: {}", id);
-        Campeonato actualizada = this.service.replace(id, campeonato);
-        return ResponseEntity.ok(actualizada);
+    public ResponseEntity<CampeonatoDTO> replace(@PathVariable Long id, @RequestBody CampeonatoDTO dto) {
+        log.info("Actualizando campeonato con id: {}", id);
+        return ResponseEntity.ok(service.replace(id, dto));
     }
 
+    // DELETE /api/campeonatos/{id}
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Campeonato> deletePelicula(@PathVariable("id") Long id) {
-        log.info("Eliminando campeonato con ID: {}", id);
-        this.service.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("Eliminando campeonato con id: {}", id);
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
-

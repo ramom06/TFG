@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.proyectocampeonato.modelo.Categoria;
+import org.example.proyectocampeonato.dto.CategoriaDTO;
 import org.example.proyectocampeonato.service.CategoriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,47 +20,38 @@ public class CategoriaController {
         this.service = service;
     }
 
+    // GET /api/categorias
     @GetMapping
-    public ResponseEntity<List<Categoria>> all() {
-        log.info("Accediendo a todas las categorías");
+    public ResponseEntity<List<CategoriaDTO>> all() {
+        log.info("Obteniendo todas las categorías");
         return ResponseEntity.ok(service.getAll());
     }
-/*
-    // GET /api/categorias?grupo=Juvenil
-    @GetMapping(params = "grupo")
-    public ResponseEntity<List<Categoria>> allByGrupo(@RequestParam String grupo) {
-        log.info("Accediendo a categorías del grupo: {}", grupo);
-        return ResponseEntity.ok(service.getByGrupo(grupo));
-    }
 
-    // GET /api/categorias?modalidad=kumite
-    @GetMapping(params = "modalidad")
-    public ResponseEntity<List<Categoria>> allByModalidad(@RequestParam String modalidad) {
-        log.info("Accediendo a categorías de modalidad: {}", modalidad);
-        return ResponseEntity.ok(service.getByModalidad(modalidad));
-    }*/
-
+    // GET /api/categorias/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> one(@PathVariable Long id) {
-        log.info("Accediendo a categoría con ID: {}", id);
+    public ResponseEntity<CategoriaDTO> one(@PathVariable Long id) {
+        log.info("Obteniendo categoría con id: {}", id);
         return ResponseEntity.ok(service.one(id));
     }
 
+    // POST /api/categorias
     @PostMapping
-    public ResponseEntity<Categoria> create(@RequestBody Categoria categoria) {
-        log.info("Creando nueva categoría: {}", categoria.getNombre());
-        return new ResponseEntity<>(service.save(categoria), HttpStatus.CREATED);
+    public ResponseEntity<CategoriaDTO> save(@RequestBody CategoriaDTO dto) {
+        log.info("Creando categoría: {}", dto.getNombre());
+        return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 
+    // PUT /api/categorias/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> replace(@PathVariable Long id, @RequestBody Categoria categoria) {
-        log.info("Actualizando categoría con ID: {}", id);
-        return ResponseEntity.ok(service.replace(id, categoria));
+    public ResponseEntity<CategoriaDTO> replace(@PathVariable Long id, @RequestBody CategoriaDTO dto) {
+        log.info("Actualizando categoría con id: {}", id);
+        return ResponseEntity.ok(service.replace(id, dto));
     }
 
+    // DELETE /api/categorias/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Eliminando categoría con ID: {}", id);
+        log.info("Eliminando categoría con id: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
