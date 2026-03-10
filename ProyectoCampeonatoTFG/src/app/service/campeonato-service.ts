@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {CampeonatoProvider} from './campeonato-provider';
-import {Campeonato} from './campeonato';
+import {CampeonatoProvider} from '../provider/campeonato-provider';
+import {Campeonato} from '../interfaces/campeonato';
 
 @Injectable({
   providedIn: 'root',

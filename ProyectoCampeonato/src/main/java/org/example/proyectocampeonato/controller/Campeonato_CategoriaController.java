@@ -28,6 +28,7 @@ public class Campeonato_CategoriaController {
         return ResponseEntity.ok(service.getCategoriasPorCampeonato(idCampeonato));
     }
 
+    //Esto asigna una categoria a un campeonato
     // POST /api/campeonatos/{idCampeonato}/categorias/{idCategoria}
     @PostMapping("/{idCategoria}")
     public ResponseEntity<Campeonato_CategoriaDTO> asignar(

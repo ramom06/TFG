@@ -1,8 +1,8 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule }       from '@angular/common';
 import { FormsModule }        from '@angular/forms';
-import { CampeonatoService }  from '../campeonato-service';
-import { Campeonato, Estado, Nivel } from '../campeonato';
+import { CampeonatoService }  from '../service/campeonato-service';
+import { Campeonato, Estado, Nivel } from '../interfaces/campeonato';
 import {RouterLink} from '@angular/router';
 
 @Component({

@@ -161,10 +161,14 @@ public class DtoMapper {
 
     public CombateDTO toCombateDTO(Combate c) {
         CombateDTO.CombateDTOBuilder builder = CombateDTO.builder()
-                .idCompetidorRojo(c.getId().getIdCompetidorRojo())
+                // Nueva PK — ya no incluye idCompetidorRojo
                 .idCampeonato(c.getId().getIdCampeonato())
                 .idCategoria(c.getId().getIdCategoria())
                 .numeroTatami(c.getId().getNumeroTatami())
+                .numeroCombate(c.getId().getNumeroCombate())  // ← nuevo campo
+                // Competidores como atributos normales
+                .idCompetidorRojo(c.getCompetidorRojo().getIdUsuario())
+                .nombreCompetidorRojo(c.getCompetidorRojo().getNombre() + " " + c.getCompetidorRojo().getApellidos())
                 .ronda(c.getRonda())
                 .puntuacionRojo(c.getPuntuacionRojo())
                 .puntuacionAzul(c.getPuntuacionAzul())
@@ -173,10 +177,7 @@ public class DtoMapper {
                 .duracionSegundos(c.getDuracionSegundos())
                 .observaciones(c.getObservaciones())
                 .horaProgramada(c.getHoraProgramada())
-                .horaInicioReal(c.getHoraInicioReal())
-                .nombreCompetidorRojo(
-                        c.getCompetidorRojo().getNombre() + " " + c.getCompetidorRojo().getApellidos()
-                );
+                .horaInicioReal(c.getHoraInicioReal());
 
         if (c.getCompetidorAzul() != null) {
             builder.idCompetidorAzul(c.getCompetidorAzul().getIdUsuario())

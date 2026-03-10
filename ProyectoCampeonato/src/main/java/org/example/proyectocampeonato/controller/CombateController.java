@@ -47,31 +47,31 @@ public class CombateController {
     // POST /api/combates
     @PostMapping
     public ResponseEntity<CombateDTO> save(@RequestBody CombateDTO dto) {
-        log.info("Creando combate en tatami {}", dto.getNumeroTatami());
+        log.info("Creando combate tatami {} nº{}", dto.getNumeroTatami(), dto.getNumeroCombate());
         return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 
-    // PUT /api/combates/{idCompetidorRojo}/{idCampeonato}/{idCategoria}/{numeroTatami}
-    @PutMapping("/{idCompetidorRojo}/{idCampeonato}/{idCategoria}/{numeroTatami}")
+    // PUT /api/combates/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}
+    @PutMapping("/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}")
     public ResponseEntity<CombateDTO> replace(
-            @PathVariable Long idCompetidorRojo,
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria,
             @PathVariable Integer numeroTatami,
+            @PathVariable Integer numeroCombate,
             @RequestBody CombateDTO dto) {
-        Combate_Id id = new Combate_Id(idCompetidorRojo, idCampeonato, idCategoria, numeroTatami);
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria, numeroTatami, numeroCombate);
         log.info("Actualizando combate: {}", id);
         return ResponseEntity.ok(service.replace(id, dto));
     }
 
-    // DELETE /api/combates/{idCompetidorRojo}/{idCampeonato}/{idCategoria}/{numeroTatami}
-    @DeleteMapping("/{idCompetidorRojo}/{idCampeonato}/{idCategoria}/{numeroTatami}")
+    // DELETE /api/combates/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}
+    @DeleteMapping("/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long idCompetidorRojo,
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria,
-            @PathVariable Integer numeroTatami) {
-        Combate_Id id = new Combate_Id(idCompetidorRojo, idCampeonato, idCategoria, numeroTatami);
+            @PathVariable Integer numeroTatami,
+            @PathVariable Integer numeroCombate) {
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria, numeroTatami, numeroCombate);
         log.info("Eliminando combate: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();

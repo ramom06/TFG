@@ -36,4 +36,5 @@ public class CombateDTO {
     private LocalDateTime horaInicioReal;
     private Integer duracionSegundos;
     private String observaciones;
+    private Integer numeroCombate;
 }

@@ -93,15 +93,14 @@ public class CombateService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "No existe esa combinación de campeonato y categoría"));
 
+        // Nueva PK: (campeonato, categoria, tatami, numeroCombate)
         Combate_Id id = new Combate_Id(
-                dto.getIdCompetidorRojo(),
                 dto.getIdCampeonato(),
                 dto.getIdCategoria(),
-                dto.getNumeroTatami()
+                dto.getNumeroTatami(),
+                dto.getNumeroCombate()
         );
 
-        // horaProgramada y horaInicioReal ya son LocalTime/LocalDateTime en el DTO,
-        // igual que en el modelo — no hace falta conversión
         Combate.CombateBuilder builder = Combate.builder()
                 .id(id)
                 .ronda(dto.getRonda())
