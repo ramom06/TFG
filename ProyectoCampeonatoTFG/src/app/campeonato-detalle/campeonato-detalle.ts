@@ -19,7 +19,7 @@ export class CampeonatoDetalleComponent implements OnInit {
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const todos = await this.svc.getAllCampeonatos();
-    this.campeonato.set(todos.find(c => c.id_campeonato === id) || null);  // ← c.id no c.id_campeonato
+    this.campeonato.set(todos.find(c => c.id_campeonato === id) || null);
   }
 
   protected readonly formatDate = formatDate;
