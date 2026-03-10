@@ -15,7 +15,6 @@ public class DtoMapper {
                 .email(u.getEmail())
                 .rol(u.getRol())
                 .fechaRegistro(u.getFechaRegistro())
-                // password nunca se mapea hacia el DTO de salida
                 .build();
     }
 

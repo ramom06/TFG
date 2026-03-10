@@ -1,48 +1,172 @@
-<section class="campeonato-section">
-  <div class="container">
+<section class="min-h-screen bg-[#06080f] text-[#eef0f4] font-['Outfit',sans-serif] antialiased">
 
-    <div class="filters-bar">
-      <div class="filter-group">
-        <label class="filter-label">Buscar</label>
-        <input type="text" class="filter-input" placeholder="Nombre o ciudad..." [value]="searchText()" (input)="searchText.set($any($event.target).value)"/>
+  <!-- ── HEADER ── -->
+  <div class="relative py-16 text-center overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none"
+         style="background: radial-gradient(ellipse 60% 55% at 50% -10%, rgba(224,28,46,0.22) 0%, transparent 70%)">
+    </div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-['Bebas_Neue',sans-serif]
+                text-[clamp(100px,20vw,260px)] text-white/[0.025] tracking-[0.02em] whitespace-nowrap
+                pointer-events-none select-none leading-none">
+      CAMPEONATOS
+    </div>
+    <h1 class="relative font-['Bebas_Neue',sans-serif] text-[clamp(52px,8vw,96px)] tracking-wider uppercase leading-none">
+      Campeona<span class="text-[#e01c2e]">t</span>os
+    </h1>
+    <p class="relative mt-4 text-sm text-[#8b95a3] font-light tracking-wide">
+      Consulta todos los campeonatos, filtra por estado y accede a los detalles
+    </p>
+  </div>
+
+  <!-- ── FILTERS ── -->
+  <div class="max-w-[1100px] mx-auto px-6 mb-6">
+    <div class="relative flex flex-wrap gap-3 items-end bg-[#0d1117] border border-white/[0.07] rounded-2xl p-5 overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
+
+      <div class="flex-1 min-w-[180px]">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Buscar</label>
+        <input
+          class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2 text-[13.5px] text-[#eef0f4]
+                 placeholder-[#4b5563] outline-none transition-all duration-200
+                 focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+          type="text"
+          placeholder="Nombre o ciudad..."
+          [value]="searchText()"
+          (input)="searchText.set($any($event.target).value)"
+        />
       </div>
 
-      <div>
-        <label class="filter-label">Estado</label>
-        <select class="filter-input" [value]="filtroEstado()" (change)="filtroEstado.set($any($event.target).value)">
+      <div class="flex-1 min-w-[180px]">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Estado</label>
+        <select
+          class="filter-select w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2 pr-8
+                 text-[13.5px] text-[#eef0f4] outline-none cursor-pointer appearance-none transition-all duration-200
+                 focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+          [value]="filtroEstado()"
+          (change)="filtroEstado.set($any($event.target).value)"
+        >
           <option value="todos">Todos</option>
           <option value="futuro">Próximo</option>
           <option value="activo">En curso</option>
           <option value="pasado">Finalizado</option>
         </select>
       </div>
-
-      <div>
-        <label class="filter-label">Nivel</label>
-        <select class="filter-input" [value]="filtroNivel()" (change)="filtroNivel.set($any($event.target).value)">
+    <p class="bg-red-500">PRUEBA</p>
+      <div class="flex-1 min-w-[180px]">
+        <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Nivel</label>
+        <select
+          class="filter-select w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2 pr-8
+                 text-[13.5px] text-[#eef0f4] outline-none cursor-pointer appearance-none transition-all duration-200
+                 focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+          [value]="filtroNivel()"
+          (change)="filtroNivel.set($any($event.target).value)"
+        >
           <option value="todos">Todos</option>
           <option value="provincial">Provincial</option>
           <option value="nacional">Nacional</option>
         </select>
       </div>
     </div>
+  </div>
 
-    @if (!loading() && !error()) {
-      <div class="campeonatos-grid">
-        @for (c of filtered(); track c.id_campeonato) {
-          <div class="card" [routerLink]="['/campeonato', c.id_campeonato]">
-            <div class="card-image">
-              <div class="placeholder-img">
-                <img src="{{c.urlPortada}}">
-                <p></p>
-              </div>
-            </div>
-            <div class="card-title">
-              <h3>{{ c.nombre }}</h3>
+  <!-- ── RESULTS COUNT ── -->
+  <div class="max-w-[1100px] mx-auto px-6 mb-6 flex items-center gap-2.5 text-xs text-[#8b95a3] font-medium uppercase tracking-wide">
+    <strong class="text-[#eef0f4] text-[15px] font-bold">{{ filtered().length }}</strong>
+    campeonatos encontrados
+    <span class="flex-1 h-px bg-white/[0.07]"></span>
+  </div>
+
+  <!-- ── GRID ── -->
+  @if (!loading() && !error()) {
+    <div class="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      @for (c of filtered(); track c.id_campeonato) {
+        <div
+          class="group card-anim bg-[#0d1117] border border-white/[0.07] rounded-2xl overflow-hidden cursor-pointer flex flex-col
+                 transition-all duration-200 ease-out
+                 hover:-translate-y-1.5 hover:border-[#e01c2e]
+                 hover:shadow-[0_16px_48px_rgba(0,0,0,0.55),0_0_0_1px_rgba(224,28,46,0.18)]"
+          [routerLink]="['/campeonato', c.id_campeonato]"
+        >
+          <div class="relative aspect-video overflow-hidden bg-[#141a24]">
+            <img
+              src="{{ c.urlPortada }}"
+              alt="{{ c.nombre }}"
+              loading="lazy"
+              class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(6,8,15,0.5)] to-[rgba(6,8,15,0.9)] pointer-events-none"></div>
+            <div class="absolute bottom-2.5 left-3 z-10 flex gap-1.5">
+              <span [ngClass]="badgeClass(c.estado)"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-bold
+                           uppercase tracking-[0.1em] backdrop-blur-sm border">
+                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                {{ estadoLabel(c.estado) }}
+              </span>
+              <span class="inline-flex items-center px-2.5 py-[3px] rounded-full text-[10px] font-bold uppercase
+                           tracking-[0.1em] backdrop-blur-sm border
+                           bg-[rgba(224,28,46,0.12)] text-[#e01c2e] border-[rgba(224,28,46,0.35)]">
+                {{ c.nivel }}
+              </span>
             </div>
           </div>
-        }
-      </div>
-    }
-  </div>
+
+          <div class="flex flex-col gap-3 p-4 flex-1">
+            <div class="font-['Bebas_Neue',sans-serif] text-[22px] tracking-wider uppercase leading-tight text-[#eef0f4]">
+              {{ c.nombre }}
+            </div>
+            <div class="flex flex-wrap gap-x-3.5 gap-y-1.5 text-xs text-[#8b95a3]">
+              <span class="flex items-center gap-1">
+                <svg class="opacity-50" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ c.ubicacion }}
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="opacity-50" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                {{ formatDate(c.fechaInicio) }} — {{ formatDate(c.fechaFin) }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between pt-2.5 border-t border-white/[0.07] mt-auto">
+              <span class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#e01c2e]
+                           transition-[gap] duration-200 group-hover:gap-2.5">
+                Ver detalles
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </span>
+              <span class="w-7 h-7 rounded-full flex items-center justify-center
+                           bg-[rgba(224,28,46,0.18)] transition-all duration-200
+                           group-hover:bg-[#e01c2e] group-hover:translate-x-0.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- ── LOADING ── -->
+  @if (loading()) {
+    <div class="flex flex-col items-center gap-4 py-20">
+      <div class="w-9 h-9 rounded-full border-[3px] border-[#141a24] border-t-[#e01c2e] animate-spin"></div>
+      <p class="text-sm text-[#8b95a3]">Cargando campeonatos...</p>
+    </div>
+  }
+
+  <!-- ── ERROR ── -->
+  @if (error()) {
+    <div class="max-w-[400px] mx-auto my-20 text-center bg-[#0d1117] border border-red-900/40 rounded-2xl p-8">
+      <p class="font-['Bebas_Neue',sans-serif] text-2xl text-[#e01c2e] tracking-wider mb-2">Error</p>
+      <p class="text-sm text-[#8b95a3]">{{ error() }}</p>
+    </div>
+  }
+
 </section>
