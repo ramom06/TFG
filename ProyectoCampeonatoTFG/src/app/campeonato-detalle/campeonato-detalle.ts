@@ -1,16 +1,12 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CampeonatoService } from '../service/campeonato-service';
 import { CategoriaService } from '../service/categoria-service';
+import { InscripcionService } from '../service/inscripcion.service';
 import { Campeonato } from '../interfaces/campeonato';
 import { Categoria } from '../interfaces/categoria';
-
-export interface InscripcionDTO {
-  idCompetidor: number;
-  nombreCompetidor: string;
-  clubCompetidor: string;
-}
+import { InscripcionDTO } from '../interfaces/inscripcion';
 
 @Component({
   selector: 'app-campeonato-detalle',
@@ -20,18 +16,26 @@ export interface InscripcionDTO {
   styleUrl: './campeonato-detalle.css',
 })
 export class CampeonatoDetalleComponent implements OnInit {
-  campeonato        = signal<Campeonato | null>(null);
-  categorias        = signal<Categoria[]>([]);
+  // Inyecciones
+  private route = inject(ActivatedRoute);
+  private svc = inject(CampeonatoService);
+  private catSvc = inject(CategoriaService);
+  private insSvc = inject(InscripcionService);
+
+  // Signals de estado
+  campeonato = signal<Campeonato | null>(null);
+  categorias = signal<Categoria[]>([]);
   loadingCategorias = signal(true);
 
   // Modal de inscripciones
   categoriaSeleccionada = signal<Categoria | null>(null);
-  inscripciones         = signal<InscripcionDTO[]>([]);
-  loadingInscrip        = signal(false);
-  modalAbierto          = signal(false);
+  inscripciones = signal<InscripcionDTO[]>([]);
+  loadingInscrip = signal(false);
+  modalAbierto = signal(false);
 
   readonly objectKeys = Object.keys;
 
+  // Agrupación automática por género y modalidad
   masculino = computed(() =>
     this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'M'))
   );
@@ -39,14 +43,10 @@ export class CampeonatoDetalleComponent implements OnInit {
     this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'F'))
   );
 
-  constructor(
-    private route: ActivatedRoute,
-    private svc: CampeonatoService,
-    private catSvc: CategoriaService
-  ) {}
-
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    // Carga de datos iniciales
     const todos = await this.svc.getAllCampeonatos();
     this.campeonato.set(todos.find(c => c.id_campeonato === id) || null);
 
@@ -60,18 +60,17 @@ export class CampeonatoDetalleComponent implements OnInit {
   }
 
   async abrirModalCategoria(cat: Categoria) {
+    const camp = this.campeonato();
+    if (!camp) return;
+
     this.categoriaSeleccionada.set(cat);
     this.modalAbierto.set(true);
     this.loadingInscrip.set(true);
-    this.inscripciones.set([]);
 
     try {
-      const idCamp = this.campeonato()!.id_campeonato;
-      const res = await fetch(
-        `http://localhost:8080/api/inscripciones/campeonato/${idCamp}/categoria/${cat.id}`
-      );
-      if (!res.ok) throw new Error();
-      this.inscripciones.set(await res.json());
+      // Llamada al nuevo servicio para obtener inscritos
+      const data = await this.insSvc.getInscritosPorCategoria(camp.id_campeonato, cat.id);
+      this.inscripciones.set(data);
     } catch {
       this.inscripciones.set([]);
     } finally {

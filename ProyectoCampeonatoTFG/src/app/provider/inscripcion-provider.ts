@@ -1,6 +1,6 @@
-import {Campeonato} from '../interfaces/campeonato';
+import {Inscripcion} from '../interfaces/inscripcion';
 
 //Este metodo devuelve los competidores que hay en una categoria especifica en un campeonato
 export interface InscripcionProvider {
-  getAllInscripciones(): Promise<Campeonato[]>;
+  getInscritosPorCategoria(IdCampeonato:number, IdCategoria:number): Promise<Inscripcion[]>;
 }
