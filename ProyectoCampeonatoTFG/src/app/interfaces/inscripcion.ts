@@ -1,9 +1,9 @@
 export interface Inscripcion {
-  idCameponato: number,
+  idCampeonato: number,
   idCategoria: number,
   idCompetidor: number,
   nombreCampeonato: string,
-  nombreCateogria:string,
+  nombreCategoria:string,
   nombreCompetidor: string,
   clubCompetidor: string,
 }

@@ -324,6 +324,15 @@ public class DataLoader implements CommandLineRunner {
         Competidor senF16 = Competidor.builder().nombre("Sandra").apellidos("Gil Méndez").dni("88900000H").email("sandra.gil@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(1997, 8, 31))).genero('F').club("Karate Palma").federacionAutonomica("Islas Baleares").build();
         Competidor senF17 = Competidor.builder().nombre("Irene").apellidos("Santos Quintero").dni("99000111I").email("irene.santos@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2000, 5, 16))).genero('F').club("Karate Almería").federacionAutonomica("Andalucía").build();
         Competidor senF18 = Competidor.builder().nombre("Pilar").apellidos("Flores Navas").dni("10100200J").email("pilar.flores@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2001, 1, 29))).genero('F').club("Karate Madrid").federacionAutonomica("Comunidad de Madrid").build();
+        Competidor senF19 = Competidor.builder().nombre("Carmen").apellidos("Alvarado Peña").dni("12100300A").email("carmen.alvarado@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2001, 3, 14))).genero('F').club("Karate Sevilla").federacionAutonomica("Andalucía").build();
+        Competidor senF20 = Competidor.builder().nombre("Rocío").apellidos("Delgado Vega").dni("12100301B").email("rocio.delgado@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(1999, 8, 22))).genero('F').club("Karate Granada").federacionAutonomica("Andalucía").build();
+        Competidor senF21 = Competidor.builder().nombre("Natalia").apellidos("Fuentes Ríos").dni("12100302C").email("natalia.fuentes@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2002, 11, 5))).genero('F').club("Karate Bilbao").federacionAutonomica("País Vasco").build();
+        Competidor senF22 = Competidor.builder().nombre("Marta").apellidos("Crespo Solís").dni("12100303D").email("marta.crespo@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2000, 6, 30))).genero('F').club("Karate Barcelona").federacionAutonomica("Cataluña").build();
+        Competidor senF23 = Competidor.builder().nombre("Alba").apellidos("Navarro Gil").dni("12100304E").email("alba.navarro@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(1998, 1, 17))).genero('F').club("Karate Valencia").federacionAutonomica("Comunitat Valenciana").build();
+        Competidor senF24 = Competidor.builder().nombre("Cristina").apellidos("Ortega Luna").dni("12100305F").email("cristina.ortega@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2003, 4, 9))).genero('F').club("Karate Murcia").federacionAutonomica("Región de Murcia").build();
+        Competidor senF25 = Competidor.builder().nombre("Patricia").apellidos("Lara Bernal").dni("12100306G").email("patricia.lara@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2001, 9, 25))).genero('F').club("Karate Málaga").federacionAutonomica("Andalucía").build();
+        Competidor senF26 = Competidor.builder().nombre("Lorena").apellidos("Vargas Pinto").dni("12100307H").email("lorena.vargas@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(1997, 12, 3))).genero('F').club("Karate Zaragoza").federacionAutonomica("Aragón").build();
+
 
         Competidor cadM1 = Competidor.builder().nombre("Mateo").apellidos("Reyes Gallardo").dni("11111101A").email("mateo.reyes@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2011, 3, 10))).genero('M').club("Karate Madrid").federacionAutonomica("Comunidad de Madrid").build();
         Competidor cadM2 = Competidor.builder().nombre("Samuel").apellidos("Vega Torres").dni("11111102B").email("samuel.vega@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2010, 7, 22))).genero('M').club("Karate Sevilla").federacionAutonomica("Andalucía").build();
@@ -340,6 +349,13 @@ public class DataLoader implements CommandLineRunner {
         Competidor cadF4 = Competidor.builder().nombre("Alba").apellidos("Pinto Serrano").dni("22222204D").email("alba.pinto@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2011, 4, 6))).genero('F').club("Karate Santander").federacionAutonomica("Cantabria").build();
         Competidor cadF5 = Competidor.builder().nombre("Nora").apellidos("Medina Rubio").dni("22222205E").email("nora.medina@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2010, 9, 28))).genero('F').club("Karate Logroño").federacionAutonomica("La Rioja").build();
         Competidor cadF6 = Competidor.builder().nombre("Julia").apellidos("Varela Peña").dni("22222206F").email("julia.varela@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2012, 3, 17))).genero('F').club("Karate Galicia").federacionAutonomica("Galicia").build();
+        Competidor cadF7 = Competidor.builder().nombre("Elena").apellidos("Vidal Soto").dni("22222207G").email("elena.vidal@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2011, 5, 3))).genero('F').club("Karate Alicante").federacionAutonomica("Comunitat Valenciana").build();
+        Competidor cadF8 = Competidor.builder().nombre("Nora").apellidos("Campos Ruiz").dni("22222208H").email("nora.campos@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2010, 9, 17))).genero('F').club("Karate Málaga").federacionAutonomica("Andalucía").build();
+        Competidor cadF9 = Competidor.builder().nombre("Sofía").apellidos("Ibáñez Crespo").dni("22222209I").email("sofia.ibanez@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2012, 2, 28))).genero('F').club("Karate Murcia").federacionAutonomica("Región de Murcia").build();
+        Competidor cadF10 = Competidor.builder().nombre("Claudia").apellidos("Serrano Moya").dni("22222210J").email("claudia.serrano@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2011, 7, 11))).genero('F').club("Karate Córdoba").federacionAutonomica("Andalucía").build();
+        Competidor cadF11 = Competidor.builder().nombre("Gabriela").apellidos("Mora Peña").dni("22222211K").email("gabriela.mora@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2010, 11, 4))).genero('F').club("Karate Zaragoza").federacionAutonomica("Aragón").build();
+        Competidor cadF12 = Competidor.builder().nombre("Lucía").apellidos("Romero Lago").dni("22222212L").email("lucia.romero@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2012, 4, 19))).genero('F').club("Karate Vigo").federacionAutonomica("Galicia").build();
+
 
         Competidor junM1 = Competidor.builder().nombre("Álex").apellidos("Romero Cuesta").dni("33333301A").email("alex.romero@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2009, 5, 12))).genero('M').club("Karate Madrid").federacionAutonomica("Comunidad de Madrid").build();
         Competidor junM2 = Competidor.builder().nombre("Iker").apellidos("Zubieta Larrea").dni("33333302B").email("iker.zubieta@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2008, 11, 25))).genero('M').club("Karate San Sebastián").federacionAutonomica("País Vasco").build();
@@ -411,66 +427,32 @@ public class DataLoader implements CommandLineRunner {
         Competidor juvF5 = Competidor.builder().nombre("Hana").apellidos("Muñoz Takahashi").dni("30303005E").email("hana.munoz@karate.es").password("password").rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2013, 12, 1))).genero('F').club("Karate Aragón").federacionAutonomica("Aragón").build();
 
         competidorRepository.saveAll(List.of(
-                senM1, senM2, senM3, senM4, senM5, senM6, senM7, senM8, senM9, senM10,
-                senM11, senM12, senM13, senM14, senM15, senM16, senM17, senM18, senM19, senM20,
-                senM21, senM22, senM23, senM24,
-                senF1, senF2, senF3, senF4, senF5, senF6, senF7, senF8, senF9, senF10,
-                senF11, senF12, senF13, senF14, senF15, senF16, senF17, senF18,
-                cadM1, cadM2, cadM3, cadM4, cadM5, cadM6, cadM7, cadM8,
-                cadF1, cadF2, cadF3, cadF4, cadF5, cadF6,
-                junM1, junM2, junM3, junM4, junM5, junM6, junM7, junM8,
-                junF1, junF2, junF3, junF4, junF5, junF6,
-                sub21M1, sub21M2, sub21M3, sub21M4, sub21M5, sub21M6, sub21M7, sub21M8,
-                sub21F1, sub21F2, sub21F3, sub21F4, sub21F5, sub21F6,
-                infM1, infM2, infM3, infM4, infM5, infM6,
-                infF1, infF2, infF3, infF4, infF5,
-                alevM1, alevM2, alevM3, alevM4, alevM5,
-                alevF1, alevF2, alevF3, alevF4,
-                juvM1, juvM2, juvM3, juvM4, juvM5, juvM6,
-                juvF1, juvF2, juvF3, juvF4, juvF5
+                senM1, senM2, senM3, senM4, senM5, senM6, senM7, senM8, senM9, senM10, senM11, senM12, senM13, senM14, senM15, senM16, senM17, senM18, senM19, senM20, senM21, senM22, senM23, senM24, senF1, senF2, senF3, senF4, senF5, senF6, senF7, senF8, senF9, senF10, senF11, senF12, senF13, senF14, senF15, senF16, senF17, senF18, senF19, senF20, senF21, senF22, senF23, senF24, senF25, senF26,
+                cadM1, cadM2, cadM3, cadM4, cadM5, cadM6, cadM7, cadM8, cadF1, cadF2, cadF3, cadF4, cadF5, cadF6, cadF7, cadF8, cadF9, cadF10, cadF11, cadF12,
+                junM1, junM2, junM3, junM4, junM5, junM6, junM7, junM8, junF1, junF2, junF3, junF4, junF5, junF6,
+                sub21M1, sub21M2, sub21M3, sub21M4, sub21M5, sub21M6, sub21M7, sub21M8, sub21F1, sub21F2, sub21F3, sub21F4, sub21F5, sub21F6,
+                infM1, infM2, infM3, infM4, infM5, infM6, infF1, infF2, infF3, infF4, infF5,
+                alevM1, alevM2, alevM3, alevM4, alevM5, alevF1, alevF2, alevF3, alevF4,
+                juvM1, juvM2, juvM3, juvM4, juvM5, juvM6, juvF1, juvF2, juvF3, juvF4, juvF5
         ));
 
         // INSCRIPCIONES
         List<Inscripcion> inscripciones = new ArrayList<>();
 
         // --- CAMP2: Campeonato España Senior ---
-        inscripciones.add(ins(camp2, catSenKatM, senM1)); inscripciones.add(ins(camp2, catSenKatM, senM2));
-        inscripciones.add(ins(camp2, catSenKatM, senM3)); inscripciones.add(ins(camp2, catSenKatM, senM4));
-        inscripciones.add(ins(camp2, catSenKatM, senM5)); inscripciones.add(ins(camp2, catSenKatM, senM6));
-        inscripciones.add(ins(camp2, catSenKatM, senM7));
-        inscripciones.add(ins(camp2, catSenKatF, senF1)); inscripciones.add(ins(camp2, catSenKatF, senF2));
-        inscripciones.add(ins(camp2, catSenKatF, senF3)); inscripciones.add(ins(camp2, catSenKatF, senF4));
-        inscripciones.add(ins(camp2, catSenKatF, senF5)); inscripciones.add(ins(camp2, catSenKatF, senF6));
-        inscripciones.add(ins(camp2, catSenKumM2, senM8)); inscripciones.add(ins(camp2, catSenKumM2, senM9));
-        inscripciones.add(ins(camp2, catSenKumM2, senM10)); inscripciones.add(ins(camp2, catSenKumM2, senM11));
-        inscripciones.add(ins(camp2, catSenKumM2, senM12)); inscripciones.add(ins(camp2, catSenKumM2, senM13));
-        inscripciones.add(ins(camp2, catSenKumM3, senM14)); inscripciones.add(ins(camp2, catSenKumM3, senM15));
-        inscripciones.add(ins(camp2, catSenKumM3, senM16)); inscripciones.add(ins(camp2, catSenKumM3, senM17));
-        inscripciones.add(ins(camp2, catSenKumM3, senM18)); inscripciones.add(ins(camp2, catSenKumM3, senM19));
-        inscripciones.add(ins(camp2, catSenKumM4, senM20)); inscripciones.add(ins(camp2, catSenKumM4, senM21));
-        inscripciones.add(ins(camp2, catSenKumM4, senM22)); inscripciones.add(ins(camp2, catSenKumM4, senM23));
-        inscripciones.add(ins(camp2, catSenKumM4, senM24));
-        inscripciones.add(ins(camp2, catSenKumF2, senF7)); inscripciones.add(ins(camp2, catSenKumF2, senF8));
-        inscripciones.add(ins(camp2, catSenKumF2, senF9)); inscripciones.add(ins(camp2, catSenKumF2, senF10));
-        inscripciones.add(ins(camp2, catSenKumF2, senF11)); inscripciones.add(ins(camp2, catSenKumF2, senF12));
-        inscripciones.add(ins(camp2, catSenKumF3, senF13)); inscripciones.add(ins(camp2, catSenKumF3, senF14));
-        inscripciones.add(ins(camp2, catSenKumF3, senF15)); inscripciones.add(ins(camp2, catSenKumF3, senF16));
-        inscripciones.add(ins(camp2, catSenKumF3, senF17)); inscripciones.add(ins(camp2, catSenKumF3, senF18));
+        inscripciones.add(ins(camp2, catSenKatM, senM1)); inscripciones.add(ins(camp2, catSenKatM, senM2)); inscripciones.add(ins(camp2, catSenKatM, senM3)); inscripciones.add(ins(camp2, catSenKatM, senM4)); inscripciones.add(ins(camp2, catSenKatM, senM5)); inscripciones.add(ins(camp2, catSenKatM, senM6));
+        inscripciones.add(ins(camp2, catSenKatM, senM7));inscripciones.add(ins(camp2, catSenKatF, senF1)); inscripciones.add(ins(camp2, catSenKatF, senF2)); inscripciones.add(ins(camp2, catSenKatF, senF3)); inscripciones.add(ins(camp2, catSenKatF, senF4)); inscripciones.add(ins(camp2, catSenKatF, senF5)); inscripciones.add(ins(camp2, catSenKatF, senF6));
+        inscripciones.add(ins(camp2, catSenKumM2, senM8)); inscripciones.add(ins(camp2, catSenKumM2, senM9)); inscripciones.add(ins(camp2, catSenKumM2, senM10)); inscripciones.add(ins(camp2, catSenKumM2, senM11)); inscripciones.add(ins(camp2, catSenKumM2, senM12)); inscripciones.add(ins(camp2, catSenKumM2, senM13));
+        inscripciones.add(ins(camp2, catSenKumM3, senM14)); inscripciones.add(ins(camp2, catSenKumM3, senM15)); inscripciones.add(ins(camp2, catSenKumM3, senM16)); inscripciones.add(ins(camp2, catSenKumM3, senM17)); inscripciones.add(ins(camp2, catSenKumM3, senM18)); inscripciones.add(ins(camp2, catSenKumM3, senM19));
+        inscripciones.add(ins(camp2, catSenKumM4, senM20)); inscripciones.add(ins(camp2, catSenKumM4, senM21)); inscripciones.add(ins(camp2, catSenKumM4, senM22)); inscripciones.add(ins(camp2, catSenKumM4, senM23)); inscripciones.add(ins(camp2, catSenKumM4, senM24));
+        inscripciones.add(ins(camp2, catSenKumF2, senF7)); inscripciones.add(ins(camp2, catSenKumF2, senF8)); inscripciones.add(ins(camp2, catSenKumF2, senF9)); inscripciones.add(ins(camp2, catSenKumF2, senF10)); inscripciones.add(ins(camp2, catSenKumF2, senF11)); inscripciones.add(ins(camp2, catSenKumF2, senF12));
+        inscripciones.add(ins(camp2, catSenKumF3, senF13)); inscripciones.add(ins(camp2, catSenKumF3, senF14)); inscripciones.add(ins(camp2, catSenKumF3, senF15)); inscripciones.add(ins(camp2, catSenKumF3, senF16)); inscripciones.add(ins(camp2, catSenKumF3, senF17)); inscripciones.add(ins(camp2, catSenKumF3, senF18));
 
         // --- CAMP4: Campeonato Andalucía Senior ---
-        inscripciones.add(ins(camp4, catSenKatM, senM1)); inscripciones.add(ins(camp4, catSenKatM, senM3));
-        inscripciones.add(ins(camp4, catSenKatM, senM5)); inscripciones.add(ins(camp4, catSenKatM, senM7));
-        inscripciones.add(ins(camp4, catSenKatM, senM9)); inscripciones.add(ins(camp4, catSenKatM, senM11));
-        inscripciones.add(ins(camp4, catSenKatM, senM13));
-        inscripciones.add(ins(camp4, catSenKatF, senF1)); inscripciones.add(ins(camp4, catSenKatF, senF3));
-        inscripciones.add(ins(camp4, catSenKatF, senF5)); inscripciones.add(ins(camp4, catSenKatF, senF7));
-        inscripciones.add(ins(camp4, catSenKatF, senF9)); inscripciones.add(ins(camp4, catSenKatF, senF11));
-        inscripciones.add(ins(camp4, catSenKumM3, senM2)); inscripciones.add(ins(camp4, catSenKumM3, senM4));
-        inscripciones.add(ins(camp4, catSenKumM3, senM6)); inscripciones.add(ins(camp4, catSenKumM3, senM8));
-        inscripciones.add(ins(camp4, catSenKumM3, senM10)); inscripciones.add(ins(camp4, catSenKumM3, senM12));
-        inscripciones.add(ins(camp4, catSenKumF3, senF2)); inscripciones.add(ins(camp4, catSenKumF3, senF4));
-        inscripciones.add(ins(camp4, catSenKumF3, senF6)); inscripciones.add(ins(camp4, catSenKumF3, senF8));
-        inscripciones.add(ins(camp4, catSenKumF3, senF10)); inscripciones.add(ins(camp4, catSenKumF3, senF12));
+        inscripciones.add(ins(camp4, catSenKatM, senM1)); inscripciones.add(ins(camp4, catSenKatM, senM3)); inscripciones.add(ins(camp4, catSenKatM, senM5)); inscripciones.add(ins(camp4, catSenKatM, senM7)); inscripciones.add(ins(camp4, catSenKatM, senM9)); inscripciones.add(ins(camp4, catSenKatM, senM11)); inscripciones.add(ins(camp4, catSenKatM, senM13));
+        inscripciones.add(ins(camp4, catSenKatF, senF1)); inscripciones.add(ins(camp4, catSenKatF, senF3)); inscripciones.add(ins(camp4, catSenKatF, senF5)); inscripciones.add(ins(camp4, catSenKatF, senF7)); inscripciones.add(ins(camp4, catSenKatF, senF9)); inscripciones.add(ins(camp4, catSenKatF, senF11));
+        inscripciones.add(ins(camp4, catSenKumM3, senM2)); inscripciones.add(ins(camp4, catSenKumM3, senM4)); inscripciones.add(ins(camp4, catSenKumM3, senM6)); inscripciones.add(ins(camp4, catSenKumM3, senM8));inscripciones.add(ins(camp4, catSenKumM3, senM10)); inscripciones.add(ins(camp4, catSenKumM3, senM12));
+        inscripciones.add(ins(camp4, catSenKumF3, senF2)); inscripciones.add(ins(camp4, catSenKumF3, senF4)); inscripciones.add(ins(camp4, catSenKumF3, senF6)); inscripciones.add(ins(camp4, catSenKumF3, senF8)); inscripciones.add(ins(camp4, catSenKumF3, senF10)); inscripciones.add(ins(camp4, catSenKumF3, senF12));
 
         // --- CAMP15: Liga Nacional Base Masculina ---
         inscripciones.add(ins(camp15, catCadKataM, cadM1)); inscripciones.add(ins(camp15, catCadKataM, cadM2));
@@ -709,24 +691,29 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp1, catSub21KumF2, sub21F1)); inscripciones.add(ins(camp1, catSub21KumF2, sub21F3));
         inscripciones.add(ins(camp1, catSub21KumF2, sub21F5));
 
-        // --- CAMP14: Final Cadete/Junior/Sub21 ---
-        inscripciones.add(ins(camp14, catCadKataM, cadM2)); inscripciones.add(ins(camp14, catCadKataM, cadM4));
-        inscripciones.add(ins(camp14, catCadKataM, cadM6)); inscripciones.add(ins(camp14, catCadKataM, cadM8));
-        inscripciones.add(ins(camp14, catCadKataM, cadM1)); inscripciones.add(ins(camp14, catCadKataM, cadM3));
         inscripciones.add(ins(camp14, catCadKataF, cadF2)); inscripciones.add(ins(camp14, catCadKataF, cadF4));
         inscripciones.add(ins(camp14, catCadKataF, cadF6)); inscripciones.add(ins(camp14, catCadKataF, cadF1));
         inscripciones.add(ins(camp14, catCadKataF, cadF3));
-        inscripciones.add(ins(camp14, catJunKatM, junM2)); inscripciones.add(ins(camp14, catJunKatM, junM4));
-        inscripciones.add(ins(camp14, catJunKatM, junM6)); inscripciones.add(ins(camp14, catJunKatM, junM8));
-        inscripciones.add(ins(camp14, catJunKatM, junM1)); inscripciones.add(ins(camp14, catJunKatM, junM3));
-        inscripciones.add(ins(camp14, catJunKatF, junF2)); inscripciones.add(ins(camp14, catJunKatF, junF4));
-        inscripciones.add(ins(camp14, catJunKatF, junF6)); inscripciones.add(ins(camp14, catJunKatF, junF1));
-        inscripciones.add(ins(camp14, catJunKatF, junF3));
-        inscripciones.add(ins(camp14, catSub21KatM, sub21M2)); inscripciones.add(ins(camp14, catSub21KatM, sub21M4));
-        inscripciones.add(ins(camp14, catSub21KatM, sub21M6)); inscripciones.add(ins(camp14, catSub21KatM, sub21M8));
-        inscripciones.add(ins(camp14, catSub21KatF, sub21F2)); inscripciones.add(ins(camp14, catSub21KatF, sub21F4));
-        inscripciones.add(ins(camp14, catSub21KatF, sub21F6)); inscripciones.add(ins(camp14, catSub21KatF, sub21F1));
-        inscripciones.add(ins(camp14, catSub21KatF, sub21F3));
+// --- CAMP14: Liga Iberdrola Absoluta/Cadete - 1ª Ronda 2026 ---
+// Cadete Femenino Kata (ya tiene 5, añadimos 2 más para tener 7)
+        inscripciones.add(ins(camp14, catCadKataF, cadF1)); inscripciones.add(ins(camp14, catCadKataF, cadF2));
+        inscripciones.add(ins(camp14, catCadKataF, cadF3)); inscripciones.add(ins(camp14, catCadKataF, cadF4));
+        inscripciones.add(ins(camp14, catCadKataF, cadF6)); inscripciones.add(ins(camp14, catCadKataF, cadF7));
+        inscripciones.add(ins(camp14, catCadKataF, cadF8));
+
+// Cadete Femenino Kumite <47kg
+        inscripciones.add(ins(camp14, catCadKumF1, cadF1)); inscripciones.add(ins(camp14, catCadKumF1, cadF3));
+        inscripciones.add(ins(camp14, catCadKumF1, cadF9)); inscripciones.add(ins(camp14, catCadKumF1, cadF10));
+
+// Cadete Femenino Kumite <54kg
+        inscripciones.add(ins(camp14, catCadKumF2, cadF2)); inscripciones.add(ins(camp14, catCadKumF2, cadF4));
+        inscripciones.add(ins(camp14, catCadKumF2, cadF11)); inscripciones.add(ins(camp14, catCadKumF2, cadF12)); inscripciones.add(ins(camp14, catCadKumF3, cadF5)); inscripciones.add(ins(camp14, catCadKumF3, cadF6));
+        inscripciones.add(ins(camp14, catCadKumF3, cadF7)); inscripciones.add(ins(camp14, catCadKumF3, cadF8)); inscripciones.add(ins(camp14, catCadKumF4, cadF9)); inscripciones.add(ins(camp14, catCadKumF4, cadF10)); inscripciones.add(ins(camp14, catCadKumF4, cadF11)); inscripciones.add(ins(camp14, catCadKumF4, cadF12));
+        inscripciones.add(ins(camp14, catSenKatF, senF1));  inscripciones.add(ins(camp14, catSenKatF, senF2)); inscripciones.add(ins(camp14, catSenKatF, senF3));  inscripciones.add(ins(camp14, catSenKatF, senF4)); inscripciones.add(ins(camp14, catSenKatF, senF19)); inscripciones.add(ins(camp14, catSenKatF, senF20));
+        inscripciones.add(ins(camp14, catSenKumF1, senF5));  inscripciones.add(ins(camp14, catSenKumF1, senF6)); inscripciones.add(ins(camp14, catSenKumF1, senF21)); inscripciones.add(ins(camp14, catSenKumF1, senF22)); inscripciones.add(ins(camp14, catSenKumF2, senF7));  inscripciones.add(ins(camp14, catSenKumF2, senF8));
+        inscripciones.add(ins(camp14, catSenKumF2, senF23)); inscripciones.add(ins(camp14, catSenKumF2, senF24)); inscripciones.add(ins(camp14, catSenKumF3, senF9));  inscripciones.add(ins(camp14, catSenKumF3, senF10)); inscripciones.add(ins(camp14, catSenKumF3, senF25)); inscripciones.add(ins(camp14, catSenKumF3, senF26));
+        inscripciones.add(ins(camp14, catSenKumF4, senF11)); inscripciones.add(ins(camp14, catSenKumF4, senF12)); inscripciones.add(ins(camp14, catSenKumF4, senF19)); inscripciones.add(ins(camp14, catSenKumF4, senF20)); inscripciones.add(ins(camp14, catSenKumF5, senF13)); inscripciones.add(ins(camp14, catSenKumF5, senF14));
+        inscripciones.add(ins(camp14, catSenKumF5, senF21)); inscripciones.add(ins(camp14, catSenKumF5, senF22));
 
         // --- CAMP13: Liga Master ---
         inscripciones.add(ins(camp13, catSenKatM, senM4)); inscripciones.add(ins(camp13, catSenKatM, senM8));
