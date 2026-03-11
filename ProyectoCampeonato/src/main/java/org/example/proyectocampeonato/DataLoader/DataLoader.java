@@ -845,40 +845,48 @@ public class DataLoader implements CommandLineRunner {
                         senF9, senF10, senF11, senF12), 2, java.time.LocalTime.of(9, 0), 10));
 
         // ── CAMP15: Liga Nacional Base Masculina ──────────────────────────────
-        combates.addAll(generarRonda1(camp15, catCadKataM,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp15.getId_campeonato(), catCadKataM.getId_categoria())).orElseThrow(),
-                List.of(cadM1, cadM2, cadM3, cadM4, cadM5, cadM6), 1, java.time.LocalTime.of(9, 0), 15));
-
-        // ── CAMP16: Liga Iberdrola Base Femenina ──────────────────────────────
-        combates.addAll(generarRonda1(camp16, catCadKataF,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp16.getId_campeonato(), catCadKataF.getId_categoria())).orElseThrow(),
-                List.of(cadF1, cadF2, cadF3, cadF4, cadF5, cadF6), 1, java.time.LocalTime.of(9, 0), 15));
-
-        // ── CAMP17: Liga Nacional Base Masculina Alevín/Infantil/Juvenil ──────
-        combates.addAll(generarRonda1(camp17, catAlevKataM,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp17.getId_campeonato(), catAlevKataM.getId_categoria())).orElseThrow(),
+        combates.addAll(generarRonda1(camp15, catAlevKataM,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp15.getId_campeonato(), catAlevKataM.getId_categoria())).orElseThrow(),
                 List.of(alevM1, alevM2, alevM3, alevM4, alevM5), 1, java.time.LocalTime.of(9, 0), 15));
 
-        combates.addAll(generarRonda1(camp17, catInfKataM,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp17.getId_campeonato(), catInfKataM.getId_categoria())).orElseThrow(),
+        combates.addAll(generarRonda1(camp15, catInfKataM,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp15.getId_campeonato(), catInfKataM.getId_categoria())).orElseThrow(),
                 List.of(infM1, infM2, infM3, infM4, infM5, infM6), 2, java.time.LocalTime.of(9, 0), 15));
 
-        combates.addAll(generarRonda1(camp17, catJuvKataM,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp17.getId_campeonato(), catJuvKataM.getId_categoria())).orElseThrow(),
+        combates.addAll(generarRonda1(camp15, catJuvKataM,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp15.getId_campeonato(), catJuvKataM.getId_categoria())).orElseThrow(),
                 List.of(juvM1, juvM2, juvM3, juvM4, juvM5), 3, java.time.LocalTime.of(9, 0), 15));
 
-        // ── CAMP18: Liga Iberdrola Base Femenina Alevín/Infantil/Juvenil ──────
-        combates.addAll(generarRonda1(camp18, catAlevKataF,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp18.getId_campeonato(), catAlevKataF.getId_categoria())).orElseThrow(),
+        // ── CAMP16: Liga Iberdrola Base Femenina (alvFem + infFem + juvFem) ───
+        combates.addAll(generarRonda1(camp16, catAlevKataF,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp16.getId_campeonato(), catAlevKataF.getId_categoria())).orElseThrow(),
                 List.of(alevF1, alevF2, alevF3, alevF4), 1, java.time.LocalTime.of(9, 0), 15));
 
-        combates.addAll(generarRonda1(camp18, catInfKataF,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp18.getId_campeonato(), catInfKataF.getId_categoria())).orElseThrow(),
+        combates.addAll(generarRonda1(camp16, catInfKataF,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp16.getId_campeonato(), catInfKataF.getId_categoria())).orElseThrow(),
                 List.of(infF1, infF2, infF3, infF4, infF5), 2, java.time.LocalTime.of(9, 0), 15));
 
-        combates.addAll(generarRonda1(camp18, catJuvKataF,
-                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp18.getId_campeonato(), catJuvKataF.getId_categoria())).orElseThrow(),
+        combates.addAll(generarRonda1(camp16, catJuvKataF,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp16.getId_campeonato(), catJuvKataF.getId_categoria())).orElseThrow(),
                 List.of(juvF1, juvF2, juvF3, juvF4, juvF5), 3, java.time.LocalTime.of(9, 0), 15));
+
+        // ── CAMP17: Liga Nacional Master (masters) ────────────────────────────
+        combates.addAll(generarRonda1(camp17, catMasKatM1,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp17.getId_campeonato(), catMasKatM1.getId_categoria())).orElseThrow(),
+                List.of(senM1, senM2, senM3, senM4), 1, java.time.LocalTime.of(9, 0), 15));
+
+        combates.addAll(generarRonda1(camp17, catMasKatF1,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp17.getId_campeonato(), catMasKatF1.getId_categoria())).orElseThrow(),
+                List.of(senF1, senF2, senF3, senF4), 2, java.time.LocalTime.of(9, 0), 15));
+
+        // ── CAMP18: Liga Nacional Junior/Sub21 (junMasc + s21Masc) ───────────
+        combates.addAll(generarRonda1(camp18, catJunKatM,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp18.getId_campeonato(), catJunKatM.getId_categoria())).orElseThrow(),
+                List.of(junM1, junM2, junM3, junM4, junM5, junM6), 1, java.time.LocalTime.of(9, 0), 15));
+
+        combates.addAll(generarRonda1(camp18, catSub21KatM,
+                campeonato_categoriaRepository.findById(new Campeonato_Categoria_Id(camp18.getId_campeonato(), catSub21KatM.getId_categoria())).orElseThrow(),
+                List.of(sub21M1, sub21M2, sub21M3, sub21M4, sub21M5, sub21M6), 2, java.time.LocalTime.of(9, 0), 15));
 
         combateRepository.saveAll(combates);
         System.out.println("Combates de ronda 1 generados: " + combates.size());
