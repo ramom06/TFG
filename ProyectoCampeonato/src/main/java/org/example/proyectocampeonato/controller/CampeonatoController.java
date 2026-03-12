@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.proyectocampeonato.dto.CampeonatoDTO;
+import org.example.proyectocampeonato.modelo.Campeonato;
 import org.example.proyectocampeonato.service.CampeonatoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,35 +20,30 @@ public class CampeonatoController {
         this.service = service;
     }
 
-    // GET /api/campeonatos
     @GetMapping
-    public ResponseEntity<List<CampeonatoDTO>> all() {
+    public ResponseEntity<List<Campeonato>> all() {
         log.info("Obteniendo todos los campeonatos");
         return ResponseEntity.ok(service.getAll());
     }
 
-    // GET /api/campeonatos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<CampeonatoDTO> one(@PathVariable Long id) {
+    public ResponseEntity<Campeonato> one(@PathVariable Long id) {
         log.info("Obteniendo campeonato con id: {}", id);
         return ResponseEntity.ok(service.one(id));
     }
 
-    // POST /api/campeonatos
     @PostMapping
-    public ResponseEntity<CampeonatoDTO> save(@RequestBody CampeonatoDTO dto) {
-        log.info("Creando campeonato: {}", dto.getNombre());
-        return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
+    public ResponseEntity<Campeonato> save(@RequestBody Campeonato campeonato) {
+        log.info("Creando campeonato: {}", campeonato.getNombre());
+        return new ResponseEntity<>(service.save(campeonato), HttpStatus.CREATED);
     }
 
-    // PUT /api/campeonatos/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<CampeonatoDTO> replace(@PathVariable Long id, @RequestBody CampeonatoDTO dto) {
+    public ResponseEntity<Campeonato> replace(@PathVariable Long id, @RequestBody Campeonato campeonato) {
         log.info("Actualizando campeonato con id: {}", id);
-        return ResponseEntity.ok(service.replace(id, dto));
+        return ResponseEntity.ok(service.replace(id, campeonato));
     }
 
-    // DELETE /api/campeonatos/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info("Eliminando campeonato con id: {}", id);

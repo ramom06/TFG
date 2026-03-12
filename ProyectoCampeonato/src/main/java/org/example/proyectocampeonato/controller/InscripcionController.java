@@ -1,7 +1,7 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.proyectocampeonato.dto.InscripcionDTO;
+import org.example.proyectocampeonato.modelo.Inscripcion;
 import org.example.proyectocampeonato.service.InscripcionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,26 +22,29 @@ public class InscripcionController {
 
     // GET /api/inscripciones/competidor/{id}
     @GetMapping("/competidor/{id}")
-    public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long id) {
+    public ResponseEntity<List<Inscripcion>> getByCompetidor(@PathVariable Long id) {
         log.info("Obteniendo inscripciones del competidor con id: {}", id);
         return ResponseEntity.ok(service.getByCompetidor(id));
     }
 
     // GET /api/inscripciones/campeonato/{idCampeonato}/categoria/{idCategoria}
     @GetMapping("/campeonato/{idCampeonato}/categoria/{idCategoria}")
-    public ResponseEntity<List<InscripcionDTO>> getByCampeonatoAndCategoria(
+    public ResponseEntity<List<Inscripcion>> getByCampeonatoAndCategoria(
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria) {
         log.info("Obteniendo inscripciones del campeonato {} en categoría {}", idCampeonato, idCategoria);
         return ResponseEntity.ok(service.getByCampeonatoAndCategoria(idCampeonato, idCategoria));
     }
 
-    // POST /api/inscripciones
-    @PostMapping
-    public ResponseEntity<InscripcionDTO> save(@RequestBody InscripcionDTO dto) {
+    // POST /api/inscripciones/{idCampeonato}/{idCategoria}/{idCompetidor}
+    @PostMapping("/{idCampeonato}/{idCategoria}/{idCompetidor}")
+    public ResponseEntity<Inscripcion> save(
+            @PathVariable Long idCampeonato,
+            @PathVariable Long idCategoria,
+            @PathVariable Long idCompetidor) {
         log.info("Inscribiendo competidor {} en campeonato {} categoría {}",
-                dto.getIdCompetidor(), dto.getIdCampeonato(), dto.getIdCategoria());
-        return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
+                idCompetidor, idCampeonato, idCategoria);
+        return new ResponseEntity<>(service.save(idCampeonato, idCategoria, idCompetidor), HttpStatus.CREATED);
     }
 
     // DELETE /api/inscripciones/{idCampeonato}/{idCategoria}/{idCompetidor}

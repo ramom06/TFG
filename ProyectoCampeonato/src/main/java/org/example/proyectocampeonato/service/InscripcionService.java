@@ -1,8 +1,6 @@
 package org.example.proyectocampeonato.service;
 
-import org.example.proyectocampeonato.dto.InscripcionDTO;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
-import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
@@ -14,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class InscripcionService {
@@ -23,50 +20,39 @@ public class InscripcionService {
     private final CampeonatoRepository campeonatoRepository;
     private final CategoriaRepository categoriaRepository;
     private final CompetidorRepository competidorRepository;
-    private final DtoMapper mapper;
 
     public InscripcionService(InscripcionRepository inscripcionRepository,
                               CampeonatoRepository campeonatoRepository,
                               CategoriaRepository categoriaRepository,
-                              CompetidorRepository competidorRepository,
-                              DtoMapper mapper) {
+                              CompetidorRepository competidorRepository) {
         this.inscripcionRepository = inscripcionRepository;
         this.campeonatoRepository = campeonatoRepository;
         this.categoriaRepository = categoriaRepository;
         this.competidorRepository = competidorRepository;
-        this.mapper = mapper;
     }
 
-    public List<InscripcionDTO> getByCompetidor(Long idCompetidor) {
-        return inscripcionRepository.findByCompetidor(idCompetidor).stream()
-                .map(mapper::toInscripcionDTO)
-                .collect(Collectors.toList());
+    public List<Inscripcion> getByCompetidor(Long idCompetidor) {
+        return inscripcionRepository.findByCompetidor(idCompetidor);
     }
 
-    public List<InscripcionDTO> getByCampeonatoAndCategoria(Long idCampeonato, Long idCategoria) {
-        return inscripcionRepository.findByCampeonatoAndCategoria(Math.toIntExact(idCampeonato), idCategoria).stream()
-                .map(mapper::toInscripcionDTO)
-                .collect(Collectors.toList());
+    public List<Inscripcion> getByCampeonatoAndCategoria(Long idCampeonato, Long idCategoria) {
+        return inscripcionRepository.findByCampeonatoAndCategoria(Math.toIntExact(idCampeonato), idCategoria);
     }
 
     @Transactional
-    public InscripcionDTO save(InscripcionDTO dto) {
-        Campeonato campeonato = campeonatoRepository.findById(dto.getIdCampeonato())
-                .orElseThrow(() -> new CampeonatoNotFoundException(dto.getIdCampeonato()));
+    public Inscripcion save(Long idCampeonato, Long idCategoria, Long idCompetidor) {
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
-        Categoria categoria = categoriaRepository.findById(dto.getIdCategoria())
+        Categoria categoria = categoriaRepository.findById(idCategoria)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoría con id " + dto.getIdCategoria() + " no encontrada"));
+                        HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
 
-        Competidor competidor = competidorRepository.findById(dto.getIdCompetidor())
+        Competidor competidor = competidorRepository.findById(idCompetidor)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Competidor con id " + dto.getIdCompetidor() + " no encontrado"));
+                        HttpStatus.NOT_FOUND, "Competidor con id " + idCompetidor + " no encontrado"));
 
-        Inscripcion_Id id = new Inscripcion_Id(
-                dto.getIdCampeonato(),
-                dto.getIdCategoria(),
-                dto.getIdCompetidor()
-        );
+        Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
 
         if (inscripcionRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -80,7 +66,7 @@ public class InscripcionService {
                 .competidor(competidor)
                 .build();
 
-        return mapper.toInscripcionDTO(inscripcionRepository.save(inscripcion));
+        return inscripcionRepository.save(inscripcion);
     }
 
     @Transactional

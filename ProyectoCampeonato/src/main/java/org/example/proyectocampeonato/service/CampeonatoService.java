@@ -1,7 +1,5 @@
 package org.example.proyectocampeonato.service;
 
-import org.example.proyectocampeonato.dto.CampeonatoDTO;
-import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
 import org.example.proyectocampeonato.modelo.Campeonato;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
@@ -9,54 +7,44 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CampeonatoService {
 
     private final CampeonatoRepository campeonatoRepository;
-    private final DtoMapper mapper;
 
-    public CampeonatoService(CampeonatoRepository campeonatoRepository, DtoMapper mapper) {
+    public CampeonatoService(CampeonatoRepository campeonatoRepository) {
         this.campeonatoRepository = campeonatoRepository;
-        this.mapper = mapper;
     }
 
-    public List<CampeonatoDTO> getAll() {
-        return campeonatoRepository.findAll().stream()
-                .map(mapper::toCampeonatoDTO)
-                .collect(Collectors.toList());
+    public List<Campeonato> getAll() {
+        return campeonatoRepository.findAll();
     }
 
-    public CampeonatoDTO one(Long id) {
-        return mapper.toCampeonatoDTO(
-                campeonatoRepository.findById(id)
-                        .orElseThrow(() -> new CampeonatoNotFoundException(id))
-        );
+    public Campeonato one(Long id) {
+        return campeonatoRepository.findById(id)
+                .orElseThrow(() -> new CampeonatoNotFoundException(id));
     }
 
     @Transactional
-    public CampeonatoDTO save(CampeonatoDTO dto) {
-        Campeonato entidad = mapper.toCampeonatoEntity(dto);
-        return mapper.toCampeonatoDTO(campeonatoRepository.save(entidad));
+    public Campeonato save(Campeonato campeonato) {
+        return campeonatoRepository.save(campeonato);
     }
 
     @Transactional
-    public CampeonatoDTO replace(Long id, CampeonatoDTO dto) {
+    public Campeonato replace(Long id, Campeonato campeonato) {
         return campeonatoRepository.findById(id)
                 .map(existing -> {
-                    Campeonato entidad = mapper.toCampeonatoEntity(dto);
-                    entidad.setId_campeonato(id);
-                    return mapper.toCampeonatoDTO(campeonatoRepository.save(entidad));
+                    campeonato.setId_campeonato(id);
+                    return campeonatoRepository.save(campeonato);
                 })
                 .orElseThrow(() -> new CampeonatoNotFoundException(id));
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!campeonatoRepository.existsById(id)) {
+        if (!campeonatoRepository.existsById(id))
             throw new CampeonatoNotFoundException(id);
-        }
         campeonatoRepository.deleteById(id);
     }
 }

@@ -1,7 +1,5 @@
 package org.example.proyectocampeonato.service;
 
-import org.example.proyectocampeonato.dto.CombateDTO;
-import org.example.proyectocampeonato.mapperDTO.DtoMapper;
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.*;
@@ -10,8 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CombateService {
@@ -19,106 +18,114 @@ public class CombateService {
     private final CombateRepository combateRepository;
     private final CompetidorRepository competidorRepository;
     private final Campeonato_CategoriaRepository campeonatoCategoriaRepository;
-    private final DtoMapper mapper;
 
     public CombateService(CombateRepository combateRepository,
                           CompetidorRepository competidorRepository,
-                          Campeonato_CategoriaRepository campeonatoCategoriaRepository,
-                          DtoMapper mapper) {
+                          Campeonato_CategoriaRepository campeonatoCategoriaRepository) {
         this.combateRepository = combateRepository;
         this.competidorRepository = competidorRepository;
         this.campeonatoCategoriaRepository = campeonatoCategoriaRepository;
-        this.mapper = mapper;
     }
 
-    public List<CombateDTO> getAll() {
-        return combateRepository.findAll().stream()
-                .map(mapper::toCombateDTO)
-                .collect(Collectors.toList());
+    // ── Record usado como body de entrada para POST/PUT ───────────────────────
+    public record CombateRequest(
+            Long idCampeonato,
+            Long idCategoria,
+            Integer numeroTatami,
+            Integer numeroCombate,
+            Long idCompetidorRojo,
+            Long idCompetidorAzul,
+            String ronda,
+            Integer puntuacionRojo,
+            Integer puntuacionAzul,
+            String senshu,
+            String estado,
+            LocalTime horaProgramada,
+            LocalDateTime horaInicioReal,
+            Integer duracionSegundos,
+            String observaciones
+    ) {}
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public List<Combate> getAll() {
+        return combateRepository.findAll();
     }
 
-    public List<CombateDTO> getByCampeonatoCategoria(Long idCampeonato, Long idCategoria) {
-        return combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria).stream()
-                .map(mapper::toCombateDTO)
-                .collect(Collectors.toList());
+    public List<Combate> getByCampeonatoCategoria(Long idCampeonato, Long idCategoria) {
+        return combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
     }
 
-    public List<CombateDTO> getByCompetidor(Long idCompetidor) {
-        return combateRepository.findByCompetidor(idCompetidor).stream()
-                .map(mapper::toCombateDTO)
-                .collect(Collectors.toList());
+    public List<Combate> getByCompetidor(Long idCompetidor) {
+        return combateRepository.findByCompetidor(idCompetidor);
     }
 
-    public CombateDTO one(Combate_Id id) {
-        return mapper.toCombateDTO(
-                combateRepository.findById(id)
-                        .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()))
-        );
+    public Combate one(Combate_Id id) {
+        return combateRepository.findById(id)
+                .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()));
     }
 
     @Transactional
-    public CombateDTO save(CombateDTO dto) {
-        Combate entidad = buildCombateFromDTO(dto);
-        return mapper.toCombateDTO(combateRepository.save(entidad));
+    public Combate save(CombateRequest req) {
+        Combate entidad = buildCombate(req);
+        return combateRepository.save(entidad);
     }
 
     @Transactional
-    public CombateDTO replace(Combate_Id id, CombateDTO dto) {
+    public Combate replace(Combate_Id id, CombateRequest req) {
         return combateRepository.findById(id)
                 .map(existing -> {
-                    Combate entidad = buildCombateFromDTO(dto);
+                    Combate entidad = buildCombate(req);
                     entidad.setId(id);
-                    return mapper.toCombateDTO(combateRepository.save(entidad));
+                    return combateRepository.save(entidad);
                 })
                 .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()));
     }
 
     @Transactional
     public void delete(Combate_Id id) {
-        if (!combateRepository.existsById(id)) {
+        if (!combateRepository.existsById(id))
             throw new CampeonatoNotFoundException(id.getIdCampeonato());
-        }
         combateRepository.deleteById(id);
     }
 
     // ── helper ───────────────────────────────────────────────────────────────
 
-    private Combate buildCombateFromDTO(CombateDTO dto) {
-        Competidor rojo = competidorRepository.findById(dto.getIdCompetidorRojo())
+    private Combate buildCombate(CombateRequest req) {
+        Competidor rojo = competidorRepository.findById(req.idCompetidorRojo())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Competidor rojo con id " + dto.getIdCompetidorRojo() + " no encontrado"));
+                        HttpStatus.NOT_FOUND, "Competidor rojo con id " + req.idCompetidorRojo() + " no encontrado"));
 
-        Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(dto.getIdCampeonato(), dto.getIdCategoria());
+        Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(req.idCampeonato(), req.idCategoria());
         Campeonato_Categoria campeonatoCategoria = campeonatoCategoriaRepository.findById(ccId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "No existe esa combinación de campeonato y categoría"));
 
-        // Nueva PK: (campeonato, categoria, tatami, numeroCombate)
         Combate_Id id = new Combate_Id(
-                dto.getIdCampeonato(),
-                dto.getIdCategoria(),
-                dto.getNumeroTatami(),
-                dto.getNumeroCombate()
+                req.idCampeonato(),
+                req.idCategoria(),
+                req.numeroTatami(),
+                req.numeroCombate()
         );
 
         Combate.CombateBuilder builder = Combate.builder()
                 .id(id)
-                .ronda(dto.getRonda())
-                .estado(dto.getEstado())
-                .senshu(dto.getSenshu())
-                .puntuacionRojo(dto.getPuntuacionRojo() != null ? dto.getPuntuacionRojo() : 0)
-                .puntuacionAzul(dto.getPuntuacionAzul() != null ? dto.getPuntuacionAzul() : 0)
-                .horaProgramada(dto.getHoraProgramada())
-                .horaInicioReal(dto.getHoraInicioReal())
-                .duracionSegundos(dto.getDuracionSegundos())
-                .observaciones(dto.getObservaciones())
+                .ronda(req.ronda())
+                .estado(req.estado())
+                .senshu(req.senshu())
+                .puntuacionRojo(req.puntuacionRojo() != null ? req.puntuacionRojo() : 0)
+                .puntuacionAzul(req.puntuacionAzul() != null ? req.puntuacionAzul() : 0)
+                .horaProgramada(req.horaProgramada())
+                .horaInicioReal(req.horaInicioReal())
+                .duracionSegundos(req.duracionSegundos())
+                .observaciones(req.observaciones())
                 .competidorRojo(rojo)
                 .campeonatoCategoria(campeonatoCategoria);
 
-        if (dto.getIdCompetidorAzul() != null) {
-            Competidor azul = competidorRepository.findById(dto.getIdCompetidorAzul())
+        if (req.idCompetidorAzul() != null) {
+            Competidor azul = competidorRepository.findById(req.idCompetidorAzul())
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Competidor azul con id " + dto.getIdCompetidorAzul() + " no encontrado"));
+                            HttpStatus.NOT_FOUND, "Competidor azul con id " + req.idCompetidorAzul() + " no encontrado"));
             builder.competidorAzul(azul);
         }
 

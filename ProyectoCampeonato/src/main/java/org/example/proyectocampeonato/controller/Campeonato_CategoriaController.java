@@ -1,8 +1,8 @@
 package org.example.proyectocampeonato.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.proyectocampeonato.dto.Campeonato_CategoriaDTO;
-import org.example.proyectocampeonato.dto.CategoriaDTO;
+import org.example.proyectocampeonato.modelo.Campeonato_Categoria;
+import org.example.proyectocampeonato.modelo.Categoria;
 import org.example.proyectocampeonato.service.CampeonatoCategoriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +23,14 @@ public class Campeonato_CategoriaController {
 
     // GET /api/campeonatos/{idCampeonato}/categorias
     @GetMapping
-    public ResponseEntity<List<CategoriaDTO>> getCategorias(@PathVariable Long idCampeonato) {
+    public ResponseEntity<List<Categoria>> getCategorias(@PathVariable Long idCampeonato) {
         log.info("Obteniendo categorías del campeonato con id: {}", idCampeonato);
         return ResponseEntity.ok(service.getCategoriasPorCampeonato(idCampeonato));
     }
 
-    //Esto asigna una categoria a un campeonato
     // POST /api/campeonatos/{idCampeonato}/categorias/{idCategoria}
     @PostMapping("/{idCategoria}")
-    public ResponseEntity<Campeonato_CategoriaDTO> asignar(
+    public ResponseEntity<Campeonato_Categoria> asignar(
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria) {
         log.info("Asignando categoría {} al campeonato {}", idCategoria, idCampeonato);
