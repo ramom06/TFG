@@ -77,8 +77,6 @@ class CampeonatoCategoriaTest {
         assertThat(service.getCategoriasPorCampeonato(99L)).isEmpty();
     }
 
-    // ── asignarCategoria ──────────────────────────────────────────────────────
-
     @Test
     void asignarCategoria_valida_creaRelacion() {
         when(campeonatoRepository.findById(1L)).thenReturn(Optional.of(campeonato));

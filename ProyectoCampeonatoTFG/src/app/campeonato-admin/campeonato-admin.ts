@@ -148,7 +148,7 @@ export class CampeonatoAdminComponent implements OnInit {
   // Devuelve el grupo seleccionado para un grupo (true si todos están, false si ninguno, null si parcial)
   grupoTodosSeleccionados(grupo: GrupoCategoria): boolean {
     const todas = [...grupo.masculino, ...grupo.femenino];
-    return todas.length > 0 && todas.every(c => this.categoriasSeleccionadas().has(c.id));
+    return todas.length > 0 && todas.every(c => this.categoriasSeleccionadas().has(c.id_categoria));
   }
 
   toggleCategoria(id: number): void {
@@ -161,9 +161,9 @@ export class CampeonatoAdminComponent implements OnInit {
     const todas = [...grupo.masculino, ...grupo.femenino];
     const s = new Set(this.categoriasSeleccionadas());
     if (this.grupoTodosSeleccionados(grupo)) {
-      todas.forEach(c => s.delete(c.id));
+      todas.forEach(c => s.delete(c.id_categoria));
     } else {
-      todas.forEach(c => s.add(c.id));
+      todas.forEach(c => s.add(c.id_categoria));
     }
     this.categoriasSeleccionadas.set(s);
   }
@@ -197,7 +197,7 @@ export class CampeonatoAdminComponent implements OnInit {
     // Cargar las categorías que ya tiene este campeonato
     try {
       const catsActuales = await this.catSvc.getCategoriasPorCampeonato(c.id_campeonato);
-      this.categoriasSeleccionadas.set(new Set(catsActuales.map(cat => cat.id)));
+      this.categoriasSeleccionadas.set(new Set(catsActuales.map(cat => cat.id_categoria)));
     } catch {
       this.categoriasSeleccionadas.set(new Set());
     }
@@ -250,7 +250,7 @@ export class CampeonatoAdminComponent implements OnInit {
       const r = await fetch(apiBase);
       if (r.ok) {
         const cats: Categoria[] = await r.json();
-        actuales = cats.map(c => c.id);
+        actuales = cats.map(c => c.id_categoria);
       }
     } catch { /* si falla, asumimos vacío */ }
 

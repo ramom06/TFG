@@ -39,7 +39,7 @@ export class CampeonatoListComponent implements OnInit {
       lista = lista.filter(c => c.estado === this.filtroEstado());
 
     if (this.filtroNivel() !== 'todos')
-      lista = lista.filter(c => c.nivel === this.filtroNivel());
+      lista = lista.filter(c => c.nivel.toLowerCase() === this.filtroNivel());
 
     return [...lista].sort((a, b) => {
       const f = this.sortField();

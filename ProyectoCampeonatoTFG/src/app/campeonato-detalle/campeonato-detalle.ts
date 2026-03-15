@@ -61,7 +61,7 @@ export class CampeonatoDetalleComponent implements OnInit {
 
     try {
       // Llamada al nuevo servicio para obtener inscritos
-      const data = await this.InscServ.getInscritosPorCategoria(camp.id_campeonato, cat.id);
+      const data = await this.InscServ.getInscritosPorCategoria(camp.id_campeonato, cat.id_categoria);
       this.inscripciones.set(data);
     } catch {
       this.inscripciones.set([]);

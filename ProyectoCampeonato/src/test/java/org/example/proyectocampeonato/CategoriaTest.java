@@ -125,8 +125,6 @@ class CategoriaTest {
                 .isInstanceOf(ResponseStatusException.class);
     }
 
-    // ── delete ────────────────────────────────────────────────────────────────
-
     @Test
     void delete_idExistente_eliminaCorrectamente() {
         when(categoriaRepository.existsById(1L)).thenReturn(true);

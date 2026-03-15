@@ -360,10 +360,10 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-blue-400/60"></span>Masculino
                           </p>
                           <div class="space-y-1">
-                            @for (cat of grupo.masculino; track cat.id) {
+                            @for (cat of grupo.masculino; track cat.id_categoria) {
                               <label class="flex items-center gap-2 cursor-pointer group/cat">
-                                <input type="checkbox" [checked]="estaSeleccionada(cat.id)"
-                                       (change)="toggleCategoria(cat.id)"
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.id_categoria)"
+                                       (change)="toggleCategoria(cat.id_categoria)"
                                        class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
                                 <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
                                   {{ cat.nombre }}
@@ -380,10 +380,10 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-pink-400/60"></span>Femenino
                           </p>
                           <div class="space-y-1">
-                            @for (cat of grupo.femenino; track cat.id) {
+                            @for (cat of grupo.femenino; track cat.id_categoria) {
                               <label class="flex items-center gap-2 cursor-pointer group/cat">
-                                <input type="checkbox" [checked]="estaSeleccionada(cat.id)"
-                                       (change)="toggleCategoria(cat.id)"
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.id_categoria)"
+                                       (change)="toggleCategoria(cat.id_categoria)"
                                        class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
                                 <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
                                   {{ cat.nombre }}

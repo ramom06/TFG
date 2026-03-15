@@ -75,7 +75,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @for (cat of masculino()[modalidad]; track cat.id) {
+                        @for (cat of masculino()[modalidad]; track cat.id_categoria) {
                           <tr class="border-t border-white/[0.04] hover:bg-blue-950/30 cursor-pointer transition-colors group" (click)="abrirModalCategoria(cat)">
                             <td class="py-2 pr-4 text-[#eef0f4] font-medium group-hover:text-blue-300 transition-colors">{{ cat.nombre }}
                           <span class="ml-1 text-[#4b5563] group-hover:text-blue-400 text-[10px]">↗</span>
@@ -120,7 +120,7 @@
                       </tr>
                       </thead>
                       <tbody>
-                        @for (cat of femenino()[modalidad]; track cat.id) {
+                        @for (cat of femenino()[modalidad]; track cat.id_categoria) {
                           <tr class="border-t border-white/[0.04] hover:bg-pink-950/30 cursor-pointer transition-colors group"
                               (click)="abrirModalCategoria(cat)">
                             <td class="py-2 pr-4 text-[#eef0f4] font-medium group-hover:text-pink-300 transition-colors">

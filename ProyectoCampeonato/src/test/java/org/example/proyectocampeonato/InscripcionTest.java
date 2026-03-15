@@ -68,8 +68,6 @@ class InscripcionTest {
                 .build();
     }
 
-    // ── getByCampeonatoAndCategoria ───────────────────────────────────────────
-
     @Test
     void getByCampeonatoAndCategoria_devuelveInscripciones() {
         when(inscripcionRepository.findByCampeonatoAndCategoria(1, 2L))
@@ -89,7 +87,6 @@ class InscripcionTest {
         assertThat(inscripcionService.getByCampeonatoAndCategoria(99L, 99L)).isEmpty();
     }
 
-    // ── save ──────────────────────────────────────────────────────────────────
 
     @Test
     void save_inscripcionValida_guardaYDevuelve() {
@@ -133,8 +130,6 @@ class InscripcionTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("ya está inscrito");
     }
-
-    // ── delete ────────────────────────────────────────────────────────────────
 
     @Test
     void delete_inscripcionExistente_eliminaCorrectamente() {

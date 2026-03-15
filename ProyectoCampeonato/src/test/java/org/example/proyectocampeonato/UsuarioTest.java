@@ -46,7 +46,6 @@ class UsuarioTest {
         usuario.setGenero('M');
     }
 
-    // ── getAll ────────────────────────────────────────────────────────────────
 
     @Test
     void getAll_devuelveListaDeUsuarios() {
@@ -57,8 +56,6 @@ class UsuarioTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getNombre()).isEqualTo("AdminUser");
     }
-
-    // ── one ───────────────────────────────────────────────────────────────────
 
     @Test
     void one_idExistente_devuelveUsuario() {
@@ -78,7 +75,6 @@ class UsuarioTest {
                 .isInstanceOf(ResponseStatusException.class);
     }
 
-    // ── findByNombre ──────────────────────────────────────────────────────────
 
     @Test
     void findByNombre_nombreExistente_devuelveUsuario() {
@@ -97,8 +93,6 @@ class UsuarioTest {
                 .isInstanceOf(ResponseStatusException.class);
     }
 
-    // ── findByRol ─────────────────────────────────────────────────────────────
-
     @Test
     void findByRol_devuelveUsuariosConEseRol() {
         when(usuarioRepository.findByRol(Usuario.Rol.ADMIN)).thenReturn(List.of(usuario));
@@ -108,8 +102,6 @@ class UsuarioTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getRol()).isEqualTo(Usuario.Rol.ADMIN);
     }
-
-    // ── save ──────────────────────────────────────────────────────────────────
 
     @Test
     void save_usuarioValido_codificaPasswordYGuarda() {
@@ -143,7 +135,6 @@ class UsuarioTest {
                 .hasMessageContaining("ya está registrado");
     }
 
-    // ── delete ────────────────────────────────────────────────────────────────
 
     @Test
     void delete_idExistente_eliminaCorrectamente() {

@@ -13,14 +13,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Bean de BCrypt que inyectaremos en los servicios
+    //BCrypt que inyectaremos en los servicios
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Dejamos todos los endpoints de la API libres (sin login)
-    // porque el proyecto no tiene pantalla de login propia aún
+    // Dejamos todos los endpoints de la API libres (sin login) porque el ya se verifica el rol del usuario en el endpoint de login
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

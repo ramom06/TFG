@@ -51,8 +51,6 @@ class CompetidorTest {
         competidor.setIdUsuario(1L);
     }
 
-    // ── getAll ────────────────────────────────────────────────────────────────
-
     @Test
     void getAll_devuelveListaDeCompetidores() {
         when(competidorRepository.findAll()).thenReturn(List.of(competidor));
@@ -71,7 +69,6 @@ class CompetidorTest {
         assertThat(competidorService.getAll()).isEmpty();
     }
 
-    // ── one ───────────────────────────────────────────────────────────────────
 
     @Test
     void one_idExistente_devuelveCompetidor() {
@@ -91,7 +88,6 @@ class CompetidorTest {
                 .isInstanceOf(CompetidorNotFoundException.class);
     }
 
-    // ── save ──────────────────────────────────────────────────────────────────
 
     @Test
     void save_competidorValido_codificaPasswordYGuarda() {
@@ -117,7 +113,6 @@ class CompetidorTest {
         assertThat(resultado.getPassword()).isEqualTo("$2a$10$hashedPassword");
     }
 
-    // ── replace ───────────────────────────────────────────────────────────────
 
     @Test
     void replace_idExistente_actualizaYDevuelve() {
@@ -164,8 +159,6 @@ class CompetidorTest {
         assertThatThrownBy(() -> competidorService.replace(99L, competidor))
                 .isInstanceOf(CompetidorNotFoundException.class);
     }
-
-    // ── delete ────────────────────────────────────────────────────────────────
 
     @Test
     void delete_idExistente_eliminaCorrectamente() {

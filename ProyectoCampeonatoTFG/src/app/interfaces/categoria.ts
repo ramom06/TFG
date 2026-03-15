@@ -1,7 +1,7 @@
 import {Genero} from './campeonato_categoria';
 
 export interface Categoria {
-  id: number,
+  id_categoria: number,
   nombre: string,
   modalidad: Modalidad,
   genero: Genero,
