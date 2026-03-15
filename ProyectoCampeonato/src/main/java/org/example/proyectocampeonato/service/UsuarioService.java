@@ -3,6 +3,7 @@ package org.example.proyectocampeonato.service;
 import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,9 +14,11 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Usuario> getAll() {
@@ -42,6 +45,7 @@ public class UsuarioService {
     public Usuario save(Usuario usuario) {
         validarNombreUnico(usuario.getNombre());
         validarEmailUnico(usuario.getEmail());
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
@@ -55,6 +59,11 @@ public class UsuarioService {
                         validarEmailUnico(usuario.getEmail());
                     usuario.setIdUsuario(id);
                     usuario.setFechaRegistro(existing.getFechaRegistro());
+                    if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
+                        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                    } else {
+                        usuario.setPassword(existing.getPassword());
+                    }
                     return usuarioRepository.save(usuario);
                 })
                 .orElseThrow(() -> new ResponseStatusException(

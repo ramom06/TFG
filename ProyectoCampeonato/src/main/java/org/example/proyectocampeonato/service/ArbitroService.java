@@ -5,6 +5,7 @@ import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.ArbitroRepository;
 import org.example.proyectocampeonato.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,10 +17,12 @@ public class ArbitroService {
 
     private final ArbitroRepository arbitroRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ArbitroService(ArbitroRepository arbitroRepository, UsuarioRepository usuarioRepository) {
+    public ArbitroService(ArbitroRepository arbitroRepository, UsuarioRepository usuarioRepository,PasswordEncoder passwordEncoder) {
         this.arbitroRepository = arbitroRepository;
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Arbitro> getAll() {
@@ -48,6 +51,7 @@ public class ArbitroService {
         validarEmailUnico(arbitro.getEmail());
         validarLicenciaUnica(arbitro.getLicencia());
         arbitro.setRol(Usuario.Rol.ARBITRO);
+        arbitro.setPassword(passwordEncoder.encode(arbitro.getPassword()));
         return arbitroRepository.save(arbitro);
     }
 
@@ -64,6 +68,11 @@ public class ArbitroService {
                     arbitro.setIdUsuario(id);
                     arbitro.setRol(Usuario.Rol.ARBITRO);
                     arbitro.setFechaRegistro(existing.getFechaRegistro());
+                    if (arbitro.getPassword() != null && !arbitro.getPassword().isBlank()) {
+                        arbitro.setPassword(passwordEncoder.encode(arbitro.getPassword()));
+                    } else {
+                        arbitro.setPassword(existing.getPassword());
+                    }
                     return arbitroRepository.save(arbitro);
                 })
                 .orElseThrow(() -> new ResponseStatusException(
