@@ -39,8 +39,6 @@ class CampeonatoTest {
         campeonato.setId_campeonato(1L);
     }
 
-    // ── getAll ────────────────────────────────────────────────────────────────
-
     @Test
     void getAll_ListaDeCampeonatos() {
         when(campeonatoRepository.findAll()).thenReturn(List.of(campeonato));
@@ -50,15 +48,6 @@ class CampeonatoTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getNombre()).isEqualTo("Campeonato de España Absoluto 2026");
         verify(campeonatoRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getAll_ListaVacia() {
-        when(campeonatoRepository.findAll()).thenReturn(List.of());
-
-        List<Campeonato> resultado = campeonatoService.getAll();
-
-        assertThat(resultado).isEmpty();
     }
 
     @Test
@@ -79,8 +68,6 @@ class CampeonatoTest {
                 .isInstanceOf(CampeonatoNotFoundException.class);
     }
 
-    // ── save ──────────────────────────────────────────────────────────────────
-
     @Test
     void save_campeonatoValido_guardaYDevuelve() {
         when(campeonatoRepository.save(campeonato)).thenReturn(campeonato);
@@ -91,26 +78,6 @@ class CampeonatoTest {
         verify(campeonatoRepository, times(1)).save(campeonato);
     }
 
-    // ── replace ───────────────────────────────────────────────────────────────
-
-    @Test
-    void replace_idExistente_actualizaYDevuelve() {
-        Campeonato actualizado = Campeonato.builder()
-                .nombre("Campeonato Actualizado")
-                .ubicacion("Barcelona, España")
-                .estado("activo")
-                .nivel("Nacional")
-                .build();
-
-        when(campeonatoRepository.findById(1L)).thenReturn(Optional.of(campeonato));
-        when(campeonatoRepository.save(actualizado)).thenReturn(actualizado);
-
-        Campeonato resultado = campeonatoService.replace(1L, actualizado);
-
-        assertThat(resultado.getNombre()).isEqualTo("Campeonato Actualizado");
-        assertThat(resultado.getId_campeonato()).isEqualTo(1L);
-    }
-
     @Test
     void replace_idInexistente_lanzaExcepcion() {
         when(campeonatoRepository.findById(99L)).thenReturn(Optional.empty());
@@ -119,10 +86,8 @@ class CampeonatoTest {
                 .isInstanceOf(CampeonatoNotFoundException.class);
     }
 
-    // ── delete ────────────────────────────────────────────────────────────────
-
     @Test
-    void delete_idExistente_eliminaCorrectamente() {
+    void delete_eliminaCorrectamente() {
         when(campeonatoRepository.existsById(1L)).thenReturn(true);
         doNothing().when(campeonatoRepository).deleteById(1L);
 

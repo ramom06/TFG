@@ -26,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
     private final Campeonato_CategoriaRepository campeonato_categoriaRepository;
     private final InscripcionRepository inscripcionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UsuarioRepository usuarioRepository;
 
     // Helper para convertir LocalDate a Date
     private Date toDate(LocalDate localDate) {
@@ -892,6 +893,19 @@ public class DataLoader implements CommandLineRunner {
                 .categoriaArbitral("Nacional")
                 .build();
         arbitroRepository.save(arb1);
+
+
+        Usuario admin = Usuario.builder()
+                .nombre("Admin")
+                .apellidos("Sistema")
+                .dni("00000000A")
+                .email("admin@admin.es")
+                .password(passwordEncoder.encode("1234"))
+                .rol(Usuario.Rol.ADMIN)
+                .fechaNacimiento(toDate(LocalDate.of(1990, 1, 1)))
+                .genero('M')
+                .build();
+        usuarioRepository.save(admin);
 
         System.out.println("Carga de datos de Karate finalizada con éxito.");
     }

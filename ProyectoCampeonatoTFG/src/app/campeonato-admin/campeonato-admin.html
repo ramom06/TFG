@@ -1,0 +1,468 @@
+<section class="min-h-screen bg-[#06080f] text-[#eef0f4] font-['Outfit',sans-serif] antialiased">
+
+  <!-- ── HEADER ── -->
+  <div class="relative py-14 text-center overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none"
+         style="background: radial-gradient(ellipse 60% 55% at 50% -10%, rgba(224,28,46,0.18) 0%, transparent 70%)"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                font-['Bebas_Neue',sans-serif] text-[clamp(80px,16vw,220px)]
+                text-white/[0.025] tracking-[0.02em] whitespace-nowrap pointer-events-none select-none leading-none">
+      ADMIN
+    </div>
+    <!-- Barra superior con usuario y logout -->
+    <div class="relative flex items-center justify-between max-w-[1100px] mx-auto px-6 mb-4">
+      <a routerLink="/"
+         class="flex items-center gap-1.5 text-xs text-[#8b95a3] hover:text-[#e01c2e] transition-colors">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver al listado
+      </a>
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-[#8b95a3]">
+          Hola, <strong class="text-[#eef0f4]">{{ usuarioActual?.nombre }}</strong>
+        </span>
+        <button (click)="cerrarSesion()"
+                class="flex items-center gap-1.5 text-xs text-[#4b5563] hover:text-[#e01c2e] transition-colors">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+    <h1 class="relative font-['Bebas_Neue',sans-serif] text-[clamp(44px,7vw,84px)] tracking-wider uppercase leading-none">
+      Gestión de <span class="text-[#e01c2e]">Campeonatos</span>
+    </h1>
+    <p class="relative mt-3 text-sm text-[#8b95a3] font-light tracking-wide">
+      Crea, edita y elimina campeonatos del sistema
+    </p>
+  </div>
+
+  <!-- ── TOAST ÉXITO ── -->
+  @if (successMsg()) {
+    <div class="fixed top-5 right-5 z-[200] flex items-center gap-3 bg-[#0d1f12] border border-green-500/40
+                text-green-400 text-sm font-medium px-5 py-3.5 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)]"
+         style="animation: fadeInDown 0.3s ease">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      {{ successMsg() }}
+    </div>
+  }
+
+  <!-- ── ERROR GLOBAL ── -->
+  @if (error()) {
+    <div class="max-w-[1100px] mx-auto px-6 mb-4">
+      <div class="flex items-center gap-3 bg-[#1a0a0a] border border-[#e01c2e]/40 text-[#e01c2e] text-sm px-5 py-3.5 rounded-xl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error() }}
+        <button class="ml-auto opacity-60 hover:opacity-100" (click)="error.set(null)">✕</button>
+      </div>
+    </div>
+  }
+
+  <!-- ── TOOLBAR ── -->
+  <div class="max-w-[1100px] mx-auto px-6 mb-5 flex flex-wrap gap-3 items-center">
+    <div class="relative flex-1 min-w-[200px]">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#4b5563] pointer-events-none"
+           width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="w-full bg-[#0d1117] border border-white/[0.07] rounded-xl pl-9 pr-4 py-2.5
+                    text-[13.5px] text-[#eef0f4] placeholder-[#4b5563] outline-none transition-all
+                    focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.15)]"
+             type="text" placeholder="Buscar por nombre o ciudad..."
+             [value]="searchText()" (input)="searchText.set($any($event.target).value)" />
+    </div>
+    <span class="text-xs text-[#8b95a3]">
+      <strong class="text-[#eef0f4]">{{ filteredCampeonatos().length }}</strong> campeonatos
+    </span>
+    <button (click)="abrirModalCrear()"
+            class="flex items-center gap-2 bg-[#e01c2e] hover:bg-[#c4192a] active:bg-[#a8141f]
+                   text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors
+                   shadow-[0_4px_20px_rgba(224,28,46,0.35)]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Nuevo campeonato
+    </button>
+  </div>
+
+  <!-- ── TABLA ── -->
+  <div class="max-w-[1100px] mx-auto px-6 pb-20">
+    <div class="relative bg-[#0d1117] border border-white/[0.07] rounded-2xl overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
+      @if (loading()) {
+        <div class="flex items-center justify-center py-24 gap-3 text-[#8b95a3]">
+          <svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          Cargando campeonatos...
+        </div>
+      }
+      @if (!loading()) {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+            <tr class="border-b border-white/[0.06] text-[#4b5563] text-[10px] font-bold uppercase tracking-[0.14em]">
+              <th class="text-left px-6 py-4">Campeonato</th>
+              <th class="text-left px-4 py-4 hidden md:table-cell">Fechas</th>
+              <th class="text-left px-4 py-4 hidden lg:table-cell">Ubicación</th>
+              <th class="text-center px-4 py-4">Estado</th>
+              <th class="text-center px-4 py-4 hidden sm:table-cell">Nivel</th>
+              <th class="text-right px-6 py-4">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (c of filteredCampeonatos(); track c.id_campeonato) {
+                <tr class="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-[#141a24]">
+                        <img [src]="c.urlPortada" [alt]="c.nombre" loading="lazy"
+                             class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                      <div>
+                        <p class="font-semibold text-[#eef0f4] leading-tight line-clamp-1">{{ c.nombre }}</p>
+                        <p class="text-[11px] text-[#4b5563] mt-0.5">#{{ c.id_campeonato }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 hidden md:table-cell">
+                    <p class="text-[#8b95a3] text-[12px]">{{ formatDate(c.fechaInicio) }}</p>
+                    @if (c.fechaInicio !== c.fechaFin) {
+                      <p class="text-[#4b5563] text-[11px]">→ {{ formatDate(c.fechaFin) }}</p>
+                    }
+                  </td>
+                  <td class="px-4 py-4 hidden lg:table-cell">
+                    <span class="text-[#8b95a3] text-[12px] line-clamp-1">{{ c.ubicacion }}</span>
+                  </td>
+                  <td class="px-4 py-4 text-center">
+                    <span [ngClass]="badgeClass(c.estado)"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px]
+                                 font-bold uppercase tracking-[0.1em] backdrop-blur-sm border">
+                      <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                      {{ estadoLabel(c.estado) }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 text-center hidden sm:table-cell">
+                    <span class="text-[11px] font-semibold uppercase tracking-wide text-[#8b95a3]">{{ c.nivel }}</span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <a [routerLink]="['/campeonato', c.id_campeonato]"
+                         class="p-2 rounded-lg text-[#4b5563] hover:text-[#8b95a3] hover:bg-white/[0.05] transition-all" title="Ver">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </a>
+                      <button (click)="abrirModalEditar(c)"
+                              class="p-2 rounded-lg text-[#4b5563] hover:text-[#eef0f4] hover:bg-white/[0.05] transition-all" title="Editar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                      </button>
+                      <button (click)="confirmarBorrar(c)"
+                              class="p-2 rounded-lg text-[#4b5563] hover:text-[#e01c2e] hover:bg-[#e01c2e]/10 transition-all" title="Eliminar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                          <path d="M10 11v6"/><path d="M14 11v6"/>
+                          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (filteredCampeonatos().length === 0) {
+                <tr>
+                  <td colspan="6" class="text-center py-20 text-[#4b5563]">
+                    <svg class="mx-auto mb-3 opacity-30" width="40" height="40" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <p class="text-sm">No se encontraron campeonatos</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ MODAL CREAR / EDITAR -->
+  @if (modalAbierto()) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" (click)="cerrarModal()">
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div class="relative w-full max-w-2xl bg-[#0d1117] border border-white/[0.09] rounded-2xl
+                  shadow-[0_32px_80px_rgba(0,0,0,0.8)] overflow-hidden max-h-[92vh] overflow-y-auto"
+           (click)="$event.stopPropagation()">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
+
+        <!-- Header modal -->
+        <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-white/[0.07]">
+          <div>
+            <h2 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase">
+              {{ modoEdicion() ? 'Editar campeonato' : 'Nuevo campeonato' }}
+            </h2>
+            <p class="text-xs text-[#4b5563] mt-0.5">
+              {{ modoEdicion() ? 'Modifica los datos del campeonato' : 'Rellena los datos para crear un nuevo campeonato' }}
+            </p>
+          </div>
+          <button (click)="cerrarModal()"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg text-[#4b5563]
+                         hover:text-[#eef0f4] hover:bg-white/[0.06] transition-all">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="guardar()" class="px-7 py-6 space-y-5">
+
+          <!-- Nombre -->
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Nombre *</label>
+            <input formControlName="nombre" type="text" placeholder="Ej: Campeonato de España Absoluto 2026"
+                   class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                          text-[13.5px] text-[#eef0f4] placeholder-[#4b5563] outline-none transition-all
+                          focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+                   [class.border-red-500]="f['nombre'].invalid && f['nombre'].touched" />
+            @if (f['nombre'].invalid && f['nombre'].touched) {
+              <p class="mt-1 text-[11px] text-[#e01c2e]/80">El nombre es obligatorio (mínimo 3 caracteres)</p>
+            }
+          </div>
+
+          <!-- Fechas -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Fecha inicio *</label>
+              <input formControlName="fechaInicio" type="date"
+                     class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                            text-[13.5px] text-[#eef0f4] outline-none transition-all
+                            focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+                     [class.border-red-500]="f['fechaInicio'].invalid && f['fechaInicio'].touched" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Fecha fin *</label>
+              <input formControlName="fechaFin" type="date"
+                     class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                            text-[13.5px] text-[#eef0f4] outline-none transition-all
+                            focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+                     [class.border-red-500]="f['fechaFin'].invalid && f['fechaFin'].touched" />
+            </div>
+          </div>
+
+          <!-- Ubicación -->
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Ubicación *</label>
+            <input formControlName="ubicacion" type="text" placeholder="Ej: Pabellón de Carranque, Málaga, España"
+                   class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                          text-[13.5px] text-[#eef0f4] placeholder-[#4b5563] outline-none transition-all
+                          focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+                   [class.border-red-500]="f['ubicacion'].invalid && f['ubicacion'].touched" />
+          </div>
+
+          <!-- Estado y Nivel -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Estado *</label>
+              <select formControlName="estado"
+                      class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                             text-[13.5px] text-[#eef0f4] outline-none cursor-pointer appearance-none transition-all
+                             focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]">
+                <option value="futuro">Próximo</option>
+                <option value="activo">En curso</option>
+                <option value="pasado">Finalizado</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">Nivel *</label>
+              <select formControlName="nivel"
+                      class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                             text-[13.5px] text-[#eef0f4] outline-none cursor-pointer appearance-none transition-all
+                             focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]">
+                <option value="provincial">Provincial</option>
+                <option value="nacional">Nacional</option>
+                <option value="regional">Regional</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- URL Portada -->
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">URL de portada *</label>
+            <input formControlName="urlPortada" type="url" placeholder="https://..."
+                   class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                          text-[13.5px] text-[#eef0f4] placeholder-[#4b5563] outline-none transition-all
+                          focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"
+                   [class.border-red-500]="f['urlPortada'].invalid && f['urlPortada'].touched" />
+          </div>
+
+          <!-- Descripción -->
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563] mb-1.5">
+              Descripción <span class="font-normal normal-case text-[#4b5563]">(opcional)</span>
+            </label>
+            <textarea formControlName="descripcion" rows="2" placeholder="Breve descripción..."
+                      class="w-full bg-[#141a24] border border-white/[0.07] rounded-lg px-3 py-2.5
+                             text-[13.5px] text-[#eef0f4] placeholder-[#4b5563] outline-none transition-all resize-none
+                             focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]"></textarea>
+          </div>
+
+          <!-- ══ SECCIÓN CATEGORÍAS ══ -->
+          <div class="border-t border-white/[0.07] pt-5">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#4b5563]">Categorías participantes</p>
+                <p class="text-[11px] text-[#4b5563] mt-0.5">
+                  {{ categoriasSeleccionadas().size }} seleccionada{{ categoriasSeleccionadas().size !== 1 ? 's' : '' }}
+                </p>
+              </div>
+            </div>
+
+            @if (gruposCategorias().length === 0) {
+              <p class="text-xs text-[#4b5563] py-4 text-center">Cargando categorías...</p>
+            } @else {
+              <div class="space-y-3 max-h-64 overflow-y-auto pr-1"
+                   style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;">
+                @for (grupo of gruposCategorias(); track grupo.grupo) {
+                  <div class="bg-[#141a24] border border-white/[0.06] rounded-xl overflow-hidden">
+
+                    <!-- Cabecera del grupo con toggle total -->
+                    <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.05]">
+                      <span class="text-[12px] font-bold text-[#eef0f4] uppercase tracking-wide">{{ grupo.grupo }}</span>
+                      <button type="button" (click)="toggleGrupo(grupo)"
+                              class="text-[10px] font-bold uppercase tracking-wide transition-colors px-2 py-1 rounded-md"
+                              [class]="grupoTodosSeleccionados(grupo)
+                                ? 'text-[#e01c2e] bg-[#e01c2e]/10 hover:bg-[#e01c2e]/20'
+                                : 'text-[#8b95a3] bg-white/[0.05] hover:bg-white/[0.08]'">
+                        {{ grupoTodosSeleccionados(grupo) ? 'Quitar todo' : 'Seleccionar todo' }}
+                      </button>
+                    </div>
+
+                    <div class="p-3 grid grid-cols-2 gap-x-4 gap-y-2">
+                      <!-- MASCULINO -->
+                      @if (grupo.masculino.length > 0) {
+                        <div>
+                          <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-blue-400/60 mb-2 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400/60"></span>Masculino
+                          </p>
+                          <div class="space-y-1">
+                            @for (cat of grupo.masculino; track cat.id) {
+                              <label class="flex items-center gap-2 cursor-pointer group/cat">
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.id)"
+                                       (change)="toggleCategoria(cat.id)"
+                                       class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
+                                <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
+                                  {{ cat.nombre }}
+                                </span>
+                              </label>
+                            }
+                          </div>
+                        </div>
+                      }
+                      <!-- FEMENINO -->
+                      @if (grupo.femenino.length > 0) {
+                        <div>
+                          <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-pink-400/60 mb-2 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-pink-400/60"></span>Femenino
+                          </p>
+                          <div class="space-y-1">
+                            @for (cat of grupo.femenino; track cat.id) {
+                              <label class="flex items-center gap-2 cursor-pointer group/cat">
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.id)"
+                                       (change)="toggleCategoria(cat.id)"
+                                       class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
+                                <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
+                                  {{ cat.nombre }}
+                                </span>
+                              </label>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Botones -->
+          <div class="flex items-center justify-end gap-3 pt-2 border-t border-white/[0.07]">
+            <button type="button" (click)="cerrarModal()"
+                    class="px-5 py-2.5 text-sm font-medium text-[#8b95a3] bg-white/[0.04]
+                           hover:bg-white/[0.08] border border-white/[0.07] rounded-xl transition-all">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="saving()"
+                    class="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white
+                           bg-[#e01c2e] hover:bg-[#c4192a] disabled:opacity-50 disabled:cursor-not-allowed
+                           rounded-xl transition-all shadow-[0_4px_20px_rgba(224,28,46,0.3)]">
+              @if (saving()) {
+                <svg class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              }
+              {{ saving() ? 'Guardando...' : (modoEdicion() ? 'Guardar cambios' : 'Crear campeonato') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ═══════════════════════ MODAL CONFIRMAR BORRADO -->
+  @if (modalBorrarAbierto()) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" (click)="cancelarBorrar()">
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div class="relative w-full max-w-md bg-[#0d1117] border border-[#e01c2e]/25 rounded-2xl
+                  shadow-[0_32px_80px_rgba(0,0,0,0.8)] overflow-hidden" (click)="$event.stopPropagation()">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-[#e01c2e]"></div>
+        <div class="p-8 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-[#e01c2e]/10 border border-[#e01c2e]/20
+                      flex items-center justify-center mx-auto mb-5">
+            <svg class="text-[#e01c2e]" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6"/><path d="M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+          </div>
+          <h3 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase mb-2">Eliminar campeonato</h3>
+          <p class="text-sm text-[#8b95a3] leading-relaxed mb-1">¿Estás seguro de que quieres eliminar</p>
+          <p class="text-sm font-semibold text-[#eef0f4] mb-5 px-4">"{{ campeonatoABorrar()?.nombre }}"</p>
+          <p class="text-xs text-[#4b5563] mb-7">
+            Esta acción eliminará también todas sus categorías, inscripciones y combates. No se puede deshacer.
+          </p>
+          <div class="flex gap-3 justify-center">
+            <button (click)="cancelarBorrar()"
+                    class="px-6 py-2.5 text-sm font-medium text-[#8b95a3] bg-white/[0.04]
+                           hover:bg-white/[0.08] border border-white/[0.07] rounded-xl transition-all">
+              Cancelar
+            </button>
+            <button (click)="ejecutarBorrar()" [disabled]="saving()"
+                    class="px-6 py-2.5 text-sm font-semibold text-white bg-[#e01c2e]
+                           hover:bg-[#c4192a] disabled:opacity-50 rounded-xl transition-all
+                           shadow-[0_4px_20px_rgba(224,28,46,0.35)]">
+              {{ saving() ? 'Eliminando...' : 'Sí, eliminar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+</section>
