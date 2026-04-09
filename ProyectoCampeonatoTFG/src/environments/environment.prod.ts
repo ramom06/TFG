@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://jubilant-youthfulness-production.up.railway.app'
+  apiUrl: 'tfg-production-7985.up.railway.app'
 };
