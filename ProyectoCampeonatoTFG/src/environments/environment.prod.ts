@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://TU-BACKEND.up.railway.app' 
+  apiUrl: 'https://jubilant-youthfulness-production.up.railway.app'
 };
