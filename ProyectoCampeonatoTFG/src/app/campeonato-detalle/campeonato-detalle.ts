@@ -7,12 +7,11 @@ import { InscripcionService }   from '../service/inscripcion-service';
 import { Campeonato }   from '../interfaces/campeonato';
 import { Categoria }    from '../interfaces/categoria';
 import { Inscripcion }  from '../interfaces/inscripcion';
-import { InscripcionComponent } from '../inscripcion/inscripcion';
 
 @Component({
   selector: 'app-campeonato-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink, InscripcionComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './campeonato-detalle.html',
   styleUrl: './campeonato-detalle.css',
 })
