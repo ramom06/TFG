@@ -7,6 +7,7 @@ import { CategoriaService } from '../service/categoria-service';
 import {AutenticacionService} from '../service/autenticacion-service';
 import { Campeonato, Estado, Nivel } from '../interfaces/campeonato';
 import { Categoria } from '../interfaces/categoria';
+import { environment } from '../../environments/environment';
 
 /** Grupo de categorías para el selector del formulario */
 export interface GrupoCategoria {
