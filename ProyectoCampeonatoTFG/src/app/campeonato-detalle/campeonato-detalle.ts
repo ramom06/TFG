@@ -1,44 +1,47 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CampeonatoService } from '../service/campeonato-service';
-import { CategoriaService } from '../service/categoria-service';
-import { InscripcionService } from '../service/inscripcion-service';
-import { Campeonato } from '../interfaces/campeonato';
-import { Categoria } from '../interfaces/categoria';
-import { Inscripcion } from '../interfaces/inscripcion';
+import { CampeonatoService }    from '../service/campeonato-service';
+import { CategoriaService }     from '../service/categoria-service';
+import { InscripcionService }   from '../service/inscripcion-service';
+import { Campeonato }   from '../interfaces/campeonato';
+import { Categoria }    from '../interfaces/categoria';
+import { Inscripcion }  from '../interfaces/inscripcion';
+import { InscripcionComponent } from '../inscripcion/inscripcion';
 
 @Component({
   selector: 'app-campeonato-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, InscripcionComponent],
   templateUrl: './campeonato-detalle.html',
   styleUrl: './campeonato-detalle.css',
 })
 export class CampeonatoDetalleComponent implements OnInit {
-  // Inyecciones
-  private route = inject(ActivatedRoute);
+  private route    = inject(ActivatedRoute);
   private CampServ = inject(CampeonatoService);
-  private CatServ = inject(CategoriaService);
+  private CatServ  = inject(CategoriaService);
   private InscServ = inject(InscripcionService);
 
-  //Campeonato
-  campeonato = signal<Campeonato | null>(null);
-
-  //Categorias del campeonato
-  categorias = signal<Categoria[]>([]);
-
+  campeonato            = signal<Campeonato | null>(null);
+  categorias            = signal<Categoria[]>([]);
   categoriaSeleccionada = signal<Categoria | null>(null);
+  inscripciones         = signal<Inscripcion[]>([]);
+  modalAbierto          = signal(false);
 
-  inscripciones = signal<Inscripcion[]>([]);
-
-  modalAbierto = signal(false);
+  // Modal de inscripción
+  inscripcionModalAbierto = signal(false);
+  inscripcionExitosa      = signal(false);
 
   readonly objectKeys = Object.keys;
 
-  // Agrupar por género y modalidad
   masculino = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'M')));
-  femenino = computed(() =>  this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'F')));
+  femenino  = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'F')));
+
+  // Solo mostramos el botón de inscripción en campeonatos futuros o activos
+  puedeInscribirse = computed(() => {
+    const c = this.campeonato();
+    return c ? c.estado === 'futuro' || c.estado === 'activo' : false;
+  });
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -55,12 +58,9 @@ export class CampeonatoDetalleComponent implements OnInit {
   async abrirModalCategoria(cat: Categoria) {
     const camp = this.campeonato();
     if (!camp) return;
-
     this.categoriaSeleccionada.set(cat);
     this.modalAbierto.set(true);
-
     try {
-      // Llamada al nuevo servicio para obtener inscritos
       const data = await this.InscServ.getInscritosPorCategoria(camp.id_campeonato, cat.id_categoria);
       this.inscripciones.set(data);
     } catch {
@@ -72,6 +72,17 @@ export class CampeonatoDetalleComponent implements OnInit {
     this.modalAbierto.set(false);
     this.categoriaSeleccionada.set(null);
     this.inscripciones.set([]);
+  }
+
+  // ── Inscripción ────────────────────────────────────────────────────────────
+  abrirInscripcionModal()  { this.inscripcionModalAbierto.set(true);  this.inscripcionExitosa.set(false); }
+  cerrarInscripcionModal() { this.inscripcionModalAbierto.set(false); }
+
+  onInscritoOk() {
+    this.inscripcionModalAbierto.set(false);
+    this.inscripcionExitosa.set(true);
+    // Ocultar toast tras 4 segundos
+    setTimeout(() => this.inscripcionExitosa.set(false), 4000);
   }
 
   private agruparPorModalidad(cats: Categoria[]): Record<string, Categoria[]> {

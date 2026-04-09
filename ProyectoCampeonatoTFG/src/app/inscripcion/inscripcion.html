@@ -1,0 +1,368 @@
+<!-- ══════════════════════════════════════════════════════════
+     BACKDROP
+══════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" (click)="cerrarModal()">
+
+  <!-- ══ PANEL ══ -->
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+
+    <!-- Barra de progreso superior -->
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="(paso() / 3) * 100"></div>
+    </div>
+
+    <!-- ── HEADER ─────────────────────────────────────────── -->
+    <div class="modal-header">
+      <div>
+        <div class="modal-eyebrow">Inscripción al campeonato</div>
+        <h2 class="modal-title">{{ campeonato.nombre }}</h2>
+        <p class="modal-sub">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          {{ formatDate(campeonato.fechaInicio) }} · {{ campeonato.ubicacion }}
+        </p>
+      </div>
+      <button class="close-btn" (click)="cerrarModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ── STEPPER ────────────────────────────────────────── -->
+    <div class="stepper">
+      @for (p of pasos; track p.id) {
+        <div class="step" [class.active]="paso() === p.id" [class.done]="paso() > p.id">
+          <span class="step-dot">
+            @if (paso() > p.id) {
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            } @else {
+              {{ p.id }}
+            }
+          </span>
+          <span class="step-label">{{ p.label }}</span>
+        </div>
+        @if (p.id < 3) { <div class="step-line" [class.done]="paso() > p.id"></div> }
+      }
+    </div>
+
+    <!-- ── ERROR ──────────────────────────────────────────── -->
+    @if (error()) {
+      <div class="error-banner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════
+         PASO 1 · IDENTIFICACIÓN
+    ══════════════════════════════════════════════════════════ -->
+    @if (paso() === 1) {
+      <div class="step-content">
+        <p class="step-description">
+          Inicia sesión con tus credenciales de competidor para acceder al formulario de inscripción.
+        </p>
+
+        <div class="form-field">
+          <label class="field-label">DNI</label>
+          <div class="input-wrap">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            <input
+              class="field-input"
+              type="text" placeholder="12345678A" maxlength="9"
+              [value]="dni()"
+              (input)="dni.set($any($event.target).value.toUpperCase())"
+              (keydown.enter)="login()"
+            />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">Contraseña</label>
+          <div class="input-wrap">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input
+              class="field-input pr-10"
+              [type]="showPass() ? 'text' : 'password'"
+              placeholder="••••••••"
+              [value]="password()"
+              (input)="password.set($any($event.target).value)"
+              (keydown.enter)="login()"
+            />
+            <button type="button" class="eye-btn" (click)="showPass.set(!showPass())">
+              @if (showPass()) {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              } @else {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-primary" (click)="login()" [disabled]="loading()">
+          @if (loading()) {
+            <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+            Verificando...
+          } @else {
+            Continuar
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          }
+        </button>
+
+        <p class="hint-text">
+          ¿No tienes cuenta? Contacta con tu federación para registrarte como competidor.
+        </p>
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════
+         PASO 2 · SELECCIÓN DE CATEGORÍAS
+    ══════════════════════════════════════════════════════════ -->
+    @if (paso() === 2) {
+      <div class="step-content">
+
+        <!-- Competidor logueado -->
+        <div class="competidor-chip">
+          <span class="chip-avatar">{{ auth.currentCompetidor()?.nombre?.charAt(0) }}</span>
+          <div>
+            <p class="chip-name">{{ auth.currentCompetidor()?.nombre }}</p>
+            <p class="chip-sub">Competidor identificado</p>
+          </div>
+          <button class="chip-logout" (click)="auth.logout(); paso.set(1)" title="Cambiar cuenta">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="step-description">
+          Selecciona la/las categorías en las que deseas participar. Las categorías marcadas en gris ya tienes inscripción confirmada.
+        </p>
+
+        <div class="cat-scroll">
+
+          <!-- MASCULINO -->
+          @if (objectKeys(masculino()).length > 0) {
+            <div class="genero-block blue">
+              <div class="genero-header">
+                <span class="genero-dot"></span>
+                <span class="genero-label">Masculino</span>
+              </div>
+              <div class="genero-body">
+                @for (modalidad of objectKeys(masculino()); track modalidad) {
+                  <div class="modalidad-group">
+                    <p class="modalidad-title">
+                      <span class="modalidad-line"></span>{{ modalidad }}
+                    </p>
+                    @for (cat of masculino()[modalidad]; track cat.id) {
+                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id)" [class.checked]="estaSeleccionada(cat.id)">
+                        <input
+                          type="checkbox"
+                          [checked]="estaSeleccionada(cat.id) || estaYaInscrito(cat.id)"
+                          [disabled]="estaYaInscrito(cat.id)"
+                          (change)="toggleCategoria(cat.id)"
+                          class="cat-check"
+                        />
+                        <span class="cat-name">{{ cat.nombre }}</span>
+                        <span class="cat-meta">
+                          @if (cat.edadMinima && cat.edadMaxima) { {{ cat.edadMinima }}–{{ cat.edadMaxima }} años · }
+                          @if (cat.pesoMaximo && !cat.pesoMinimo) { &lt;{{ cat.pesoMaximo }}kg }
+                          @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
+                          @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
+                        </span>
+                        @if (estaYaInscrito(cat.id)) {
+                          <span class="already-badge">Inscrito</span>
+                        }
+                      </label>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- FEMENINO -->
+          @if (objectKeys(femenino()).length > 0) {
+            <div class="genero-block pink">
+              <div class="genero-header">
+                <span class="genero-dot"></span>
+                <span class="genero-label">Femenino</span>
+              </div>
+              <div class="genero-body">
+                @for (modalidad of objectKeys(femenino()); track modalidad) {
+                  <div class="modalidad-group">
+                    <p class="modalidad-title">
+                      <span class="modalidad-line"></span>{{ modalidad }}
+                    </p>
+                    @for (cat of femenino()[modalidad]; track cat.id) {
+                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id)" [class.checked]="estaSeleccionada(cat.id)">
+                        <input
+                          type="checkbox"
+                          [checked]="estaSeleccionada(cat.id) || estaYaInscrito(cat.id)"
+                          [disabled]="estaYaInscrito(cat.id)"
+                          (change)="toggleCategoria(cat.id)"
+                          class="cat-check"
+                        />
+                        <span class="cat-name">{{ cat.nombre }}</span>
+                        <span class="cat-meta">
+                          @if (cat.edadMinima && cat.edadMaxima) { {{ cat.edadMinima }}–{{ cat.edadMaxima }} años · }
+                          @if (cat.pesoMaximo && !cat.pesoMinimo) { &lt;{{ cat.pesoMaximo }}kg }
+                          @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
+                          @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
+                        </span>
+                        @if (estaYaInscrito(cat.id)) {
+                          <span class="already-badge">Inscrita</span>
+                        }
+                      </label>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+        </div><!-- /cat-scroll -->
+
+        <div class="step-footer">
+          <span class="sel-count">
+            {{ seleccionadas().size }} categoría{{ seleccionadas().size !== 1 ? 's' : '' }} seleccionada{{ seleccionadas().size !== 1 ? 's' : '' }}
+          </span>
+          <button class="btn-primary" (click)="siguientePaso()" [disabled]="seleccionadas().size === 0">
+            Revisar inscripción
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════
+         PASO 3 · CONFIRMACIÓN + RGPD
+    ══════════════════════════════════════════════════════════ -->
+    @if (paso() === 3) {
+      <div class="step-content">
+
+        <p class="step-description">
+          Revisa tu inscripción y acepta el tratamiento de datos antes de confirmar.
+        </p>
+
+        <!-- Resumen -->
+        <div class="resumen-card">
+          <div class="resumen-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>{{ auth.currentCompetidor()?.nombre }}</span>
+          </div>
+          <div class="resumen-cats">
+            @for (cat of categoriasParaConfirmar(); track cat.id) {
+              <div class="resumen-cat-row">
+                <span class="resumen-cat-dot" [class.blue]="cat.genero === 'M'" [class.pink]="cat.genero === 'F'"></span>
+                <span class="resumen-cat-name">{{ cat.nombre }}</span>
+                <span class="resumen-cat-mod">{{ cat.modalidad }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ── CHECKBOX RGPD (OBLIGATORIO) ──────────────────────────────── -->
+        <div class="rgpd-block" [class.rgpd-error]="error() && !consentimiento()">
+
+          <label class="rgpd-label">
+            <span class="rgpd-check-wrap">
+              <input
+                type="checkbox"
+                [checked]="consentimiento()"
+                (change)="consentimiento.set($any($event.target).checked)"
+                class="rgpd-check"
+              />
+              <span class="custom-check">
+                @if (consentimiento()) {
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                }
+              </span>
+            </span>
+            <span class="rgpd-text">
+              Acepto el tratamiento de mis datos personales
+              (<strong>Nombre, Apellidos y Club</strong>) para la gestión del campeonato
+              y su publicación en los cuadros de emparejamientos (sorteos) y resultados del evento,
+              conforme a lo establecido en el
+              <abbr title="Reglamento General de Protección de Datos">RGPD</abbr>
+              (UE) 2016/679 y la normativa española aplicable.
+            </span>
+          </label>
+
+          <div class="rgpd-info">
+            <svg class="rgpd-info-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p class="rgpd-info-text">
+              Tus datos se usarán exclusivamente para este campeonato. Puedes ejercer tus derechos de
+              acceso, rectificación y supresión contactando con tu federación autonómica.
+              Este consentimiento es <strong>necesario para participar</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step-footer two-buttons">
+          <button class="btn-secondary" (click)="volverAPaso2()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Volver
+          </button>
+          <button
+            class="btn-primary"
+            (click)="confirmarInscripcion()"
+            [disabled]="loading() || !consentimiento()"
+          >
+            @if (loading()) {
+              <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              Inscribiendo...
+            } @else {
+              Confirmar inscripción
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            }
+          </button>
+        </div>
+
+      </div>
+    }
+
+  </div><!-- /modal-panel -->
+</div><!-- /backdrop -->
