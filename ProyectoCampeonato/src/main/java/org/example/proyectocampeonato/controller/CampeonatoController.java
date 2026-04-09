@@ -12,6 +12,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/campeonatos")
+@CrossOrigin(origins = "https://www.campeonatolive.online")
 public class CampeonatoController {
 
     private final CampeonatoService service;
