@@ -179,13 +179,13 @@
                     <p class="modalidad-title">
                       <span class="modalidad-line"></span>{{ modalidad }}
                     </p>
-                    @for (cat of masculino()[modalidad]; track cat.id) {
-                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id)" [class.checked]="estaSeleccionada(cat.id)">
+                    @for (cat of masculino()[modalidad]; track cat.id_categoria) {
+                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id_categoria)" [class.checked]="estaSeleccionada(cat.id_categoria)">
                         <input
                           type="checkbox"
-                          [checked]="estaSeleccionada(cat.id) || estaYaInscrito(cat.id)"
-                          [disabled]="estaYaInscrito(cat.id)"
-                          (change)="toggleCategoria(cat.id)"
+                          [checked]="estaSeleccionada(cat.id_categoria) || estaYaInscrito(cat.id_categoria)"
+                          [disabled]="estaYaInscrito(cat.id_categoria)"
+                          (change)="toggleCategoria(cat.id_categoria)"
                           class="cat-check"
                         />
                         <span class="cat-name">{{ cat.nombre }}</span>
@@ -195,7 +195,7 @@
                           @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
                           @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
                         </span>
-                        @if (estaYaInscrito(cat.id)) {
+                        @if (estaYaInscrito(cat.id_categoria)) {
                           <span class="already-badge">Inscrito</span>
                         }
                       </label>
@@ -219,13 +219,13 @@
                     <p class="modalidad-title">
                       <span class="modalidad-line"></span>{{ modalidad }}
                     </p>
-                    @for (cat of femenino()[modalidad]; track cat.id) {
-                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id)" [class.checked]="estaSeleccionada(cat.id)">
+                    @for (cat of femenino()[modalidad]; track cat.id_categoria) {
+                      <label class="cat-row" [class.already]="estaYaInscrito(cat.id_categoria)" [class.checked]="estaSeleccionada(cat.id_categoria)">
                         <input
                           type="checkbox"
-                          [checked]="estaSeleccionada(cat.id) || estaYaInscrito(cat.id)"
-                          [disabled]="estaYaInscrito(cat.id)"
-                          (change)="toggleCategoria(cat.id)"
+                          [checked]="estaSeleccionada(cat.id_categoria) || estaYaInscrito(cat.id_categoria)"
+                          [disabled]="estaYaInscrito(cat.id_categoria)"
+                          (change)="toggleCategoria(cat.id_categoria)"
                           class="cat-check"
                         />
                         <span class="cat-name">{{ cat.nombre }}</span>
@@ -235,7 +235,7 @@
                           @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
                           @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
                         </span>
-                        @if (estaYaInscrito(cat.id)) {
+                        @if (estaYaInscrito(cat.id_categoria)) {
                           <span class="already-badge">Inscrita</span>
                         }
                       </label>
@@ -283,7 +283,7 @@
             <span>{{ auth.currentCompetidor()?.nombre }}</span>
           </div>
           <div class="resumen-cats">
-            @for (cat of categoriasParaConfirmar(); track cat.id) {
+            @for (cat of categoriasParaConfirmar(); track cat.id_categoria) {
               <div class="resumen-cat-row">
                 <span class="resumen-cat-dot" [class.blue]="cat.genero === 'M'" [class.pink]="cat.genero === 'F'"></span>
                 <span class="resumen-cat-name">{{ cat.nombre }}</span>
