@@ -12,6 +12,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "https://www.campeonatolive.online")
+
 public class UsuarioController {
 
     private final UsuarioService service;

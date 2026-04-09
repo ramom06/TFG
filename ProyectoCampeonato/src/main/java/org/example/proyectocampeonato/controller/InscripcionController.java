@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/inscripciones")
+@CrossOrigin(origins = "https://www.campeonatolive.online")
 public class InscripcionController {
 
     private final InscripcionService service;

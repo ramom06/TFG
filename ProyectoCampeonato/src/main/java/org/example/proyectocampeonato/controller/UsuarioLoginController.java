@@ -13,6 +13,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "https://www.campeonatolive.online")
 public class UsuarioLoginController {
 
     private final UsuarioRepository usuarioRepository;
