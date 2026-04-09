@@ -1,5 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+
 
 export interface UsuarioAuth {
   id: number;
@@ -11,7 +13,8 @@ export interface UsuarioAuth {
 @Injectable({ providedIn: 'root' })
 export class AutenticacionService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/usuarios';
+  private readonly apiUrl = `${environment.apiUrl}/api/usuarios`;
+
   private readonly SESSION_KEY = 'admin_session';
 
   currentUser = signal<UsuarioAuth | null>(this.loadSession());

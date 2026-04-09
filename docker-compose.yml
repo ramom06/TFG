@@ -29,7 +29,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/campeonato?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: campeonato
       SPRING_DATASOURCE_PASSWORD: campeonato123
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
     depends_on:
       mysql:
         condition: service_healthy

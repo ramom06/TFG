@@ -106,7 +106,7 @@ export class CampeonatoAdminComponent implements OnInit {
   async cargarTodasCategorias(): Promise<void> {
     try {
       // Usamos el endpoint GET /api/categorias (ya existe)
-      const response = await fetch('http://localhost:8080/api/categorias');
+const response = await fetch(`${environment.apiUrl}/api/categorias`);
       if (!response.ok) throw new Error();
       const data: Categoria[] = await response.json();
       this.todasCategorias.set(data);

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {CategoriaProvider} from '../provider/categoria-provider';
 import { Categoria } from "../interfaces/categoria";
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriaService implements CategoriaProvider {
-  private readonly apiUrl = 'http://localhost:8080/api/campeonatos';
+  private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
+
 
   async getCategoriasPorCampeonato(idCampeonato: number): Promise<Categoria[]> {
     const response = await fetch(`${this.apiUrl}/${idCampeonato}/categorias`);
