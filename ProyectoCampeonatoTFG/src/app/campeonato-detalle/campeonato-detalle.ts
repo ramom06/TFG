@@ -16,7 +16,7 @@ import { InscripcionComponent } from '../inscripcion/inscripcion';
   templateUrl: './campeonato-detalle.html',
   styleUrl: './campeonato-detalle.css',
 })
-export class CampeonatoDetalleComponent implements OnInit {
+export class CampeonatoDetalle implements OnInit {
   private route    = inject(ActivatedRoute);
   private CampServ = inject(CampeonatoService);
   private CatServ  = inject(CategoriaService);

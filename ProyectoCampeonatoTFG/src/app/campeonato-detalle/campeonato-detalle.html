@@ -272,7 +272,7 @@
 
 <!-- ── MODAL INSCRIPCIÓN (nuevo) ───────────────────────────────────────────── -->
 @if (inscripcionModalAbierto() && campeonato()) {
-  <app-inscripcion-modal
+  <app-inscripcion
     [campeonato]="campeonato()!"
     (cerrar)="cerrarInscripcionModal()"
     (inscritoOk)="onInscritoOk()"
