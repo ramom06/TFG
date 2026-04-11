@@ -9,9 +9,9 @@ import { Campeonato }    from '../interfaces/campeonato';
 import { Categoria }     from '../interfaces/categoria';
 import { Inscripcion }   from '../interfaces/inscripcion';
 
-import { CategoriaService }           from '../service/categoria-service';
+import { CategoriaService }             from '../service/categoria-service';
 import { InscripcionCompetidorService } from '../service/inscripcion-competidor-service';
-import { CompetidorAuthService }       from '../service/competidor-auth-service';
+import { CompetidorAuthService }        from '../service/competidor-auth-service';
 
 interface Paso { id: number; label: string }
 
@@ -20,37 +20,35 @@ interface Paso { id: number; label: string }
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './inscripcion.html',
-  styleUrl:    './inscripcion.css',
 })
 export class InscripcionComponent implements OnInit {
 
   @Input()  campeonato!: Campeonato;
-  @Output() cerrar       = new EventEmitter<void>();
-  @Output() inscritoOk   = new EventEmitter<void>();
+  @Output() cerrar     = new EventEmitter<void>();
+  @Output() inscritoOk = new EventEmitter<void>();
 
   // ── Servicios ──────────────────────────────────────────────────────────────
-  private catSvc   = inject(CategoriaService);
-  private inscSvc  = inject(InscripcionCompetidorService);
-  readonly auth    = inject(CompetidorAuthService);
+  private catSvc  = inject(CategoriaService);
+  private inscSvc = inject(InscripcionCompetidorService);
+  readonly auth   = inject(CompetidorAuthService);
 
   // ── Estado UI ──────────────────────────────────────────────────────────────
-  paso             = signal<number>(1);   // 1 = login, 2 = selección, 3 = confirmación
-  loading          = signal(false);
-  error            = signal<string | null>(null);
+  paso    = signal<number>(1);
+  loading = signal(false);
+  error   = signal<string | null>(null);
 
   // ── Login ──────────────────────────────────────────────────────────────────
-  dni              = signal('');
-  password         = signal('');
-  showPass         = signal(false);
+  dni      = signal('');
+  password = signal('');
+  showPass = signal(false);
 
-  // ── Categorías disponibles ─────────────────────────────────────────────────
-  categorias       = signal<Categoria[]>([]);
-  seleccionadas    = signal<Set<number>>(new Set());
-  // Categorías en las que el usuario YA está inscrito
-  yaInscritas      = signal<Set<number>>(new Set());
+  // ── Categorías ─────────────────────────────────────────────────────────────
+  categorias    = signal<Categoria[]>([]);
+  seleccionadas = signal<Set<number>>(new Set());
+  yaInscritas   = signal<Set<number>>(new Set());
 
-  // ── RGPD ──────────────────────────────────────────────────────────────────
-  consentimiento   = signal(false);
+  // ── RGPD ───────────────────────────────────────────────────────────────────
+  consentimiento = signal(false);
 
   // ── Computed ───────────────────────────────────────────────────────────────
   masculino = computed(() =>
@@ -59,7 +57,6 @@ export class InscripcionComponent implements OnInit {
   femenino = computed(() =>
     this.agrupar(this.categorias().filter(c => c.genero === 'F'))
   );
-
   categoriasParaConfirmar = computed(() =>
     this.categorias().filter(c => this.seleccionadas().has(c.id_categoria))
   );
@@ -72,7 +69,6 @@ export class InscripcionComponent implements OnInit {
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   async ngOnInit() {
-    // Si ya hay sesión activa, saltamos el paso de login
     if (this.auth.isLoggedIn()) {
       await this.cargarDatos();
       this.paso.set(2);
@@ -98,7 +94,7 @@ export class InscripcionComponent implements OnInit {
     }
   }
 
-  // ── Cargar categorías e inscripciones ya existentes ────────────────────────
+  // ── Cargar datos del competidor ────────────────────────────────────────────
   private async cargarDatos() {
     const [cats, misIns] = await Promise.all([
       this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
@@ -108,23 +104,22 @@ export class InscripcionComponent implements OnInit {
     ]);
     this.categorias.set(cats);
 
-    // IDs de categorías en ESTE campeonato donde ya está inscrito
     const estecamp = misIns
       .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
       .map(i => i.idCategoria);
     this.yaInscritas.set(new Set(estecamp));
   }
 
-  // ── Selección de categorías ────────────────────────────────────────────────
+  // ── Selección ──────────────────────────────────────────────────────────────
   toggleCategoria(id: number) {
-    if (this.yaInscritas().has(id)) return;   // no se puede desmarcar las ya inscritas
+    if (this.yaInscritas().has(id)) return;
     const s = new Set(this.seleccionadas());
     s.has(id) ? s.delete(id) : s.add(id);
     this.seleccionadas.set(s);
   }
 
-  estaSeleccionada(id: number)  { return this.seleccionadas().has(id); }
-  estaYaInscrito(id: number)    { return this.yaInscritas().has(id); }
+  estaSeleccionada(id: number) { return this.seleccionadas().has(id); }
+  estaYaInscrito(id: number)   { return this.yaInscritas().has(id);   }
 
   siguientePaso() {
     if (this.seleccionadas().size === 0) {
@@ -141,7 +136,7 @@ export class InscripcionComponent implements OnInit {
     this.paso.set(2);
   }
 
-  // ── Confirmar inscripción ──────────────────────────────────────────────────
+  // ── Confirmar ──────────────────────────────────────────────────────────────
   async confirmarInscripcion() {
     if (!this.consentimiento()) {
       this.error.set('Debes aceptar el tratamiento de datos para continuar');
@@ -152,11 +147,9 @@ export class InscripcionComponent implements OnInit {
 
     this.loading.set(true);
     this.error.set(null);
-
     try {
-      const ids = Array.from(this.seleccionadas());
       await Promise.all(
-        ids.map(idCat =>
+        Array.from(this.seleccionadas()).map(idCat =>
           this.inscSvc.inscribir(this.campeonato.id_campeonato, idCat, comp.id)
         )
       );
@@ -183,7 +176,5 @@ export class InscripcionComponent implements OnInit {
     return new Date(d).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  cerrarModal() {
-    this.cerrar.emit();
-  }
+  cerrarModal() { this.cerrar.emit(); }
 }
