@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Inscripcion }  from '../interfaces/inscripcion';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class InscripcionCompetidorService {
 
-  private readonly base = 'http://localhost:8080/api/inscripciones';
+  private readonly base = '${environment.apiUrl}/api/usuarios';
 
   /** Inscribe al competidor en una categoría de un campeonato */
   async inscribir(idCampeonato: number, idCategoria: number, idCompetidor: number): Promise<Inscripcion> {
