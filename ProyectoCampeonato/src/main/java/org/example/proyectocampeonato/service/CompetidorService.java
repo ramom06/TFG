@@ -2,6 +2,7 @@ package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.excepcion.CompetidorNotFoundException;
 import org.example.proyectocampeonato.modelo.Competidor;
+import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.CompetidorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class CompetidorService {
 
     @Transactional
     public Competidor save(Competidor competidor) {
-
+        competidor.setRol(Usuario.Rol.COMPETIDOR);
         competidor.setPassword(passwordEncoder.encode(competidor.getPassword()));
         return competidorRepository.save(competidor);
     }
