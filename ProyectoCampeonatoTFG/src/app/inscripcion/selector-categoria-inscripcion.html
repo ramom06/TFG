@@ -1,32 +1,48 @@
-<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-6 max-h-[50vh] overflow-y-auto pr-2 custom-scroll px-1">
+
+  <p class="text-xs text-gray-400 leading-relaxed">
+    Selecciona las modalidades en las que vas a competir. 
+  </p>
+
   @for (mod of ['Kata', 'Kumite']; track mod) {
-    <div class="flex flex-col gap-2">
-      <h3 class="text-[10px] font-bold uppercase text-[#4b5563] tracking-widest ml-1">
-        {{ mod }}
-      </h3>
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center gap-2 ml-1">
+        <div class="w-1 h-3 bg-[#e01c2e] rounded-full"></div>
+        <h3 class="text-[10px] font-bold uppercase text-gray-500 tracking-[0.2em]">
+          {{ mod }}
+        </h3>
+      </div>
 
-      <div class="max-h-[160px] overflow-y-auto bg-[#0a0f1a] border border-white/5 rounded-xl p-2 custom-scroll">
-
-        @if (secciones()[mod]?.length === 0) {
-          <p class="text-[11px] text-[#4b5563] p-3 italic text-center">
-            No hay categorías disponibles.
-          </p>
+      <div class="grid gap-2">
+        @if (!secciones()[mod] || secciones()[mod].length === 0) {
+          <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl text-center">
+            <p class="text-[11px] text-gray-600 italic">No hay categorías de {{ mod }} disponibles</p>
+          </div>
         }
 
         @for (cat of secciones()[mod]; track cat.id_categoria) {
-          <label class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
-                 [class.opacity-50]="yaInscritasIds.has(cat.id_categoria)">
+          <label class="group relative flex items-center gap-4 p-4 bg-[#141a24] border border-white/10 rounded-xl cursor-pointer transition-all hover:border-[#e01c2e]/50"
+                 [class.opacity-50]="yaInscritasIds.has(cat.id_categoria)"
+                 [class.pointer-events-none]="yaInscritasIds.has(cat.id_categoria)">
 
-            <input type="checkbox"
-                   [checked]="estaSeleccionada(cat.id_categoria) || yaInscritasIds.has(cat.id_categoria)"
-                   [disabled]="yaInscritasIds.has(cat.id_categoria)"
-                   (change)="toggleCategoria(cat.id_categoria)"
-                   class="w-4 h-4 accent-[#e01c2e]" />
+            <div class="relative flex items-center justify-center">
+              <input type="checkbox"
+                     [checked]="estaSeleccionada(cat.id_categoria) || yaInscritasIds.has(cat.id_categoria)"
+                     [disabled]="yaInscritasIds.has(cat.id_categoria)"
+                     (change)="toggleCategoria(cat.id_categoria)"
+                     class="peer h-5 w-5 appearance-none rounded border border-white/20 bg-white/5 checked:bg-[#e01c2e] checked:border-[#e01c2e] transition-all cursor-pointer" />
+              <svg class="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
 
-            <div class="flex flex-col">
-              <span class="text-[13px] text-[#eef0f4]">{{ cat.nombre }}</span>
+            <div class="flex flex-col flex-1">
+              <span class="text-sm font-medium text-[#eef0f4] group-hover:text-white transition-colors">
+                {{ cat.nombre }}
+              </span>
               @if (yaInscritasIds.has(cat.id_categoria)) {
-                <span class="text-[9px] font-bold text-green-500 uppercase">Ya inscrito</span>
+                <span class="text-[9px] font-bold text-green-500 uppercase mt-0.5 tracking-wider">Ya estás inscrito</span>
               }
             </div>
           </label>

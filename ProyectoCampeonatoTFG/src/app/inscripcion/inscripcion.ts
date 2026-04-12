@@ -86,6 +86,7 @@ export class InscripcionComponent implements OnInit {
 
   onAuthSuccess() {
     this.prepararInscripcion();
+    this.error.set(null);
     this.flujo.set('categorias');
   }
 
