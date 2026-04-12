@@ -10,8 +10,7 @@ import { CategoriaService } from '../service/categoria-service';
 import { InscripcionCompetidorService } from '../service/inscripcion-competidor-service';
 import { CompetidorAuthService } from '../service/competidor-auth-service';
 import { ValidadorService } from '../service/validador-service';
-
-interface Paso { id: number; label: string }
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-inscripcion',
@@ -20,98 +19,157 @@ interface Paso { id: number; label: string }
   templateUrl: './inscripcion.html',
 })
 export class InscripcionComponent implements OnInit {
-  // --- Inyecciones ---
   private catSvc       = inject(CategoriaService);
   private inscSvc      = inject(InscripcionCompetidorService);
-  private validadorSvc = inject(ValidadorService); // <--- Inyectamos
+  private validadorSvc = inject(ValidadorService);
   readonly auth        = inject(CompetidorAuthService);
-  passwordInput = '';
 
   @Input() campeonato!: Campeonato;
-  @Output() cerrar = new EventEmitter<void>();
+  @Output() cerrar     = new EventEmitter<void>();
   @Output() inscritoOk = new EventEmitter<void>();
 
-  // --- Estado UI ---
-  paso    = signal<number>(1);
+  // ── Flujo ────────────────────────────────────────────────
+  // 'elegir'   → ¿tienes cuenta o no?
+  // 'login'    → formulario login
+  // 'registro' → formulario nuevo usuario
+  // 'categorias' → selección de categorías
+  // 'confirmar'  → resumen + consentimiento
+  flujo = signal<'elegir' | 'login' | 'registro' | 'categorias' | 'confirmar'>('elegir');
+
   loading = signal(false);
   error   = signal<string | null>(null);
 
-  // --- Campos y Validaciones con Signals ---
-  dni          = signal('');
-  password     = signal('');
-  showPass     = signal(false);
-  intentoLogin = signal(false);
-  mostrarReglas = signal(false);
+  // ── Login ─────────────────────────────────────────────────
+  dniLogin      = signal('');
+  passwordLogin = signal('');
+  showPassLogin = signal(false);
+  intentoLogin  = signal(false);
 
-  // Delegamos la validación al servicio mediante computed
-  dniValidacion = computed(() => this.validadorSvc.validarDNI(this.dni()));
-  dniValido     = computed(() => this.dniValidacion().valido);
-  dniError      = computed(() => this.intentoLogin() && !this.dniValido() ? this.dniValidacion().mensaje : null);
+  dniLoginVal  = computed(() => this.validadorSvc.validarDNI(this.dniLogin()));
+  dniLoginErr  = computed(() => this.intentoLogin() && !this.dniLoginVal().valido ? this.dniLoginVal().mensaje : null);
+  passLoginErr = computed(() => this.intentoLogin() && !this.passwordLogin() ? 'Introduce tu contraseña' : null);
 
-  reglasEstado   = computed(() => this.validadorSvc.getReglasEstado(this.password()));
-  passwordValida = computed(() => this.validadorSvc.isPasswordValida(this.password()));
-  passwordError  = computed(() => this.intentoLogin() && !this.passwordValida() ? 'La contraseña no es segura' : null);
+  // ── Registro ──────────────────────────────────────────────
+  regNombre      = signal('');
+  regApellidos   = signal('');
+  regDni         = signal('');
+  regEmail       = signal('');
+  regPassword    = signal('');
+  regClub        = signal('');
+  regFedAuton    = signal('');
+  regFechaNac    = signal('');
+  regGenero      = signal<'M' | 'F'>('M');
+  showPassReg    = signal(false);
+  intentoReg     = signal(false);
 
-  // --- Datos de categorías ---
+  dniRegVal    = computed(() => this.validadorSvc.validarDNI(this.regDni()));
+  passRegReglas = computed(() => this.validadorSvc.getReglasEstado(this.regPassword()));
+  passRegValida = computed(() => this.validadorSvc.isPasswordValida(this.regPassword()));
+
+  // ── Categorías ────────────────────────────────────────────
   categorias    = signal<Categoria[]>([]);
   seleccionadas = signal<Set<number>>(new Set());
   yaInscritas   = signal<Set<number>>(new Set());
   consentimiento = signal(false);
 
-  // --- Computed para la vista ---
   masculino = computed(() => this.agrupar(this.categorias().filter(c => c.genero === 'M')));
   femenino  = computed(() => this.agrupar(this.categorias().filter(c => c.genero === 'F')));
-  categoriasParaConfirmar = computed(() => this.categorias().filter(c => this.seleccionadas().has(c.id_categoria)));
+  categoriasParaConfirmar = computed(() =>
+    this.categorias().filter(c => this.seleccionadas().has(c.id_categoria))
+  );
 
-  readonly pasos: Paso[] = [
-    { id: 1, label: 'Identificación' },
-    { id: 2, label: 'Categorías' },
-    { id: 3, label: 'Confirmación' },
-  ];
+  readonly objectKeys = Object.keys;
 
   async ngOnInit() {
+    // Si ya hay sesión activa, saltar directamente a categorías
     if (this.auth.isLoggedIn()) {
-      await this.cargarDatos();
-      this.paso.set(2);
+      await this.cargarCategorias();
+      this.flujo.set('categorias');
     }
   }
 
+  // ── Paso 1: elegir ────────────────────────────────────────
+  irALogin()    { this.error.set(null); this.flujo.set('login');    }
+  irARegistro() { this.error.set(null); this.flujo.set('registro'); }
+
+  // ── Paso 2a: login ────────────────────────────────────────
   async login() {
     this.intentoLogin.set(true);
-    if (!this.dniValido() || !this.passwordValida()) return;
+    if (!this.dniLoginVal().valido || !this.passwordLogin()) return;
 
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.login(this.dni(), this.password());
-      await this.cargarDatos();
-      this.paso.set(2);
+      await this.auth.login(this.dniLogin(), this.passwordLogin());
+      await this.cargarCategorias();
+      this.flujo.set('categorias');
     } catch (e: any) {
-      this.error.set(e.message?.includes('fetch') ? 'Error de conexión con el servidor' : 'DNI o contraseña incorrectos');
+      this.error.set(e.message ?? 'Error al iniciar sesión');
     } finally {
       this.loading.set(false);
     }
   }
 
-  // ... (cargarDatos, toggleCategoria, confirmarInscripcion y agrupar se mantienen igual)
-  // Nota: asegúrate de que agrupar use cat.modalidad para las llaves.
+  // ── Paso 2b: registro ─────────────────────────────────────
+  async registro() {
+    this.intentoReg.set(true);
 
-  private async cargarDatos() {
+    if (
+      !this.regNombre() || !this.regApellidos() || !this.dniRegVal().valido ||
+      !this.regEmail() || !this.passRegValida() || !this.regClub() ||
+      !this.regFedAuton() || !this.regFechaNac()
+    ) return;
+
+    this.loading.set(true);
+    this.error.set(null);
     try {
-      const [cats, misIns] = await Promise.all([
-        this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
-        this.auth.currentCompetidor()
-          ? this.inscSvc.getMisInscripciones(this.auth.currentCompetidor()!.id).catch(() => [] as Inscripcion[])
-          : Promise.resolve([] as Inscripcion[]),
-      ]);
-      this.categorias.set(cats);
-      const estecamp = misIns
-        .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
-        .map(i => i.idCategoria);
-      this.yaInscritas.set(new Set(estecamp));
-    } catch (e) {
-      this.error.set('Error al cargar datos del campeonato');
+      // Crear el competidor en el backend
+      const body = {
+        nombre:               this.regNombre(),
+        apellidos:            this.regApellidos(),
+        dni:                  this.regDni().toUpperCase(),
+        email:                this.regEmail(),
+        password:             this.regPassword(),
+        club:                 this.regClub(),
+        federacionAutonomica: this.regFedAuton(),
+        fechaNacimiento:      this.regFechaNac(),
+        genero:               this.regGenero(),
+        rol:                  'COMPETIDOR',
+      };
+
+      const res = await fetch(`${environment.apiUrl}/api/competidores`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body),
+      });
+
+      if (res.status === 409) throw new Error('Ya existe una cuenta con ese DNI o email');
+      if (!res.ok) throw new Error('Error al crear la cuenta');
+
+      // Login automático tras registro
+      await this.auth.login(this.regDni(), this.regPassword());
+      await this.cargarCategorias();
+      this.flujo.set('categorias');
+    } catch (e: any) {
+      this.error.set(e.message ?? 'Error al crear la cuenta');
+    } finally {
+      this.loading.set(false);
     }
+  }
+
+  // ── Paso 3: categorías ────────────────────────────────────
+  private async cargarCategorias() {
+    const [cats, misIns] = await Promise.all([
+      this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
+      this.auth.currentCompetidor()
+        ? this.inscSvc.getMisInscripciones(this.auth.currentCompetidor()!.id).catch(() => [] as Inscripcion[])
+        : Promise.resolve([] as Inscripcion[]),
+    ]);
+    this.categorias.set(cats);
+    const yaInsc = misIns
+      .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
+      .map(i => i.idCategoria);
+    this.yaInscritas.set(new Set(yaInsc));
   }
 
   toggleCategoria(id: number) {
@@ -122,14 +180,17 @@ export class InscripcionComponent implements OnInit {
   }
 
   estaSeleccionada(id: number) { return this.seleccionadas().has(id); }
-  estaYaInscrito(id: number) { return this.yaInscritas().has(id); }
+  estaYaInscrito(id: number)   { return this.yaInscritas().has(id); }
 
-  siguientePaso() { if (this.seleccionadas().size > 0) this.paso.set(3); }
-  volverAPaso2()  { this.paso.set(2); }
+  siguientePaso() {
+    if (this.seleccionadas().size > 0) this.flujo.set('confirmar');
+  }
 
+  // ── Paso 4: confirmar ─────────────────────────────────────
   async confirmarInscripcion() {
     if (!this.consentimiento()) return;
     this.loading.set(true);
+    this.error.set(null);
     try {
       const compId = this.auth.currentCompetidor()!.id;
       await Promise.all(
@@ -138,8 +199,8 @@ export class InscripcionComponent implements OnInit {
         )
       );
       this.inscritoOk.emit();
-    } catch (e) {
-      this.error.set('Error al procesar la inscripción');
+    } catch (e: any) {
+      this.error.set(e.message ?? 'Error al procesar la inscripción');
     } finally {
       this.loading.set(false);
     }
@@ -153,7 +214,6 @@ export class InscripcionComponent implements OnInit {
     }, {} as Record<string, Categoria[]>);
   }
 
-  readonly objectKeys = Object.keys;
-  formatDate(d: string) { return new Date(d).toLocaleDateString(); }
-  cerrarModal() { this.cerrar.emit(); }
+  formatDate(d: string) { return new Date(d).toLocaleDateString('es-ES'); }
+  cerrarModal()         { this.cerrar.emit(); }
 }
