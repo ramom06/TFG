@@ -205,7 +205,6 @@
               </div>
             </div>
             }
-            }
           </div>
         }
       </div>
@@ -235,7 +234,6 @@
           </p>
           <h3 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase">{{ categoriaSeleccionada()?.nombre }}</h3>
         </div>
-
         @if (puedeVerSorteo()) {
           <a [routerLink]="['/campeonato', campeonato()!.id_campeonato,
                     'categoria', categoriaSeleccionada()!.id_categoria, 'sorteo']"
