@@ -1,15 +1,19 @@
 @if (campeonato()) {
-  <div class="flex flex-col lg:flex-row gap-8 mb-8">
+  <div class="flex flex-col lg:flex-row gap-6 mb-8 items-stretch">
 
-    <div class="relative w-full lg:w-1/3 shrink-0 rounded-2xl overflow-hidden border border-white/[0.07] bg-[#0d1117]">
+    <div class="relative w-full lg:w-[350px] shrink-0 rounded-2xl overflow-hidden border border-white/[0.07] bg-[#0d1117]">
       <img [src]="campeonato()!.urlPortada"
            [alt]="campeonato()!.nombre"
-           class="w-full h-full object-cover">
+           class="w-full h-full object-cover min-h-[400px]">
 
-      <div class="absolute inset-0 bg-gradient-to-t from-[#06080f]/80 via-transparent to-transparent pointer-events-none"></div>
-      <div class="absolute bottom-4 left-4 flex gap-2 flex-wrap">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#06080f] via-[rgba(6,8,15,0.4)] to-transparent pointer-events-none"></div>
+
+      <div class="absolute bottom-5 left-6 flex gap-2 flex-wrap">
             <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[rgba(224,28,46,0.85)] text-white backdrop-blur-sm">
               {{ campeonato()!.nivel }}
+            </span>
+        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-black/60 text-[#8b95a3] backdrop-blur-sm border border-white/10">
+              {{ campeonato()!.estado }}
             </span>
       </div>
     </div>
@@ -17,49 +21,59 @@
     <div class="relative flex-1 bg-[#0d1117] border border-white/[0.07] rounded-2xl p-7 overflow-hidden flex flex-col justify-center">
       <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
 
-      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+      <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-5">
         <div class="flex-1">
-              <span class="inline-block mb-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/5 text-[#8b95a3] border border-white/10">
-                {{ campeonato()!.estado }}
-              </span>
-
-          <h1 class="font-['Bebas_Neue',sans-serif] text-[clamp(28px,4vw,48px)] tracking-wider uppercase leading-tight mb-4">
+          <h1 class="font-['Bebas_Neue',sans-serif] text-[clamp(28px,4vw,52px)] tracking-wider uppercase leading-none mb-6">
             {{ campeonato()!.nombre }}
           </h1>
 
           <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#8b95a3] mb-6">
                 <span class="flex items-center gap-2">
-                  <svg class="opacity-50 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                  <svg class="opacity-50 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                   </svg>
                   {{ campeonato()!.fechaInicio | date:'dd/MM/yyyy' }}
                 </span>
             <span class="flex items-center gap-2">
-                  <svg class="opacity-50 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg class="opacity-50 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
               {{ campeonato()!.ubicacion }}
                 </span>
           </div>
 
-          <p class="text-sm text-[#8b95a3] leading-relaxed max-w-2xl">
+          <p class="text-sm text-[#8b95a3] leading-relaxed">
             {{ campeonato()!.descripcion || 'Sin descripción disponible.' }}
           </p>
         </div>
 
-        <div class="shrink-0">
+        <div class="xl:flex-shrink-0 xl:pl-4">
           @if (puedeInscribirse()) {
-            <button (click)="abrirInscripcionModal()"
-                    class="group flex items-center gap-2.5 bg-[#e01c2e] hover:bg-[#c4192a] text-white text-sm font-bold px-8 py-4 rounded-xl transition-all shadow-[0_4px_24px_rgba(224,28,46,0.4)] hover:-translate-y-0.5">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+            <button
+              (click)="abrirInscripcionModal()"
+              class="group flex items-center gap-2.5 bg-[#e01c2e] hover:bg-[#c4192a] active:bg-[#a8141f]
+                         text-white text-sm font-bold px-6 py-3 rounded-xl transition-all
+                         shadow-[0_4px_24px_rgba(224,28,46,0.4)] hover:shadow-[0_6px_30px_rgba(224,28,46,0.55)]
+                         hover:-translate-y-0.5 whitespace-nowrap w-full sm:w-auto"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round"
+                   class="transition-transform group-hover:scale-110">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
               </svg>
               Inscribirse
             </button>
-            <p class="text-[10px] text-[#4b5563] text-center mt-2">Requiere cuenta de competidor</p>
+            <p class="text-[10px] text-[#4b5563] text-center mt-1.5">Requiere cuenta de competidor</p>
           }
 
           @if (campeonato()!.estado === 'pasado') {
-            <span class="flex items-center gap-2 text-xs text-[#4b5563] bg-white/[0.03] border border-white/[0.06] px-4 py-2.5 rounded-xl">
+            <span class="flex items-center gap-2 text-xs text-[#4b5563] bg-white/[0.03] border border-white/[0.06]
+                             px-4 py-2.5 rounded-xl whitespace-nowrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/>
+                  </svg>
                   Campeonato finalizado
                 </span>
           }
@@ -67,3 +81,4 @@
       </div>
     </div>
   </div>
+}
