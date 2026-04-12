@@ -12,11 +12,11 @@ import { Rol } from '../interfaces/usuario';
   templateUrl: './registro-inscripcion.html'
 })
 export class RegistroInscripcion {
-  // Inyectamos el servicio para poder hacer el login automático después de registrar
   private auth = inject(CompetidorAuthService);
 
   @Output() registroOk = new EventEmitter<void>();
 
+  // Form Fields
   nombre = signal('');
   apellidos = signal('');
   dni = signal('');
@@ -28,16 +28,29 @@ export class RegistroInscripcion {
   genero = signal<'M' | 'F'>('M');
 
   loading = signal(false);
-  error = signal<string | null>(null);
+
+  // Ahora es un objeto para mostrar errores por cada input
+  errores = signal<Record<string, string>>({});
+  errorGlobal = signal<string | null>(null);
 
   async registrar() {
-    if (!this.nombre() || !this.dni() || !this.password()) {
-      this.error.set('Por favor, rellena los campos obligatorios');
-      return;
-    }
+    // 1. Validaciones previas al envío
+    const newErrors: Record<string, string> = {};
+
+    if (!this.nombre()) newErrors['nombre'] = 'El nombre es obligatorio';
+    if (!this.apellidos()) newErrors['apellidos'] = 'Los apellidos son obligatorios';
+    if (!this.dni() || this.dni().length < 9) newErrors['dni'] = 'DNI incompleto o inválido';
+    if (!this.email().includes('@')) newErrors['email'] = 'Email no válido';
+    if (this.password().length < 6) newErrors['password'] = 'Mínimo 6 caracteres';
+    if (!this.fechaNac()) newErrors['fechaNac'] = 'Fecha de nacimiento obligatoria';
+
+    this.errores.set(newErrors);
+
+    // Si hay errores, no seguimos
+    if (Object.keys(newErrors).length > 0) return;
 
     this.loading.set(true);
-    this.error.set(null);
+    this.errorGlobal.set(null);
 
     try {
       const body = {
@@ -53,25 +66,23 @@ export class RegistroInscripcion {
         rol: Rol.COMPETIDOR
       };
 
-      // 1. Creamos la cuenta en el backend
       const res = await fetch(`${environment.apiUrl}/api/competidores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
 
-      if (!res.ok) throw new Error('Error al crear la cuenta. El DNI o Email podrían estar ya en uso.');
+      if (!res.ok) {
+        throw new Error('Error al crear la cuenta. El DNI o Email podrían estar ya en uso.');
+      }
 
-      // 2. LOGUEO AUTOMÁTICO:
-      // Aquí es donde usamos el servicio. Llamamos a login() con los datos que
-      // el usuario acaba de escribir. Así el servicio guarda la sesión en el Storage.
+      // Login automático
       await this.auth.login(this.dni(), this.password());
 
-      // 3. Avisamos al padre (InscripcionComponent) que ya puede pasar a las categorías
       this.registroOk.emit();
 
     } catch (e: any) {
-      this.error.set(e.message);
+      this.errorGlobal.set(e.message);
     } finally {
       this.loading.set(false);
     }
