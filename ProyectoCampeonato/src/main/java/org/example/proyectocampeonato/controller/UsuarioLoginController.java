@@ -57,4 +57,36 @@ public class UsuarioLoginController {
                 "rol",    usuario.getRol().name()
         ));
     }
+
+    @PostMapping("/login-competidor")
+    public ResponseEntity<?> loginCompetidor(@RequestBody Map<String, String> body) {
+        String dni      = body.get("dni");
+        String password = body.get("password");
+
+        var usuarioOpt = usuarioRepository.findByDni(dni);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales incorrectas"));
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales incorrectas"));
+        }
+
+        if (usuario.getRol() != Usuario.Rol.COMPETIDOR) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Esta cuenta no es de competidor"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "id",        usuario.getIdUsuario(),
+                "nombre",    usuario.getNombre(),
+                "apellidos", usuario.getApellidos(),
+                "email",     usuario.getEmail(),
+                "rol",       usuario.getRol().name()
+        ));
+    }
 }

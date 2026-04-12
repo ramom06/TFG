@@ -25,6 +25,7 @@ export class InscripcionComponent implements OnInit {
   private inscSvc      = inject(InscripcionCompetidorService);
   private validadorSvc = inject(ValidadorService); // <--- Inyectamos
   readonly auth        = inject(CompetidorAuthService);
+  passwordInput = '';
 
   @Input() campeonato!: Campeonato;
   @Output() cerrar = new EventEmitter<void>();

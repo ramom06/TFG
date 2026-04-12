@@ -3,7 +3,7 @@ import { CommonModule }       from '@angular/common';
 import { FormsModule }        from '@angular/forms';
 import { CampeonatoService }  from '../service/campeonato-service';
 import { Campeonato, Estado, Nivel } from '../interfaces/campeonato';
-import {RouterLink} from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-campeonato-list',
@@ -14,11 +14,11 @@ import {RouterLink} from '@angular/router';
 })
 export class CampeonatoListComponent implements OnInit {
 
-  campeonatos = signal<Campeonato[]>([]);
-  loading     = signal(true);
-  error       = signal<string | null>(null);
+  campeonatos  = signal<Campeonato[]>([]);
+  loading      = signal(true);
+  error        = signal<string | null>(null);
 
-  searchText  = signal('');
+  searchText   = signal('');
   filtroEstado = signal<Estado | 'todos'>('todos');
   filtroNivel  = signal<Nivel  | 'todos'>('todos');
   sortField    = signal<'fechaInicio' | 'nombre'>('fechaInicio');
@@ -28,11 +28,11 @@ export class CampeonatoListComponent implements OnInit {
   filtered = computed(() => {
     let lista = this.campeonatos();
 
-    const txt = this.searchText().toLowerCase();
+    const txt = this.normalize(this.searchText());
     if (txt)
       lista = lista.filter(c =>
-        c.nombre.toLowerCase().includes(txt) ||
-        c.ubicacion.toLowerCase().includes(txt)
+        this.normalize(c.nombre).includes(txt) ||
+        this.normalize(c.ubicacion).includes(txt)
       );
 
     if (this.filtroEstado() !== 'todos')
@@ -92,5 +92,12 @@ export class CampeonatoListComponent implements OnInit {
     return new Date(date).toLocaleDateString('es-ES', {
       day: '2-digit', month: 'short', year: 'numeric'
     });
+  }
+
+  private normalize(text: string): string {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 }

@@ -50,14 +50,54 @@
         </div>
 
         <div class="mb-5">
-          <label class="block text-[10px] font-bold tracking-[0.14em] uppercase text-[#4b5563] mb-1.5">Contraseña *</label>
+          <label class="block text-[10px] font-bold tracking-[0.14em] uppercase text-[#4b5563] mb-1.5">
+            Contraseña *
+          </label>
           <div class="relative">
-            <input [type]="showPass() ? 'text' : 'password'" [value]="password()"
-                   (input)="password.set($any($event.target).value)"
-                   (focus)="mostrarReglas.set(true)"
-                   class="w-full bg-[#141a24] rounded-lg px-4 py-2.5 text-[#eef0f4] border border-white/10 outline-none focus:border-[#e01c2e]"
-                   [class.border-red-500]="passwordError()" />
+            <input
+              [type]="showPass() ? 'text' : 'password'"
+              [(ngModel)]="passwordInput"
+              (ngModelChange)="password.set($event)"
+              (focus)="mostrarReglas.set(true)"
+              class="w-full bg-[#141a24] rounded-lg px-4 py-2.5 pr-10 text-[#eef0f4]
+             border border-white/10 outline-none focus:border-[#e01c2e]"
+              [class.border-red-500]="passwordError()" />
+            <button type="button" (click)="showPass.set(!showPass())"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#4b5563] hover:text-[#8b95a3]">
+              @if (showPass()) {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              } @else {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              }
+            </button>
           </div>
+
+          <!-- Reglas de contraseña -->
+          @if (mostrarReglas() && password().length > 0) {
+            <div class="mt-2 flex flex-col gap-1">
+              @for (regla of reglasEstado(); track regla.id) {
+                <div class="flex items-center gap-1.5 text-[11px]"
+                     [class]="regla.ok ? 'text-green-400' : 'text-[#4b5563]'">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    @if (regla.ok) {
+                      <polyline points="20 6 9 17 4 12"/>
+                    } @else {
+                      <circle cx="12" cy="12" r="10"/>
+                    }
+                  </svg>
+                  {{ regla.texto }}
+                </div>
+              }
+            </div>
+          }
+
           @if (passwordError()) {
             <p class="mt-1 text-[11px] text-red-400">{{ passwordError() }}</p>
           }

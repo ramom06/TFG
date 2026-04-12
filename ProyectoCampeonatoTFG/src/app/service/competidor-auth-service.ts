@@ -11,25 +11,28 @@ export class CompetidorAuthService {
 
   /** Login con DNI + password: reutiliza el mismo endpoint /api/usuarios/login */
   async login(dni: string, password: string): Promise<CompetidorSesion> {
-    const res = await fetch(`${this.apiUrl}/login`, {
+    const res = await fetch(`${this.apiUrl}/login-competidor`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ dni, password }),
     });
 
     if (res.status === 401) throw new Error('DNI o contraseña incorrectos');
-    if (res.status === 403) throw new Error('Esta cuenta no tiene acceso como competidor');
     if (!res.ok)            throw new Error('No se puede conectar con el servidor');
 
     const data = await res.json();
 
-    // Aceptamos rol COMPETIDOR (o ADMIN durante pruebas)
+    // Aceptamos COMPETIDOR (y ADMIN en pruebas)
+    if (data.rol !== 'COMPETIDOR' && data.rol !== 'ADMIN') {
+      throw new Error('Esta cuenta no es de competidor');
+    }
+
     const sesion: CompetidorSesion = {
-      id:       data.id,
-      nombre:   data.nombre,
+      id:        data.id,
+      nombre:    data.nombre,
       apellidos: data.apellidos ?? '',
-      email:    data.email,
-      rol:      data.rol,
+      email:     data.email,
+      rol:       data.rol,
     };
     this.saveSession(sesion);
     this.currentCompetidor.set(sesion);
