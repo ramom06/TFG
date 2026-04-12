@@ -13,7 +13,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "https://www.campeonatolive.online")
+@CrossOrigin(origins = "*")  // permite también localhost durante desarrollo
 public class UsuarioLoginController {
 
     private final UsuarioRepository usuarioRepository;
@@ -25,30 +25,26 @@ public class UsuarioLoginController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // ── Login ADMIN (existente) ───────────────────────────────
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String dni      = body.get("dni");
         String password = body.get("password");
 
-        log.info("Intento de login para DNI: {}", dni);
-
         var usuarioOpt = usuarioRepository.findByDni(dni);
-        if (usuarioOpt.isEmpty()) {
+        if (usuarioOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas"));
-        }
 
         Usuario usuario = usuarioOpt.get();
 
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        if (!passwordEncoder.matches(password, usuario.getPassword()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas"));
-        }
 
-        if (usuario.getRol() != Usuario.Rol.ADMIN) {
+        if (usuario.getRol() != Usuario.Rol.ADMIN)
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "No tienes permisos de administrador"));
-        }
 
         return ResponseEntity.ok(Map.of(
                 "id",     usuario.getIdUsuario(),
@@ -58,28 +54,26 @@ public class UsuarioLoginController {
         ));
     }
 
+    // ── Login COMPETIDOR (nuevo) ──────────────────────────────
     @PostMapping("/login-competidor")
     public ResponseEntity<?> loginCompetidor(@RequestBody Map<String, String> body) {
         String dni      = body.get("dni");
         String password = body.get("password");
 
         var usuarioOpt = usuarioRepository.findByDni(dni);
-        if (usuarioOpt.isEmpty()) {
+        if (usuarioOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas"));
-        }
 
         Usuario usuario = usuarioOpt.get();
 
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        if (!passwordEncoder.matches(password, usuario.getPassword()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas"));
-        }
 
-        if (usuario.getRol() != Usuario.Rol.COMPETIDOR) {
+        if (usuario.getRol() != Usuario.Rol.COMPETIDOR)
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Esta cuenta no es de competidor"));
-        }
 
         return ResponseEntity.ok(Map.of(
                 "id",        usuario.getIdUsuario(),
