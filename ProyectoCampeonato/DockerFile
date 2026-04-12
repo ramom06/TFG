@@ -1,8 +1,12 @@
-# Compila el proyecto con Maven
+# Descarga lo necesario para compilar
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
+
+#Copia configuracion
 COPY pom.xml .
 COPY src ./src
+
+#Borra archivos viejos y empaqueta el proyecto
 RUN mvn clean package -DskipTests
 
 # Fase 2: imagen final solo con el JAR

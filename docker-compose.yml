@@ -13,6 +13,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    #Chequea la bbdd con un ping cada 10 seg
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -30,6 +31,7 @@ services:
       SPRING_DATASOURCE_USERNAME: campeonato
       SPRING_DATASOURCE_PASSWORD: campeonato123
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      #Seguridad, no arranques hasta que mysql haga el ping
     depends_on:
       mysql:
         condition: service_healthy
