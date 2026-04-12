@@ -9,6 +9,8 @@ export interface ReglaPassword {
 @Injectable({
   providedIn: 'root'
 })
+
+//Esta clase comprueba DNI y Contraseña del user
 export class ValidadorService {
   private readonly LETRAS_DNI = 'TRWAGMYFPDXBNJZSQVHLCKE';
 
@@ -22,17 +24,19 @@ export class ValidadorService {
   validarDNI(dni: string): { valido: boolean; mensaje: string | null } {
     const limpio = dni.trim().toUpperCase();
 
+    //Comprueba longitud
     if (limpio.length !== 9) {
       return { valido: false, mensaje: 'Debe tener 9 caracteres (8 números + letra)' };
     }
 
+    //Separa letras numeros
     const numeros = limpio.slice(0, 8);
     const letra = limpio.slice(8);
 
     if (!/^\d{8}$/.test(numeros)) {
       return { valido: false, mensaje: 'Los primeros 8 caracteres deben ser números' };
     }
-
+    //Divide entre 23 y toma la letra
     const letraEsperada = this.LETRAS_DNI[parseInt(numeros, 10) % 23];
     if (letra !== letraEsperada) {
       return { valido: false, mensaje: `Letra incorrecta. Para ${numeros} corresponde la "${letraEsperada}"` };

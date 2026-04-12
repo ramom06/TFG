@@ -74,6 +74,11 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Login para competidores.
+     * Devuelve id, nombre, apellidos, email, rol y genero.
+     * El campo 'id' (no 'idUsuario') es el que usa el frontend para identificar al competidor.
+     */
     @PostMapping("/login-competidor")
     public ResponseEntity<?> loginCompetidor(@RequestBody Map<String, String> body) {
         String dni      = body.get("dni");
@@ -94,12 +99,15 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Esta cuenta no es de competidor"));
 
+        // Devolvemos 'id' (no 'idUsuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
-                "id",        usuario.getIdUsuario(),
-                "nombre",    usuario.getNombre(),
-                "apellidos", usuario.getApellidos(),
-                "email",     usuario.getEmail(),
-                "rol",       usuario.getRol().name()
+                "id",             usuario.getIdUsuario(),
+                "nombre",         usuario.getNombre(),
+                "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
+                "email",          usuario.getEmail(),
+                "rol",            usuario.getRol().name(),
+                "genero",         String.valueOf(usuario.getGenero()),
+                "fechaNacimiento", usuario.getFechaNacimiento() != null ? usuario.getFechaNacimiento().toString() : ""
         ));
     }
 }

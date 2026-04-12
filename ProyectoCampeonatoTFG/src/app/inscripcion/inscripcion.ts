@@ -29,11 +29,6 @@ export class InscripcionComponent implements OnInit {
   @Output() inscritoOk = new EventEmitter<void>();
 
   // ── Flujo ────────────────────────────────────────────────
-  // 'elegir'   → ¿tienes cuenta o no?
-  // 'login'    → formulario login
-  // 'registro' → formulario nuevo usuario
-  // 'categorias' → selección de categorías
-  // 'confirmar'  → resumen + consentimiento
   flujo = signal<'elegir' | 'login' | 'registro' | 'categorias' | 'confirmar'>('elegir');
 
   loading = signal(false);
@@ -61,6 +56,9 @@ export class InscripcionComponent implements OnInit {
   regGenero      = signal<'M' | 'F'>('M');
   showPassReg    = signal(false);
   intentoReg     = signal(false);
+  // Errores de validación del registro
+  dniRegError    = signal<string | null>(null);
+  emailRegError  = signal<string | null>(null);
 
   dniRegVal    = computed(() => this.validadorSvc.validarDNI(this.regDni()));
   passRegReglas = computed(() => this.validadorSvc.getReglasEstado(this.regPassword()));
@@ -72,8 +70,26 @@ export class InscripcionComponent implements OnInit {
   yaInscritas   = signal<Set<number>>(new Set());
   consentimiento = signal(false);
 
-  masculino = computed(() => this.agrupar(this.categorias().filter(c => c.genero === 'M')));
-  femenino  = computed(() => this.agrupar(this.categorias().filter(c => c.genero === 'F')));
+  /** Género del competidor logueado (para filtrar categorías) */
+  private generoUsuario = computed(() => this.auth.currentCompetidor()?.genero ?? null);
+
+  /** Categorías filtradas por el género del usuario logueado */
+  private categoriasFiltradas = computed(() => {
+    const genero = this.generoUsuario();
+    if (!genero) return this.categorias();
+    return this.categorias().filter(c => c.genero === genero);
+  });
+
+  /** Sección Kumite (filtrado por género y modalidad) */
+  seccionKumite = computed(() =>
+    this.categoriasFiltradas().filter(c => c.modalidad?.toLowerCase() === 'kumite')
+  );
+
+  /** Sección Kata (filtrado por género y modalidad) */
+  seccionKata = computed(() =>
+    this.categoriasFiltradas().filter(c => c.modalidad?.toLowerCase() === 'kata')
+  );
+
   categoriasParaConfirmar = computed(() =>
     this.categorias().filter(c => this.seleccionadas().has(c.id_categoria))
   );
@@ -81,7 +97,6 @@ export class InscripcionComponent implements OnInit {
   readonly objectKeys = Object.keys;
 
   async ngOnInit() {
-    // Si ya hay sesión activa, saltar directamente a categorías
     if (this.auth.isLoggedIn()) {
       await this.cargarCategorias();
       this.flujo.set('categorias');
@@ -113,6 +128,8 @@ export class InscripcionComponent implements OnInit {
   // ── Paso 2b: registro ─────────────────────────────────────
   async registro() {
     this.intentoReg.set(true);
+    this.dniRegError.set(null);
+    this.emailRegError.set(null);
 
     if (
       !this.regNombre() || !this.regApellidos() || !this.dniRegVal().valido ||
@@ -120,10 +137,15 @@ export class InscripcionComponent implements OnInit {
       !this.regFedAuton() || !this.regFechaNac()
     ) return;
 
+    // Validar formato email básico
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.regEmail())) {
+      this.emailRegError.set('El formato del email no es válido');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
     try {
-      // Crear el competidor en el backend
       const body = {
         nombre:               this.regNombre(),
         apellidos:            this.regApellidos(),
@@ -143,7 +165,19 @@ export class InscripcionComponent implements OnInit {
         body:    JSON.stringify(body),
       });
 
-      if (res.status === 409) throw new Error('Ya existe una cuenta con ese DNI o email');
+      if (res.status === 409) {
+        // Intentar detectar qué campo está duplicado
+        const errBody = await res.json().catch(() => ({}));
+        const msg: string = errBody?.message ?? errBody?.error ?? '';
+        if (msg.toLowerCase().includes('dni') || msg.toLowerCase().includes('nombre')) {
+          this.dniRegError.set('Ya existe una cuenta con este DNI');
+        } else if (msg.toLowerCase().includes('email')) {
+          this.emailRegError.set('Ya existe una cuenta con este email');
+        } else {
+          this.error.set('Ya existe una cuenta con ese DNI o email');
+        }
+        return;
+      }
       if (!res.ok) throw new Error('Error al crear la cuenta');
 
       // Login automático tras registro
@@ -159,10 +193,11 @@ export class InscripcionComponent implements OnInit {
 
   // ── Paso 3: categorías ────────────────────────────────────
   private async cargarCategorias() {
+    const competidor = this.auth.currentCompetidor();
     const [cats, misIns] = await Promise.all([
       this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
-      this.auth.currentCompetidor()
-        ? this.inscSvc.getMisInscripciones(this.auth.currentCompetidor()!.id).catch(() => [] as Inscripcion[])
+      competidor
+        ? this.inscSvc.getMisInscripciones(competidor.id).catch(() => [] as Inscripcion[])
         : Promise.resolve([] as Inscripcion[]),
     ]);
     this.categorias.set(cats);
@@ -192,7 +227,8 @@ export class InscripcionComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const compId = this.auth.currentCompetidor()!.id;
+      const compId = this.auth.currentCompetidor()?.id;
+      if (!compId) throw new Error('No se encontró tu sesión. Por favor, vuelve a iniciar sesión.');
       await Promise.all(
         Array.from(this.seleccionadas()).map(idCat =>
           this.inscSvc.inscribir(this.campeonato.id_campeonato, idCat, compId)
@@ -206,14 +242,12 @@ export class InscripcionComponent implements OnInit {
     }
   }
 
-  private agrupar(cats: Categoria[]): Record<string, Categoria[]> {
-    return cats.reduce((acc, cat) => {
-      const key = cat.modalidad || 'General';
-      (acc[key] ??= []).push(cat);
-      return acc;
-    }, {} as Record<string, Categoria[]>);
-  }
-
   formatDate(d: string) { return new Date(d).toLocaleDateString('es-ES'); }
   cerrarModal()         { this.cerrar.emit(); }
+
+  /** Etiqueta de género para el título de sección */
+  get tituloGenero(): string {
+    const g = this.generoUsuario();
+    return g === 'M' ? 'Masculino' : g === 'F' ? 'Femenino' : '';
+  }
 }

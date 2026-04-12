@@ -30,15 +30,17 @@ export class CompetidorAuthService {
 
     const data = await res.json();
 
-    // Mapeo completo siguiendo la interfaz CompetidorSesion y el modelo Java
+    // El endpoint /login-competidor devuelve { id, nombre, apellidos, email, rol }
+    // El endpoint /login (admin) también devuelve { id, nombre, email, rol }
+    // Usamos data.id o data.idUsuario como fallback por seguridad
     const sesion: CompetidorSesion = {
-      id:              data.idUsuario,     // Coincide con tu @Id idUsuario
+      id:              data.id ?? data.idUsuario,
       nombre:          data.nombre,
       apellidos:       data.apellidos ?? '',
       email:           data.email,
-      rol:             data.rol,           // Extraído de Usuario
-      genero:          data.genero,        // Extraído de Usuario
-      fechaNacimiento: data.fechaNacimiento // Extraído de Usuario
+      rol:             data.rol,
+      genero:          data.genero,
+      fechaNacimiento: data.fechaNacimiento,
     };
 
     this.saveSession(sesion);

@@ -3,6 +3,7 @@ import { Inscripcion }  from '../interfaces/inscripcion';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
+//Control de inscripciones
 export class InscripcionCompetidorService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/inscripciones`;
