@@ -1,0 +1,41 @@
+<div class="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scroll">
+  @if (error()) {
+    <div class="p-2 bg-red-500/10 text-red-400 text-[11px] rounded border border-red-500/20">{{ error() }}</div>
+  }
+
+  <div class="grid grid-cols-2 gap-2">
+    <input [value]="nombre()" (input)="nombre.set($any($event.target).value)" placeholder="Nombre *" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+    <input [value]="apellidos()" (input)="apellidos.set($any($event.target).value)" placeholder="Apellidos *" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+  </div>
+
+  <div class="grid grid-cols-2 gap-2">
+    <input [value]="dni()" (input)="dni.set($any($event.target).value)" placeholder="DNI *" maxlength="9" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+    <select [value]="genero()" (change)="genero.set($any($event.target).value)" class="bg-[#1a1f26] border border-white/10 p-2 rounded-lg text-sm text-white outline-none">
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+    </select>
+  </div>
+
+  <input [value]="email()" (input)="email.set($any($event.target).value)" type="email" placeholder="Email *" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-[10px] text-gray-500 uppercase font-bold ml-1">Fecha Nacimiento *</label>
+    <input [value]="fechaNac()" (input)="fechaNac.set($any($event.target).value)" type="date" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+  </div>
+
+  <div class="grid grid-cols-2 gap-2">
+    <input [value]="club()" (input)="club.set($any($event.target).value)" placeholder="Club" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+    <input [value]="federacion()" (input)="federacion.set($any($event.target).value)" placeholder="Federación" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+  </div>
+
+  <input [value]="password()" (input)="password.set($any($event.target).value)" type="password" placeholder="Contraseña *" class="bg-white/5 border border-white/10 p-2 rounded-lg text-sm text-white outline-none focus:border-red-600">
+
+  <button (click)="registrar()" [disabled]="loading()" class="w-full mt-2 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+    {{ loading() ? 'Procesando...' : 'Registrar y Continuar' }}
+  </button>
+</div>
+
+<style>
+  .custom-scroll::-webkit-scrollbar { width: 4px; }
+  .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+</style>

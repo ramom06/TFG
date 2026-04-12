@@ -5,11 +5,18 @@ import { CompetidorAuthService } from '../service/competidor-auth-service';
 import { CategoriaService } from '../service/categoria-service';
 import { InscripcionCompetidorService } from '../service/inscripcion-competidor-service';
 import { SelectorCategorias } from './selector-categorias-inscripcion';
+import { RegistroInscripcion } from './registro-inscripcion';
+import { LoginInscripcion } from './login-inscripcion';
 
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, SelectorCategorias],
+  imports: [
+    CommonModule,
+    SelectorCategorias,
+    RegistroInscripcion,
+    LoginInscripcion
+  ],
   templateUrl: './inscripcion.html'
 })
 export class InscripcionComponent implements OnInit {
@@ -27,7 +34,7 @@ export class InscripcionComponent implements OnInit {
 
   categorias = signal<any[]>([]);
   yaInscritasIds = signal<Set<number>>(new Set());
-  seleccionadas = signal<number[]>([]);
+  seleccionadasIds = signal<number[]>([]);
 
   edad = computed(() => {
     const user = this.auth.currentCompetidor();
@@ -35,40 +42,54 @@ export class InscripcionComponent implements OnInit {
     const nac = new Date(user.fechaNacimiento);
     const hoy = new Date();
     let edad = hoy.getFullYear() - nac.getFullYear();
-    if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
+    const m = hoy.getMonth() - nac.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
     return edad;
   });
 
   async ngOnInit() {
     if (this.auth.isLoggedIn()) {
-      await this.cargarDatos();
+      await this.prepararInscripcion();
       this.flujo.set('categorias');
     }
   }
 
-  async cargarDatos() {
+  async prepararInscripcion() {
+    this.loading.set(true);
     try {
       const [cats, misIns] = await Promise.all([
         this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
         this.inscSvc.getMisInscripciones(this.auth.currentCompetidor()!.id)
       ]);
       this.categorias.set(cats);
-      const ids = misIns.filter(i => i.idCampeonato === this.campeonato.id_campeonato).map(i => i.idCategoria);
+      const ids = misIns
+        .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
+        .map(i => i.idCategoria);
       this.yaInscritasIds.set(new Set(ids));
-    } catch (e) { this.error.set('Error al cargar datos'); }
+    } catch (e) {
+      this.error.set('Error al conectar con el servidor');
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  actualizarSeleccion(ids: number[]) { this.seleccionadas.set(ids); }
+  onAuthSuccess() {
+    this.prepararInscripcion();
+    this.flujo.set('categorias');
+  }
 
-  async confirmarInscripcion() {
+  async confirmarFinal() {
     this.loading.set(true);
     try {
       const compId = this.auth.currentCompetidor()!.id;
-      await Promise.all(this.seleccionadas().map(idCat =>
+      await Promise.all(this.seleccionadasIds().map(idCat =>
         this.inscSvc.inscribir(this.campeonato.id_campeonato, idCat, compId)
       ));
       this.inscritoOk.emit();
-    } catch (e: any) { this.error.set(e.message); }
-    finally { this.loading.set(false); }
+    } catch (e: any) {
+      this.error.set(e.message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

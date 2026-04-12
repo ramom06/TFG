@@ -3,31 +3,57 @@
 
     <div class="h-1 bg-white/5">
       <div class="h-full bg-red-600 transition-all duration-500"
-           [style.width]="flujo() === 'categorias' ? '70%' : flujo() === 'confirmar' ? '100%' : '30%'"></div>
+           [style.width]="flujo() === 'elegir' ? '20%' :
+                          flujo() === 'login' || flujo() === 'registro' ? '40%' :
+                          flujo() === 'categorias' ? '75%' : '100%'">
+      </div>
     </div>
 
-    <div class="p-6 border-b border-white/5">
+    <div class="p-6 border-b border-white/5 bg-white/[0.02]">
       <h2 class="text-xl font-bold uppercase tracking-wider text-white">{{ campeonato.nombre }}</h2>
-      <p class="text-xs text-gray-500">{{ auth.currentCompetidor()?.nombre }} · {{ edad() }} años</p>
+      <p class="text-xs text-gray-500">
+        @if (auth.isLoggedIn()) {
+          {{ auth.currentCompetidor()?.nombre }} · {{ edad() }} años
+        } @else {
+          Inscripción al evento
+        }
+      </p>
     </div>
 
     @if (error()) {
-      <div class="mx-6 mt-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg">{{ error() }}</div>
+      <div class="mx-6 mt-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg">
+        {{ error() }}
+      </div>
     }
 
     <div class="p-6">
       @switch (flujo()) {
+
         @case ('elegir') {
           <div class="flex flex-col gap-3">
-            <button (click)="flujo.set('login')" class="w-full p-4 bg-white/5 border border-white/5 rounded-xl hover:border-red-600 transition-all text-left">
-              <span class="block font-bold">Ya tengo cuenta</span>
+            <button (click)="flujo.set('login')" class="w-full p-4 bg-white/5 border border-white/5 rounded-xl hover:border-red-600 transition-all text-left group">
+              <span class="block font-bold group-hover:text-red-500">Ya tengo cuenta</span>
               <span class="text-xs text-gray-500">Inicia sesión con tu DNI</span>
             </button>
-            <button (click)="flujo.set('registro')" class="w-full p-4 bg-white/5 border border-white/5 rounded-xl hover:border-red-600 transition-all text-left">
-              <span class="block font-bold">Nueva cuenta</span>
+            <button (click)="flujo.set('registro')" class="w-full p-4 bg-white/5 border border-white/5 rounded-xl hover:border-red-600 transition-all text-left group">
+              <span class="block font-bold group-hover:text-red-500">Nueva cuenta</span>
               <span class="text-xs text-gray-500">Regístrate como competidor</span>
             </button>
           </div>
+        }
+
+        @case ('login') {
+          <app-login-inscripcion (loginOk)="onAuthSuccess()"></app-login-inscripcion>
+          <button (click)="flujo.set('elegir')" class="mt-4 w-full text-center text-xs text-gray-400 underline">
+            Volver atrás
+          </button>
+        }
+
+        @case ('registro') {
+          <app-registro-inscripcion (registroOk)="onAuthSuccess()"></app-registro-inscripcion>
+          <button (click)="flujo.set('elegir')" class="mt-4 w-full text-center text-xs text-gray-400 underline">
+            Volver atrás
+          </button>
         }
 
         @case ('categorias') {
@@ -36,23 +62,28 @@
             [generoUsuario]="auth.currentCompetidor()?.genero || 'M'"
             [edadUsuario]="edad()"
             [yaInscritasIds]="yaInscritasIds()"
-            (seleccionFinal)="actualizarSeleccion($event)">
+            (seleccionFinal)="seleccionadasIds.set($event)">
           </app-selector-categorias>
 
           <div class="mt-6 flex gap-3">
             <button (click)="cerrar.emit()" class="flex-1 py-3 text-sm text-gray-400">Cancelar</button>
-            <button (click)="flujo.set('confirmar')" [disabled]="seleccionadas().length === 0"
-                    class="flex-[2] py-3 bg-red-600 rounded-xl font-bold disabled:opacity-30">Siguiente</button>
+            <button (click)="flujo.set('confirmar')" [disabled]="seleccionadasIds().length === 0"
+                    class="flex-[2] py-3 bg-red-600 rounded-xl font-bold disabled:opacity-30">
+              Siguiente
+            </button>
           </div>
         }
 
         @case ('confirmar') {
           <div class="py-4">
-            <p class="text-sm text-gray-400 mb-4">Vas a inscribirte en {{ seleccionadas().length }} categoría(s). ¿Confirmas tus datos?</p>
+            <p class="text-sm text-gray-400 mb-6 text-center">
+              Estás a punto de inscribirte en <b class="text-white">{{ seleccionadasIds().length }}</b> categoría(s).
+              ¿Confirmas que tus datos son correctos?
+            </p>
             <div class="flex gap-3">
               <button (click)="flujo.set('categorias')" class="flex-1 py-3 text-sm text-gray-400">Volver</button>
-              <button (click)="confirmarInscripcion()" [disabled]="loading()"
-                      class="flex-[2] py-3 bg-green-600 rounded-xl font-bold">
+              <button (click)="confirmarFinal()" [disabled]="loading()"
+                      class="flex-[2] py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors">
                 {{ loading() ? 'Procesando...' : 'Confirmar Todo' }}
               </button>
             </div>

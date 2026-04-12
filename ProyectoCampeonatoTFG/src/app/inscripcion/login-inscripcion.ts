@@ -9,7 +9,7 @@ import {CompetidorAuthService} from '../service/competidor-auth-service';
   imports: [CommonModule, FormsModule],
   template: ``
 })
-export class LoginInscripcionComponent {
+export class LoginInscripcion {
   private auth = inject(CompetidorAuthService);
 
   // Avisa al padre
