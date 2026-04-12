@@ -101,8 +101,7 @@
                  (input)="dniLogin.set($any($event.target).value.toUpperCase())"
                  class="w-full bg-[#141a24] rounded-lg px-4 py-2.5 text-[#eef0f4]
                         border outline-none focus:border-[#e01c2e] transition-colors"
-                 [class.border-red-500]="dniLoginErr()"
-                 [class.border-white/10]="!dniLoginErr()" />
+                 [class.border-red-500]="dniLoginErr()"/>
           @if (dniLoginErr()) {
             <p class="mt-1 text-[11px] text-red-400">{{ dniLoginErr() }}</p>
           }
