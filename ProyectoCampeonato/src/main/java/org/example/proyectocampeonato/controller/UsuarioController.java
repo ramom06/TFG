@@ -25,7 +25,7 @@ public class UsuarioController {
 
     public UsuarioController(UsuarioService service,
                              UsuarioRepository usuarioRepository,
-                             PasswordEncoder passwordEncoder) {    
+                             PasswordEncoder passwordEncoder) {
         this.service = service;
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
