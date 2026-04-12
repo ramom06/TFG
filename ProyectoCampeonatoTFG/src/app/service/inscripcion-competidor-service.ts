@@ -7,7 +7,7 @@ export class InscripcionCompetidorService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/inscripciones`;
 
-  /** Inscribe al competidor en una categoría de un campeonato */
+  // Inscribe al competidor en una categoría de un campeonato
   async inscribir(idCampeonato: number, idCategoria: number, idCompetidor: number): Promise<Inscripcion> {
     const res = await fetch(`${this.apiUrl}/${idCampeonato}/${idCategoria}/${idCompetidor}`, {
       method: 'POST',
@@ -16,8 +16,7 @@ export class InscripcionCompetidorService {
     if (!res.ok) throw new Error('Error al procesar la inscripción');
     return res.json();
   }
-
-  /** Cancela una inscripción */
+  // Cancela una inscripción
   async cancelar(idCampeonato: number, idCategoria: number, idCompetidor: number): Promise<void> {
     const res = await fetch(`${this.apiUrl}/${idCampeonato}/${idCategoria}/${idCompetidor}`, {
       method: 'DELETE',
@@ -25,7 +24,7 @@ export class InscripcionCompetidorService {
     if (!res.ok) throw new Error('Error al cancelar la inscripción');
   }
 
-  /** Obtiene todas las inscripciones de un competidor */
+  // Obtiene todas las inscripciones de un competidor
   async getMisInscripciones(idCompetidor: number): Promise<Inscripcion[]> {
     const res = await fetch(`${this.apiUrl}/competidor/${idCompetidor}`);
     if (!res.ok) throw new Error('Error al cargar inscripciones');

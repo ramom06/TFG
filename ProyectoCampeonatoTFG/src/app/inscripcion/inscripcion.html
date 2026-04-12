@@ -317,19 +317,22 @@
         <p class="text-xs text-[#8b95a3] mb-4">
           Selecciona las categorías en las que quieres participar
         </p>
-        <div class="max-h-[320px] overflow-y-auto flex flex-col gap-3"
-             style="scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.08) transparent">
 
+        <div class="flex flex-col gap-4">
           @for (grupo of [{label:'Masculino', data: masculino()}, {label:'Femenino', data: femenino()}]; track grupo.label) {
             @if (objectKeys(grupo.data).length > 0) {
-              <div class="rounded-xl overflow-hidden bg-[#0a0f1a] border border-white/5">
+              <div class="rounded-xl overflow-hidden bg-[#0a0f1a] border border-white/5 flex flex-col">
+
                 <div class="px-4 py-2 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-[#8b95a3]">
                   {{ grupo.label }}
                 </div>
-                <div class="p-3 flex flex-col gap-1">
+
+                <div class="p-2 flex flex-col gap-1 max-h-[180px] overflow-y-auto custom-scrollbar"
+                     style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent">
+
                   @for (mod of objectKeys(grupo.data); track mod) {
                     @for (cat of grupo.data[mod]; track cat.id_categoria) {
-                      <label class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer"
+                      <label class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
                              [class.opacity-50]="estaYaInscrito(cat.id_categoria)"
                              [class.cursor-not-allowed]="estaYaInscrito(cat.id_categoria)">
                         <input type="checkbox"
@@ -354,7 +357,7 @@
           <span class="text-[11px] text-[#4b5563]">{{ seleccionadas().size }} seleccionadas</span>
           <button (click)="siguientePaso()" [disabled]="seleccionadas().size === 0"
                   class="bg-[#e01c2e] hover:bg-[#c4192a] text-white px-6 py-2.5 rounded-lg
-                         font-bold text-sm transition-all disabled:opacity-40">
+                     font-bold text-sm transition-all disabled:opacity-40">
             Siguiente →
           </button>
         </div>
