@@ -19,7 +19,7 @@ import { LoginInscripcion } from './login-inscripcion';
   ],
   templateUrl: './inscripcion.html'
 })
-export class InscripcionComponent implements OnInit {
+export class Inscripcion implements OnInit {
   readonly auth = inject(CompetidorAuthService);
   private catSvc = inject(CategoriaService);
   private inscSvc = inject(InscripcionCompetidorService);
@@ -55,19 +55,30 @@ export class InscripcionComponent implements OnInit {
   }
 
   async prepararInscripcion() {
+    const competidor = this.auth.currentCompetidor();
+
+    // Validamos que el competidor y su ID existan antes de llamar al servidor
+    if (!competidor || !competidor.id) {
+      console.warn('Esperando a que el competidor esté disponible...');
+      return;
+    }
+
     this.loading.set(true);
     try {
       const [cats, misIns] = await Promise.all([
         this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
-        this.inscSvc.getMisInscripciones(this.auth.currentCompetidor()!.id)
+        this.inscSvc.getMisInscripciones(competidor.id) // Aquí ya no será undefined
       ]);
+
       this.categorias.set(cats);
       const ids = misIns
         .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
         .map(i => i.idCategoria);
       this.yaInscritasIds.set(new Set(ids));
+      this.error.set(null); // Limpiamos errores previos si los hubiera
     } catch (e) {
       this.error.set('Error al conectar con el servidor');
+      console.error(e);
     } finally {
       this.loading.set(false);
     }
