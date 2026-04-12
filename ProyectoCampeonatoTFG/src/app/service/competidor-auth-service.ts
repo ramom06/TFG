@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { CompetidorSesion } from '../interfaces/inscripcion-form';
+import { CompetidorSesion } from '../interfaces/competidor-session';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +10,7 @@ export class CompetidorAuthService {
 
   currentCompetidor = signal<CompetidorSesion | null>(this.loadSession());
 
-  /** Login con DNI + password: reutiliza el mismo endpoint /api/usuarios/login */
+  /** Login con DNI + password */
   async login(dni: string, password: string): Promise<CompetidorSesion> {
     let res: Response;
 
@@ -21,7 +21,6 @@ export class CompetidorAuthService {
         body:    JSON.stringify({ dni, password }),
       });
     } catch {
-      // fetch lanza excepción cuando no hay conexión (ERR_CONNECTION_REFUSED)
       throw new Error('No se puede conectar con el servidor. ¿Está el backend arrancado?');
     }
 
@@ -31,13 +30,17 @@ export class CompetidorAuthService {
 
     const data = await res.json();
 
+    // Mapeo completo siguiendo la interfaz CompetidorSesion y el modelo Java
     const sesion: CompetidorSesion = {
-      id:        data.id,
-      nombre:    data.nombre,
-      apellidos: data.apellidos ?? '',
-      email:     data.email,
-      rol:       data.rol,
+      id:              data.idUsuario,     // Coincide con tu @Id idUsuario
+      nombre:          data.nombre,
+      apellidos:       data.apellidos ?? '',
+      email:           data.email,
+      rol:             data.rol,           // Extraído de Usuario
+      genero:          data.genero,        // Extraído de Usuario
+      fechaNacimiento: data.fechaNacimiento // Extraído de Usuario
     };
+
     this.saveSession(sesion);
     this.currentCompetidor.set(sesion);
     return sesion;
@@ -58,6 +61,10 @@ export class CompetidorAuthService {
 
   private loadSession(): CompetidorSesion | null {
     const s = sessionStorage.getItem(this.KEY);
-    return s ? JSON.parse(s) : null;
+    try {
+      return s ? JSON.parse(s) : null;
+    } catch {
+      return null;
+    }
   }
 }

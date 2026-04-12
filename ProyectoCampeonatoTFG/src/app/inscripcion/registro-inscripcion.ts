@@ -1,8 +1,17 @@
-import {computed, EventEmitter, inject, Output, signal} from '@angular/core';
+import {Component, computed, EventEmitter, inject, Output, signal} from '@angular/core';
 import {CompetidorAuthService} from '../service/competidor-auth-service';
 import {ValidadorService} from '../service/validador-service';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
-export class RegistroInscripcionComponent {
+@Component({
+  selector: 'app-registro-inscripcion',
+  standalone: true,
+  template: ``,
+  imports: [CommonModule, FormsModule]
+})
+
+export class RegistroInscripcion {
   private auth = inject(CompetidorAuthService);
   private validadorSvc = inject(ValidadorService);
 

@@ -25,10 +25,13 @@ export class SelectorCategorias {
     );
   });
 
-  secciones = computed(() => ({
-    'Kata': this.categoriasFiltradas().filter(c => c.modalidad?.toUpperCase() === 'KATA'),
-    'Kumite': this.categoriasFiltradas().filter(c => c.modalidad?.toUpperCase() === 'KUMITE')
-  }));
+  secciones = computed<Record<string, Categoria[]>>(() => {
+    const cats = this.categoriasFiltradas();
+    return {
+      'Kata': cats.filter(c => c.modalidad?.toUpperCase() === 'KATA'),
+      'Kumite': cats.filter(c => c.modalidad?.toUpperCase() === 'KUMITE')
+    };
+  });
 
   toggleCategoria(id: number) {
     const cat = this.categorias.find(c => c.id_categoria === id);
