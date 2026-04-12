@@ -14,7 +14,6 @@ import { InscripcionComponent } from '../inscripcion/inscripcion';
   standalone: true,
   imports: [CommonModule, RouterLink, InscripcionComponent],
   templateUrl: './campeonato-detalle.html',
-  styleUrl: './campeonato-detalle.css',
 })
 export class CampeonatoDetalle implements OnInit {
   private route    = inject(ActivatedRoute);
