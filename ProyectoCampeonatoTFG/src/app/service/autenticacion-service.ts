@@ -21,7 +21,7 @@ export class AutenticacionService {
 
   constructor(private router: Router) {}
 
-  /** Llama a POST /api/usuarios/login con DNI + contraseña */
+  //login con DNI + contraseña */
   async login(dni: string, password: string): Promise<void> {
     const response = await fetch(`${this.apiUrl}/login`, {
       method: 'POST',

@@ -54,7 +54,6 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.CONFLICT, msg);
     }
 
-    /** Cualquier otra excepción no controlada → 500 con mensaje legible */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         return error(HttpStatus.INTERNAL_SERVER_ERROR,

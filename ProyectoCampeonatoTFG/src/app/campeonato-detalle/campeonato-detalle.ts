@@ -42,6 +42,11 @@ export class CampeonatoDetalle implements OnInit {
     return c ? c.estado === 'futuro' || c.estado === 'activo' : false;
   });
 
+  puedeVerSorteo = computed(() => {
+    const c = this.campeonato();
+    return c ? c.estado === 'activo' || c.estado === 'pasado' : false;
+  });
+
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const campeonatos = await this.CampServ.getAllCampeonatos();

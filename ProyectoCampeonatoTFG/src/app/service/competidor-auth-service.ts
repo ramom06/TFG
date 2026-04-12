@@ -3,14 +3,17 @@ import { CompetidorSesion } from '../interfaces/competidor-session';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
+
+//
 export class CompetidorAuthService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/usuarios`;
   private readonly KEY      = 'competidor_session';
 
+  //Mantiene sesion
   currentCompetidor = signal<CompetidorSesion | null>(this.loadSession());
 
-  /** Login con DNI + password */
+  // Login con DNI + password
   async login(dni: string, password: string): Promise<CompetidorSesion> {
     let res: Response;
 
@@ -30,9 +33,6 @@ export class CompetidorAuthService {
 
     const data = await res.json();
 
-    // El endpoint /login-competidor devuelve { id, nombre, apellidos, email, rol }
-    // El endpoint /login (admin) también devuelve { id, nombre, email, rol }
-    // Usamos data.id o data.idUsuario como fallback por seguridad
     const sesion: CompetidorSesion = {
       id:              data.id ?? data.idUsuario,
       nombre:          data.nombre,

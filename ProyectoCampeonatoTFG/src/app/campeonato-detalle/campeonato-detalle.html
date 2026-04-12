@@ -205,6 +205,7 @@
               </div>
             </div>
             }
+            }
           </div>
         }
       </div>
@@ -234,6 +235,21 @@
           </p>
           <h3 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase">{{ categoriaSeleccionada()?.nombre }}</h3>
         </div>
+
+        @if (puedeVerSorteo()) {
+          <a [routerLink]="['/campeonato', campeonato()!.id_campeonato,
+                    'categoria', categoriaSeleccionada()!.id_categoria, 'sorteo']"
+             class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em]
+            bg-[#e01c2e]/10 hover:bg-[#e01c2e]/20 border border-[#e01c2e]/30
+            text-[#e01c2e] px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Ver sorteo
+          </a>
+        }
         <button (click)="cerrarModal()"
                 class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors text-[#8b95a3] hover:text-white ml-4 shrink-0">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
