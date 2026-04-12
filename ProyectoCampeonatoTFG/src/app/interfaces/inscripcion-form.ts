@@ -9,11 +9,3 @@ export interface CompetidorLogin {
   dni: string;
   password: string;
 }
-
-export interface CompetidorSesion {
-  id: number;
-  nombre: string;
-  apellidos: string;
-  email: string;
-  rol: string;
-}

@@ -60,7 +60,6 @@ public class Usuario {
 
     public enum Rol {
         ADMIN,
-        ORGANIZADOR,
         ARBITRO,
         COMPETIDOR
     }
