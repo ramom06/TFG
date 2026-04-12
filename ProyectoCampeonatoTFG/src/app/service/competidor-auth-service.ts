@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class CompetidorAuthService {
 
-  private readonly apiUrl   = '${environment.apiUrl}/api/usuarios';
+  private readonly apiUrl = `${environment.apiUrl}/api/usuarios`;
   private readonly KEY      = 'competidor_session';
 
   currentCompetidor = signal<CompetidorSesion | null>(this.loadSession());
