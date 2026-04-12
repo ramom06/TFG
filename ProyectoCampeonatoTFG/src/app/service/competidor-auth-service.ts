@@ -1,10 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 import { CompetidorSesion } from '../interfaces/inscripcion-form';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CompetidorAuthService {
 
-  private readonly apiUrl   = 'http://localhost:8080/api/usuarios';
+  private readonly apiUrl   = '${environment.apiUrl}/api/usuarios';
   private readonly KEY      = 'competidor_session';
 
   currentCompetidor = signal<CompetidorSesion | null>(this.loadSession());
