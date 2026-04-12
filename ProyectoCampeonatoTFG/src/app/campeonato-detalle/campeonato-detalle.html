@@ -159,7 +159,8 @@
             }
 
             <!-- FEMENINO -->
-            <div class="bg-[#0f0a14] border border-pink-900/30 rounded-xl overflow-hidden">
+            @if (objectKeys(femenino()).length > 0) {
+              <div class="bg-[#0f0a14] border border-pink-900/30 rounded-xl overflow-hidden">
               <div class="flex items-center gap-3 px-5 py-3.5 border-b border-pink-900/30 bg-pink-950/20">
                 <span class="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
                 <span class="text-xs font-bold uppercase tracking-[0.18em] text-pink-300">Femenino</span>
@@ -203,7 +204,7 @@
                 }
               </div>
             </div>
-
+            }
           </div>
         }
       </div>
