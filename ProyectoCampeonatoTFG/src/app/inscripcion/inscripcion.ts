@@ -19,7 +19,7 @@ import { LoginInscripcion } from './login-inscripcion';
   ],
   templateUrl: './inscripcion.html'
 })
-export class Inscripcion implements OnInit {
+export class InscripcionComponent implements OnInit {
   readonly auth = inject(CompetidorAuthService);
   private catSvc = inject(CategoriaService);
   private inscSvc = inject(InscripcionCompetidorService);
