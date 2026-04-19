@@ -13,7 +13,7 @@ import { Usuario, Rol } from '../interfaces/usuario';
   templateUrl: './usuario-admin.html',
   styleUrl: './usuario-admin.css',
 })
-export class UsuarioAdminComponent implements OnInit {
+export class UsuarioAdmin implements OnInit {
 
   usuarios    = signal<Usuario[]>([]);
   loading     = signal(true);
