@@ -1,5 +1,7 @@
 package org.example.proyectocampeonato.modelo;
 
+import java.util.List;
+
 public class Sorteo {
     private Long idCampeonato;
     private Long idCategoria;
@@ -7,7 +9,7 @@ public class Sorteo {
     private String nombreCampeonato;
     private String modalidad;
     private String genero;
-    private List<RondaDTO> rondas;
+    private List<Ronda> rondas;
 }
 
 

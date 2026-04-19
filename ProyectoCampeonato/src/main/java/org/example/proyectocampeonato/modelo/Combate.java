@@ -48,7 +48,7 @@ public class Combate {
 
     // Competidor rojo (siempre hay al menos uno) — ya NO forma parte de la PK
     @ManyToOne
-    @JoinColumn(name = "id_competidor_rojo", nullable = false)
+    @JoinColumn(name = "id_competidor_rojo", nullable = true)
     private Competidor competidorRojo;
 
     // Competidor azul (puede ser null si hay número impar de competidores → bye)
