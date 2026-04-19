@@ -11,7 +11,7 @@
       Volver al campeonato
     </a>
 
-    <!-- ── LOADING ──────────────────────────────────────────────────────── -->
+    <!-- ── LOADING ────────────────────────────────────────────────────────── -->
     @if (loading()) {
       <div class="flex flex-col items-center gap-4 py-32">
         <div class="w-10 h-10 rounded-full border-[3px] border-[#141a24] border-t-[#e01c2e] animate-spin"></div>
@@ -28,7 +28,7 @@
     }
 
     <!-- ── CONTENIDO PRINCIPAL ────────────────────────────────────────────── -->
-    @if (!loading() && !error() && sorteo()) {
+    @if (!loading() && !error() && sorteoData()) {
 
       <!-- Header -->
       <div class="relative mb-10 overflow-hidden">
@@ -45,13 +45,13 @@
             Bracket · Eliminación directa
           </p>
           <h1 class="font-['Bebas_Neue',sans-serif] text-[clamp(26px,5vw,56px)] tracking-wider uppercase leading-none mb-2">
-            {{ sorteo()!.nombreCategoria }}
+            {{ sorteoData()!.nombreCategoria }}
           </h1>
-          <p class="text-sm text-[#8b95a3]">{{ sorteo()!.nombreCampeonato }}</p>
+          <p class="text-sm text-[#8b95a3]">{{ sorteoData()!.nombreCampeonato }}</p>
         </div>
       </div>
 
-      <!-- ── GANADOR (si la final está resuelta) ───────────────────────── -->
+      <!-- ── GANADOR ────────────────────────────────────────────────────── -->
       @if (ganador()) {
         <div class="max-w-sm mx-auto mb-10 relative bg-gradient-to-b from-[#1a0a0a] to-[#0d1117]
                     border border-[#e01c2e]/40 rounded-2xl p-6 text-center overflow-hidden">
@@ -68,14 +68,13 @@
         </div>
       }
 
-      <!-- ── BRACKET ────────────────────────────────────────────────────── -->
+      <!-- ── BRACKET ─────────────────────────────────────────────────────── -->
       <div class="relative bg-[#0d1117] border border-white/[0.07] rounded-2xl overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
 
-        @if (sorteo()!.rondas.length === 0) {
+        @if (sorteoData()!.rondas.length === 0) {
           <div class="flex flex-col items-center gap-3 py-20 text-[#4b5563]">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                 opacity="0.4">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
@@ -83,118 +82,140 @@
           </div>
         } @else {
 
-          <div class="bracket-scroll p-6">
-            <div class="bracket-row">
+          <!-- Scroll horizontal del bracket -->
+          <div class="overflow-x-auto pb-4" style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;">
+            <div class="flex items-stretch gap-0 p-6 min-w-max">
 
-              @for (ronda of sorteo()!.rondas; track trackRonda($index, ronda); let last = $last) {
+              @for (ronda of sorteoData()!.rondas; track trackRonda($index, ronda); let last = $last) {
 
                 <!-- Columna de ronda -->
-                <div class="ronda-col">
+                <div class="flex flex-col min-w-[260px]">
+
                   <!-- Cabecera -->
-                  <div class="ronda-header">
-                    {{ ronda.nombre }}
+                  <div class="text-center pb-3 px-3">
+                    <span class="font-['Bebas_Neue',sans-serif] text-[13px] tracking-[0.16em] uppercase text-[#4b5563]">
+                      {{ ronda.nombre }}
+                    </span>
                     <div class="mt-1 mx-auto w-6 h-[2px] rounded-full"
                          [style.background]="last ? '#e01c2e' : 'rgba(255,255,255,0.08)'"></div>
                   </div>
 
-                  <!-- Combates -->
-                  <div class="ronda-combates">
+                  <!-- Combates — distribuidos verticalmente con justify-around -->
+                  <div class="flex flex-col flex-1 justify-around">
                     @for (combate of ronda.combates; track trackCombate($index, combate)) {
-                      <div class="match-cell">
-                        <div class="match-card" [class]="estadoClass(combate)">
+
+                      <div class="px-3 py-2">
+                        <!-- Tarjeta del enfrentamiento -->
+                        <div class="rounded-xl overflow-hidden border transition-colors duration-200 hover:border-[#e01c2e]/30"
+                             [class]="combate.estado === 'finalizado'
+                               ? 'border-white/[0.12] bg-[#0d1117]'
+                               : combate.estado === 'bye'
+                                 ? 'border-dashed border-white/[0.07] bg-[#0d1117] opacity-55'
+                                 : 'border-white/[0.07] bg-[#0d1117]'">
 
                           <!-- Competidor Rojo -->
-                          <div class="competitor-row"
-                               [class.winner]="rojoGana(combate)"
-                               [class.tbd]="!combate.competidorRojo && combate.estado !== 'bye'">
+                          <div class="flex items-center gap-2 px-2.5 py-2"
+                               [class]="rojoGana(combate)
+                                 ? 'bg-[#e01c2e]/10'
+                                 : !combate.competidorRojo && combate.estado !== 'bye'
+                                   ? 'opacity-40'
+                                   : ''">
                             @if (combate.competidorRojo) {
-                              <span class="fed-badge">
+                              <span class="text-[9px] font-black tracking-[0.08em] uppercase px-1.5 py-0.5
+                                           rounded bg-white/[0.06] text-[#6b7280] shrink-0 min-w-[28px] text-center"
+                                    [class]="rojoGana(combate) ? 'bg-[#e01c2e]/20 text-[#f87171]' : ''">
                                 {{ abrevClub(combate.competidorRojo.club) }}
                               </span>
-                              <span class="competitor-name">
+                              <span class="text-[12px] font-semibold flex-1 truncate"
+                                    [class]="rojoGana(combate) ? 'text-[#eef0f4]' : 'text-[#9ca3af]'">
                                 {{ nombreCompetidor(combate.competidorRojo) }}
                               </span>
                               @if (combate.estado === 'finalizado') {
-                                <span class="score">{{ combate.puntuacionRojo }}</span>
+                                <span class="text-[13px] font-black shrink-0"
+                                      [class]="rojoGana(combate) ? 'text-[#e01c2e]' : 'text-[#4b5563]'">
+                                  {{ combate.puntuacionRojo }}
+                                </span>
                               }
                               @if (rojoGana(combate)) {
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                     stroke="#e01c2e" stroke-width="3"
-                                     stroke-linecap="round" stroke-linejoin="round">
+                                     stroke="#e01c2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                   <polyline points="20 6 9 17 4 12"/>
                                 </svg>
                               }
                             } @else {
-                              <span class="competitor-name text-[#4b5563]">Por determinar</span>
+                              <span class="text-[12px] text-[#4b5563] italic">Por determinar</span>
                             }
                           </div>
 
-                          <!-- Separador central con número de combate -->
-                          <div class="flex items-center px-2 py-[3px] border-y border-white/[0.04]
-                                      bg-white/[0.02]">
+                          <!-- Separador central -->
+                          <div class="flex items-center px-2.5 py-[3px] border-y border-white/[0.04] bg-white/[0.02]">
                             <span class="text-[9px] text-[#374151] font-bold uppercase tracking-[0.12em] flex-1">
-                              @if (combate.estado === 'bye') {
-                                BYE
-                              } @else {
-                                #{{ combate.numeroCombate }} · Tatami {{ combate.numeroTatami }}
-                              }
+                              @if (combate.estado === 'bye') { BYE }
+                              @else { #{{ combate.numeroCombate }} · Tatami {{ combate.numeroTatami }} }
                             </span>
-                            @if (combate.estado === 'pendiente') {
-                              <span class="w-1.5 h-1.5 rounded-full bg-[#374151]"></span>
-                            }
-                            @if (combate.estado === 'finalizado') {
-                              <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                            }
-                            @if (combate.estado === 'bye') {
-                              <span class="w-1.5 h-1.5 rounded-full bg-[#e01c2e]/50"></span>
-                            }
+                            <span class="w-1.5 h-1.5 rounded-full shrink-0"
+                                  [class]="combate.estado === 'finalizado'
+                                    ? 'bg-green-600'
+                                    : combate.estado === 'bye'
+                                      ? 'bg-[#e01c2e]/50'
+                                      : 'bg-[#374151]'">
+                            </span>
                           </div>
 
                           <!-- Competidor Azul -->
-                          <div class="competitor-row"
-                               [class.winner]="azulGana(combate)"
-                               [class.tbd]="!combate.competidorAzul && combate.estado !== 'bye'">
+                          <div class="flex items-center gap-2 px-2.5 py-2"
+                               [class]="azulGana(combate)
+                                 ? 'bg-[#e01c2e]/10'
+                                 : !combate.competidorAzul && combate.estado !== 'bye'
+                                   ? 'opacity-40'
+                                   : ''">
                             @if (combate.competidorAzul) {
-                              <span class="fed-badge">
+                              <span class="text-[9px] font-black tracking-[0.08em] uppercase px-1.5 py-0.5
+                                           rounded bg-white/[0.06] text-[#6b7280] shrink-0 min-w-[28px] text-center"
+                                    [class]="azulGana(combate) ? 'bg-[#e01c2e]/20 text-[#f87171]' : ''">
                                 {{ abrevClub(combate.competidorAzul.club) }}
                               </span>
-                              <span class="competitor-name">
+                              <span class="text-[12px] font-semibold flex-1 truncate"
+                                    [class]="azulGana(combate) ? 'text-[#eef0f4]' : 'text-[#9ca3af]'">
                                 {{ nombreCompetidor(combate.competidorAzul) }}
                               </span>
                               @if (combate.estado === 'finalizado') {
-                                <span class="score">{{ combate.puntuacionAzul }}</span>
+                                <span class="text-[13px] font-black shrink-0"
+                                      [class]="azulGana(combate) ? 'text-[#e01c2e]' : 'text-[#4b5563]'">
+                                  {{ combate.puntuacionAzul }}
+                                </span>
                               }
                               @if (azulGana(combate)) {
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                     stroke="#e01c2e" stroke-width="3"
-                                     stroke-linecap="round" stroke-linejoin="round">
+                                     stroke="#e01c2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                   <polyline points="20 6 9 17 4 12"/>
                                 </svg>
                               }
                             } @else if (combate.estado === 'bye') {
-                              <span class="competitor-name text-[#4b5563] italic text-[11px]">BYE – pasa directo</span>
+                              <span class="text-[11px] text-[#4b5563] italic">BYE – pasa directo</span>
                             } @else {
-                              <span class="competitor-name text-[#4b5563]">Por determinar</span>
+                              <span class="text-[12px] text-[#4b5563] italic">Por determinar</span>
                             }
                           </div>
 
                         </div>
                       </div>
+
                     }
                   </div>
                 </div>
 
                 <!-- Conector entre rondas -->
                 @if (!last) {
-                  <div class="connector">
-                    <div class="connector-line"></div>
+                  <div class="flex flex-col items-center justify-center w-7 shrink-0 self-stretch">
+                    <div class="w-[2px] flex-1 bg-white/[0.07]"></div>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="rgba(255,255,255,0.1)" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12"/>
                       <polyline points="12 5 19 12 12 19"/>
                     </svg>
-                    <div class="connector-line"></div>
+                    <div class="w-[2px] flex-1 bg-white/[0.07]"></div>
                   </div>
                 }
 
@@ -203,7 +224,7 @@
             </div>
           </div>
 
-          <!-- ── Leyenda ──────────────────────────────────────────────── -->
+          <!-- Leyenda -->
           <div class="flex flex-wrap gap-4 items-center px-6 py-4 border-t border-white/[0.05]">
             <div class="flex items-center gap-2 text-[11px] text-[#4b5563]">
               <span class="w-2.5 h-2.5 rounded-full bg-[#374151]"></span> Pendiente
@@ -216,8 +237,7 @@
             </div>
             <div class="flex items-center gap-2 text-[11px] text-[#4b5563]">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-                   stroke="#e01c2e" stroke-width="3"
-                   stroke-linecap="round" stroke-linejoin="round">
+                   stroke="#e01c2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg> Ganador
             </div>

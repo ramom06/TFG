@@ -1,32 +1,35 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {environment} from '../../../environments/environment';
-import {Ronda} from '../../interfaces/ronda';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Sorteo} from '../../interfaces/sorteo';
 import {Combate} from '../../interfaces/combate';
+import {Ronda} from '../../interfaces/ronda';
+import { Competidor } from '../../interfaces/competidor';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-sorteo',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './sorteo.html',
   styleUrl: './sorteo.css',
 })
-export class Sorteo implements OnInit {
+export class SorteoComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  sorteo      = signal<Sorteo | null>(null);
-  loading     = signal(true);
-  error       = signal<string | null>(null);
+  sorteoData   = signal<Sorteo | null>(null);   // renombrado para evitar colisión con la interfaz
+  loading      = signal(true);
+  error        = signal<string | null>(null);
 
   idCampeonato = signal(0);
   idCategoria  = signal(0);
 
-  /** Ganador del torneo: competidor que ganó la Final */
   ganador = computed(() => {
-    const s = this.sorteo();
+    const s = this.sorteoData();
     if (!s) return null;
-    const final = s.rondas.find(r => r.nombre === 'Final');
-    if (!final || final.combates.length === 0) return null;
-    const combFinal = final.combates[0];
+    const finalRonda = s.rondas.find(r => r.nombre === 'Final');
+    if (!finalRonda || finalRonda.combates.length === 0) return null;
+    const combFinal = finalRonda.combates[0];
     if (combFinal.estado !== 'finalizado') return null;
     if (combFinal.puntuacionRojo > combFinal.puntuacionAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionAzul > combFinal.puntuacionRojo) return combFinal.competidorAzul;
@@ -34,7 +37,7 @@ export class Sorteo implements OnInit {
   });
 
   async ngOnInit() {
-    const idC  = Number(this.route.snapshot.paramMap.get('id'));
+    const idC   = Number(this.route.snapshot.paramMap.get('id'));
     const idCat = Number(this.route.snapshot.paramMap.get('idCategoria'));
     this.idCampeonato.set(idC);
     this.idCategoria.set(idCat);
@@ -44,7 +47,7 @@ export class Sorteo implements OnInit {
       const res = await fetch(url);
       if (!res.ok) throw new Error('No se pudo cargar el sorteo');
       const data: Sorteo = await res.json();
-      this.sorteo.set(data);
+      this.sorteoData.set(data);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar el sorteo');
     } finally {
@@ -52,41 +55,24 @@ export class Sorteo implements OnInit {
     }
   }
 
-  // ── Helpers para el template ──────────────────────────────────────────────
-
-  /** Nombre completo del competidor o "BYE" */
-  nombreCompetidor(comp: { nombre: string; apellidos: string } | null): string {
+  nombreCompetidor(comp: Competidor | null): string {
     if (!comp) return 'BYE';
     return `${comp.nombre} ${comp.apellidos}`;
   }
 
-  /** Abreviatura del club (máx 3 letras para el badge) */
   abrevClub(club: string | undefined): string {
     if (!club) return '—';
-    return club.replace(/[^A-ZÁÉÍÓÚÑ]/gi, '')
-      .toUpperCase()
-      .slice(0, 3);
+    return club.replace(/[^A-ZÁÉÍÓÚÑ]/gi, '').toUpperCase().slice(0, 3);
   }
 
-  /** Clases CSS según estado del combate */
-  estadoClass(combate: Combate): string {
-    switch (combate.estado) {
-      case 'finalizado': return 'finalizado';
-      case 'bye':        return 'bye';
-      default:           return 'pendiente';
-    }
-  }
-
-  /** Determina si el competidor rojo ganó */
   rojoGana(c: Combate): boolean {
     return c.estado === 'finalizado' && c.puntuacionRojo > c.puntuacionAzul;
   }
 
-  /** Determina si el competidor azul ganó */
   azulGana(c: Combate): boolean {
     return c.estado === 'finalizado' && c.puntuacionAzul > c.puntuacionRojo;
   }
 
   trackRonda(_: number, r: Ronda) { return r.numero; }
-  trackCombate(_: number, c: Combate) { return c.numeroCombate + '_' + c.numeroTatami; }
+  trackCombate(_: number, c: Combate) { return `${c.numeroCombate}_${c.numeroTatami}`; }
 }
