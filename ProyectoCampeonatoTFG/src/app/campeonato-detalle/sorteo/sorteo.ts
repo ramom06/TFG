@@ -27,9 +27,12 @@ export class SorteoComponent implements OnInit {
   ganador = computed(() => {
     const s = this.sorteoData();
     if (!s) return null;
-    const finalRonda = s.rondas.find(r => r.nombre === 'Final');
-    if (!finalRonda || finalRonda.combates.length === 0) return null;
-    const combFinal = finalRonda.combates[0];
+    // Buscar la última ronda (Final o la que tenga un solo combate)
+    const rondas = s.rondas;
+    if (rondas.length === 0) return null;
+    const ultimaRonda = rondas[rondas.length - 1];
+    if (ultimaRonda.combates.length === 0) return null;
+    const combFinal = ultimaRonda.combates[0];
     if (combFinal.estado !== 'finalizado') return null;
     if (combFinal.puntuacionRojo > combFinal.puntuacionAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionAzul > combFinal.puntuacionRojo) return combFinal.competidorAzul;
@@ -79,65 +82,203 @@ export class SorteoComponent implements OnInit {
     const nombreCategoria  = inscritos[0]?.nombreCategoria  ?? '';
     const nombreCampeonato = inscritos[0]?.nombreCampeonato ?? '';
 
-    // Si ya hay combates en BD los usamos agrupados por ronda
+    // Si hay combates en BD, los usamos y generamos todas las rondas del bracket
     if (combates.length > 0) {
-      const ordenRondas = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
-      const porRonda = new Map<string, any[]>();
-
-      for (const c of combates) {
-        const key = c.ronda ?? 'R1';
-        if (!porRonda.has(key)) porRonda.set(key, []);
-        porRonda.get(key)!.push(c);
-      }
-
-      const rondas: Ronda[] = ordenRondas
-        .filter(r => porRonda.has(r))
-        .map((r, i) => ({
-          nombre:   this.labelRonda(r),
-          numero:   i + 1,
-          combates: porRonda.get(r)!.map(c => this.mapCombate(c))
-        }));
-
+      const rondas = this.construirBracketDesdeCombates(combates);
       return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
     }
 
-    // Si no hay combates generamos el bracket aleatorio desde las inscripciones
+    // Sin combates en BD: generamos bracket aleatorio desde inscripciones
     if (inscritos.length === 0) {
       return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas: [] };
     }
 
     const competidores = [...inscritos].sort(() => Math.random() - 0.5);
-    const combatesSorteo: Combate[] = [];
-    let numeroCombate = 1;
+    const rondas = this.generarBracketCompleto(competidores);
 
-    for (let i = 0; i < competidores.length; i += 2) {
-      const rojo = competidores[i];
-      const azul = competidores[i + 1] ?? null;
+    return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
+  }
 
-      combatesSorteo.push({
-        numeroTatami:  1,
-        numeroCombate: numeroCombate++,
-        ronda:         'R1',
-        competidorRojo: this.inscritoACompetidor(rojo),
-        competidorAzul: azul ? this.inscritoACompetidor(azul) : null,
-        puntuacionRojo: 0,
-        puntuacionAzul: 0,
-        senshu:  null,
-        estado:  azul ? 'pendiente' : 'bye'
+  /**
+   * Toma los combates de BD (que pueden ser solo R1 o múltiples rondas)
+   * y construye todas las rondas del bracket, generando las siguientes
+   * a partir de los ganadores de cada ronda anterior.
+   */
+  private construirBracketDesdeCombates(combates: any[]): Ronda[] {
+    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
+
+    // Agrupar combates de BD por clave de ronda
+    const porClave = new Map<string, any[]>();
+    for (const c of combates) {
+      const key = c.ronda ?? 'R1';
+      if (!porClave.has(key)) porClave.set(key, []);
+      porClave.get(key)!.push(c);
+    }
+
+    // Determinar cuál es la primera clave presente
+    const clavesPresentes = ordenClaves.filter(k => porClave.has(k));
+    if (clavesPresentes.length === 0) return [];
+
+    const rondas: Ronda[] = [];
+
+    // Convertir todas las rondas que ya existen en BD
+    for (const clave of clavesPresentes) {
+      rondas.push({
+        nombre:   this.labelRonda(clave),
+        numero:   ordenClaves.indexOf(clave) + 1,
+        combates: porClave.get(clave)!.map(c => this.mapCombate(c))
       });
     }
 
-    return {
-      idCampeonato,
-      idCategoria,
-      nombreCategoria,
-      nombreCampeonato,
-      rondas: [{
-        nombre:   '1ª Ronda',
-        numero:   1,
-        combates: combatesSorteo
-      }]
-    };
+    // A partir de la última ronda con datos, generar las siguientes
+    // usando los ganadores de cada ronda finalizada
+    let rondasGeneradas = this.generarRondasFaltantes(rondas, ordenClaves, clavesPresentes);
+    return [...rondas, ...rondasGeneradas];
+  }
+
+  /**
+   * A partir de las rondas ya cargadas de BD, genera las rondas siguientes
+   * usando los ganadores de cada ronda anterior.
+   */
+  private generarRondasFaltantes(
+    rondasExistentes: Ronda[],
+    ordenClaves: string[],
+    clavesPresentes: string[]
+  ): Ronda[] {
+
+    const resultado: Ronda[] = [];
+    let ultimaRonda = rondasExistentes[rondasExistentes.length - 1];
+
+    // Si la última ronda ya es la final o solo hay 1 combate sin BYE pendiente, paramos
+    const claveUltima = ordenClaves[ordenClaves.indexOf(
+      clavesPresentes[clavesPresentes.length - 1]
+    )];
+
+    // Extraer ganadores de la última ronda (para construir la siguiente)
+    let ganadores = this.extraerGanadores(ultimaRonda.combates);
+
+    // Si no hay al menos 2 ganadores para hacer una ronda siguiente, terminamos
+    while (ganadores.length >= 2) {
+      const claveUltimaActual = clavesPresentes[clavesPresentes.length - 1 + resultado.length] ??
+        ordenClaves[Math.min(
+          ordenClaves.indexOf(clavesPresentes[clavesPresentes.length - 1]) + 1 + resultado.length,
+          ordenClaves.length - 1
+        )];
+
+      const idxSiguiente = ordenClaves.indexOf(claveUltimaActual) + 1;
+      if (idxSiguiente >= ordenClaves.length) break;
+
+      const claveNueva = ordenClaves[idxSiguiente];
+      const nuevaRondaCombates = this.emparejarCompetidores(ganadores, claveNueva, idxSiguiente + 1);
+
+      const nuevaRonda: Ronda = {
+        nombre:   this.labelRonda(claveNueva),
+        numero:   idxSiguiente + 1,
+        combates: nuevaRondaCombates
+      };
+
+      resultado.push(nuevaRonda);
+
+      // Los ganadores de esta nueva ronda para la siguiente iteración
+      ganadores = this.extraerGanadores(nuevaRondaCombates);
+      ultimaRonda = nuevaRonda;
+
+      // Si ya llegamos a la final (1 combate), paramos
+      if (nuevaRondaCombates.length <= 1) break;
+    }
+
+    return resultado;
+  }
+
+  /**
+   * Extrae los ganadores de una lista de combates.
+   * - Si el combate está finalizado: devuelve el ganador real.
+   * - Si el combate es BYE: devuelve el competidorRojo (pasa directo).
+   * - Si está pendiente: devuelve el competidorRojo como placeholder.
+   */
+  private extraerGanadores(combates: Combate[]): Competidor[] {
+    const ganadores: Competidor[] = [];
+    for (const c of combates) {
+      if (c.estado === 'bye') {
+        if (c.competidorRojo) ganadores.push(c.competidorRojo);
+      } else if (c.estado === 'finalizado') {
+        if (c.puntuacionRojo > c.puntuacionAzul && c.competidorRojo) {
+          ganadores.push(c.competidorRojo);
+        } else if (c.competidorAzul) {
+          ganadores.push(c.competidorAzul);
+        }
+      } else {
+        // Pendiente: ponemos placeholder null para mantener el hueco
+        // pero solo si hay competidores asignados
+        if (c.competidorRojo) ganadores.push(c.competidorRojo);
+        else ganadores.push(null as any);
+      }
+    }
+    return ganadores;
+  }
+
+  /**
+   * Empareja una lista de competidores en combates para la siguiente ronda.
+   */
+  private emparejarCompetidores(competidores: Competidor[], claveRonda: string, tatami: number): Combate[] {
+    const combates: Combate[] = [];
+    let numeroCombate = 1;
+
+    for (let i = 0; i < competidores.length; i += 2) {
+      const rojo = competidores[i] ?? null;
+      const azul = competidores[i + 1] ?? null;
+      const esBye = azul === null && rojo !== null;
+
+      combates.push({
+        numeroTatami:  tatami,
+        numeroCombate: numeroCombate++,
+        ronda:         claveRonda,
+        competidorRojo: rojo,
+        competidorAzul: azul,
+        puntuacionRojo: 0,
+        puntuacionAzul: 0,
+        senshu:  null,
+        estado:  esBye ? 'bye' : 'pendiente'
+      });
+    }
+
+    return combates;
+  }
+
+  /**
+   * Genera un bracket completo desde cero (sin combates en BD),
+   * a partir de una lista de competidores mezclados aleatoriamente.
+   */
+  private generarBracketCompleto(inscritos: any[]): Ronda[] {
+    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
+    const rondas: Ronda[] = [];
+
+    // Convertir inscritos a Competidor
+    let competidores: Competidor[] = inscritos.map(ins => this.inscritoACompetidor(ins));
+
+    let claveIdx = 0;
+
+    while (competidores.length >= 1 && claveIdx < ordenClaves.length) {
+      const clave = ordenClaves[claveIdx];
+      const combates = this.emparejarCompetidores(competidores, clave, 1);
+
+      rondas.push({
+        nombre:   this.labelRonda(clave),
+        numero:   claveIdx + 1,
+        combates
+      });
+
+      // Para la siguiente ronda usamos los ganadores simulados (los rojos, ya que no hay resultados)
+      const ganadores = combates.map(c => c.estado === 'bye' ? c.competidorRojo : c.competidorRojo).filter(Boolean) as Competidor[];
+
+      // Si solo hay 1 combate generado, llegamos a la final
+      if (combates.length <= 1) break;
+
+      competidores = ganadores;
+      claveIdx++;
+    }
+
+    return rondas;
   }
 
   // ── Helpers privados ──────────────────────────────────────────────────────
@@ -210,6 +351,6 @@ export class SorteoComponent implements OnInit {
     return c.estado === 'finalizado' && c.puntuacionAzul > c.puntuacionRojo;
   }
 
-  trackRonda(_: number, r: Ronda)   { return r.numero; }
+  trackRonda(_: number, r: Ronda)     { return r.numero; }
   trackCombate(_: number, c: Combate) { return `${c.numeroCombate}_${c.numeroTatami}`; }
 }
