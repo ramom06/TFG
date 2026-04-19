@@ -42,9 +42,21 @@ export class CampeonatoDetalle implements OnInit {
     return c ? c.estado === 'futuro' || c.estado === 'activo' : false;
   });
 
+  /**
+   * Muestra el botón "Ver sorteo" si:
+   *  - El campeonato ya ha finalizado, O
+   *  - El campeonato es futuro/activo y faltan ≤ 5 días para su inicio
+   */
   puedeVerSorteo = computed(() => {
     const c = this.campeonato();
-    return c ? c.estado === 'activo' || c.estado === 'pasado' : false;
+    if (!c) return false;
+    if (c.estado === 'pasado' || c.estado === 'activo') return true;
+    if (c.estado === 'futuro') {
+      const msHastaInicio = new Date(c.fechaInicio).getTime() - Date.now();
+      const diasHastaInicio = msHastaInicio / (1000 * 60 * 60 * 24);
+      return diasHastaInicio <= 5;
+    }
+    return false;
   });
 
   async ngOnInit() {
@@ -85,7 +97,6 @@ export class CampeonatoDetalle implements OnInit {
   onInscritoOk() {
     this.inscripcionModalAbierto.set(false);
     this.inscripcionExitosa.set(true);
-    // Ocultar toast tras 4 segundos
     setTimeout(() => this.inscripcionExitosa.set(false), 4000);
   }
 

@@ -161,49 +161,49 @@
             <!-- FEMENINO -->
             @if (objectKeys(femenino()).length > 0) {
               <div class="bg-[#0f0a14] border border-pink-900/30 rounded-xl overflow-hidden">
-              <div class="flex items-center gap-3 px-5 py-3.5 border-b border-pink-900/30 bg-pink-950/20">
-                <span class="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
-                <span class="text-xs font-bold uppercase tracking-[0.18em] text-pink-300">Femenino</span>
+                <div class="flex items-center gap-3 px-5 py-3.5 border-b border-pink-900/30 bg-pink-950/20">
+                  <span class="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
+                  <span class="text-xs font-bold uppercase tracking-[0.18em] text-pink-300">Femenino</span>
+                </div>
+                <div class="p-5 flex flex-col gap-5">
+                  @for (modalidad of objectKeys(femenino()); track modalidad) {
+                    <div>
+                      <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2">
+                        <span class="w-3 h-px bg-pink-500/50"></span>{{ modalidad }}
+                      </p>
+                      <table class="w-full text-xs">
+                        <thead>
+                        <tr class="text-[#4b5563] uppercase tracking-wider">
+                          <th class="text-left pb-2 font-semibold">Categoría</th>
+                          <th class="text-center pb-2 font-semibold">Edad</th>
+                          <th class="text-center pb-2 font-semibold">Peso</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                          @for (cat of femenino()[modalidad]; track cat.id_categoria) {
+                            <tr class="border-t border-white/[0.04] hover:bg-pink-950/30 cursor-pointer transition-colors group"
+                                (click)="abrirModalCategoria(cat)">
+                              <td class="py-2 pr-4 text-[#eef0f4] font-medium group-hover:text-pink-300 transition-colors">
+                                {{ cat.nombre }}
+                                <span class="ml-1 text-[#4b5563] group-hover:text-pink-400 text-[10px]">↗</span>
+                              </td>
+                              <td class="py-2 text-center text-[#8b95a3]">
+                                @if (cat.edadMinima && cat.edadMaxima) { {{ cat.edadMinima }}–{{ cat.edadMaxima }} } @else { — }
+                              </td>
+                              <td class="py-2 text-center text-[#8b95a3]">
+                                @if (cat.pesoMaximo && !cat.pesoMinimo) { &lt;{{ cat.pesoMaximo }}kg }
+                                @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
+                                @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
+                                @else { — }
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                </div>
               </div>
-              <div class="p-5 flex flex-col gap-5">
-                @for (modalidad of objectKeys(femenino()); track modalidad) {
-                  <div>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2">
-                      <span class="w-3 h-px bg-pink-500/50"></span>{{ modalidad }}
-                    </p>
-                    <table class="w-full text-xs">
-                      <thead>
-                      <tr class="text-[#4b5563] uppercase tracking-wider">
-                        <th class="text-left pb-2 font-semibold">Categoría</th>
-                        <th class="text-center pb-2 font-semibold">Edad</th>
-                        <th class="text-center pb-2 font-semibold">Peso</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                        @for (cat of femenino()[modalidad]; track cat.id_categoria) {
-                          <tr class="border-t border-white/[0.04] hover:bg-pink-950/30 cursor-pointer transition-colors group"
-                              (click)="abrirModalCategoria(cat)">
-                            <td class="py-2 pr-4 text-[#eef0f4] font-medium group-hover:text-pink-300 transition-colors">
-                              {{ cat.nombre }}
-                              <span class="ml-1 text-[#4b5563] group-hover:text-pink-400 text-[10px]">↗</span>
-                            </td>
-                            <td class="py-2 text-center text-[#8b95a3]">
-                              @if (cat.edadMinima && cat.edadMaxima) { {{ cat.edadMinima }}–{{ cat.edadMaxima }} } @else { — }
-                            </td>
-                            <td class="py-2 text-center text-[#8b95a3]">
-                              @if (cat.pesoMaximo && !cat.pesoMinimo) { &lt;{{ cat.pesoMaximo }}kg }
-                              @else if (cat.pesoMinimo && !cat.pesoMaximo) { &gt;{{ cat.pesoMinimo }}kg }
-                              @else if (cat.pesoMinimo && cat.pesoMaximo) { {{ cat.pesoMinimo }}–{{ cat.pesoMaximo }}kg }
-                              @else { — }
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                }
-              </div>
-            </div>
             }
           </div>
         }
@@ -219,42 +219,52 @@
   </div>
 </section>
 
-<!-- ── MODAL INSCRITOS (existente) ─────────────────────────────────────────── -->
+<!-- ── MODAL INSCRITOS ────────────────────────────────────────────────────── -->
 @if (modalAbierto()) {
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="cerrarModal()">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="relative z-10 w-full max-w-lg bg-[#0d1117] border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl"
          (click)="$event.stopPropagation()">
       <div class="h-[3px]" [class]="categoriaSeleccionada()?.genero === 'M' ? 'bg-gradient-to-r from-blue-500 to-transparent' : 'bg-gradient-to-r from-pink-500 to-transparent'"></div>
-      <div class="flex items-start justify-between p-6 pb-4">
+
+      <!-- ── Cabecera del modal con botón Ver sorteo ── -->
+      <div class="flex items-start justify-between gap-3 p-6 pb-4">
         <div>
           <p class="text-[10px] font-bold uppercase tracking-[0.18em] mb-1"
              [class]="categoriaSeleccionada()?.genero === 'M' ? 'text-blue-400' : 'text-pink-400'">
             {{ categoriaSeleccionada()?.genero === 'M' ? 'Masculino' : 'Femenino' }} · {{ categoriaSeleccionada()?.modalidad }}
           </p>
-          <h3 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase">{{ categoriaSeleccionada()?.nombre }}</h3>
+          <h3 class="font-['Bebas_Neue',sans-serif] text-2xl tracking-wider uppercase">
+            {{ categoriaSeleccionada()?.nombre }}
+          </h3>
         </div>
-        @if (puedeVerSorteo()) {
-          <a [routerLink]="['/campeonato', campeonato()!.id_campeonato,
-                    'categoria', categoriaSeleccionada()!.id_categoria, 'sorteo']"
-             class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em]
-            bg-[#e01c2e]/10 hover:bg-[#e01c2e]/20 border border-[#e01c2e]/30
-            text-[#e01c2e] px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- BOTÓN VER SORTEO: visible 5 días antes del inicio o si ya pasó/está activo -->
+          @if (puedeVerSorteo() && categoriaSeleccionada()) {
+            <a [routerLink]="['/campeonato', campeonato()!.id_campeonato,
+                              'categoria', categoriaSeleccionada()!.id_categoria, 'sorteo']"
+               class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em]
+                      bg-[#e01c2e]/10 hover:bg-[#e01c2e]/20 border border-[#e01c2e]/30
+                      text-[#e01c2e] px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Ver sorteo
+            </a>
+          }
+
+          <button (click)="cerrarModal()"
+                  class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors text-[#8b95a3] hover:text-white">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
-            Ver sorteo
-          </a>
-        }
-        <button (click)="cerrarModal()"
-                class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors text-[#8b95a3] hover:text-white ml-4 shrink-0">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
+          </button>
+        </div>
       </div>
+
       <div class="px-6 pb-6">
         @if (inscripciones().length === 0) {
           <div class="text-center py-10">
@@ -285,7 +295,7 @@
   </div>
 }
 
-<!-- ── MODAL INSCRIPCIÓN (nuevo) ───────────────────────────────────────────── -->
+<!-- ── MODAL INSCRIPCIÓN ───────────────────────────────────────────────────── -->
 @if (inscripcionModalAbierto() && campeonato()) {
   <app-inscripcion
     [campeonato]="campeonato()!"
