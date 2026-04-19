@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { RouterLink, Router } from '@angular/router';
 import { AutenticacionService } from '../service/autenticacion-service';
 import { UsuarioService } from '../service/usuario-service';
-import { Usuario } from '../interfaces/usuario';
+import { Usuario, Rol } from '../interfaces/usuario';
 
 @Component({
   selector: 'app-usuario-admin',
@@ -13,7 +13,7 @@ import { Usuario } from '../interfaces/usuario';
   templateUrl: './usuario-admin.html',
   styleUrl: './usuario-admin.css',
 })
-export class UsuarioAdmin implements OnInit {
+export class UsuarioAdminComponent implements OnInit {
 
   usuarios    = signal<Usuario[]>([]);
   loading     = signal(true);
@@ -80,7 +80,7 @@ export class UsuarioAdmin implements OnInit {
       dni:             [u?.dni             ?? '', [Validators.required, Validators.pattern(/^\d{8}[A-Za-z]$/)]],
       email:           [u?.email           ?? '', [Validators.required, Validators.email]],
       password:        ['', this.modoEdicion() ? [] : [Validators.required, Validators.minLength(6)]],
-      rol:             [u?.rol             ?? 'COMPETIDOR', Validators.required],
+      rol:             [u?.rol             ?? Rol.COMPETIDOR, Validators.required],
       genero:          [u?.genero          ?? 'M', Validators.required],
       fechaNacimiento: [u?.fechaNacimiento ? u.fechaNacimiento.toString().substring(0,10) : '', Validators.required],
     });
