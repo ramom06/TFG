@@ -498,7 +498,7 @@
             Consentimiento de datos
           </p>
           <label class="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox"
+            <input type="radio"
                    [checked]="consentimiento()"
                    (change)="consentimiento.set($any($event.target).checked)"
                    class="mt-0.5 w-4 h-4 accent-green-600 shrink-0" />
