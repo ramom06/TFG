@@ -20,9 +20,21 @@ export class SorteoComponent implements OnInit {
   sorteoData  = signal<Sorteo | null>(null);
   loading     = signal(true);
   error       = signal<string | null>(null);
+  estadoCampeonato = signal<string>('');
+
 
   idCampeonato = signal(0);
   idCategoria  = signal(0);
+
+  rondasVisibles = computed(() => {
+    const s = this.sorteoData();
+    if (!s) return [];
+    // Si el campeonato es "futuro", solo mostrar la primera ronda
+    if (this.estadoCampeonato() === 'futuro') {
+      return s.rondas.slice(0, 1);
+    }
+    return s.rondas;
+  });
 
   ganador = computed(() => {
     const s = this.sorteoData();
@@ -56,6 +68,11 @@ export class SorteoComponent implements OnInit {
       );
       const combates: any[] = resComb.ok ? await resComb.json() : [];
 
+
+      const resCamp = await fetch(`${environment.apiUrl}/api/campeonatos/${idC}`);
+      const campData = resCamp.ok ? await resCamp.json() : null;
+      this.estadoCampeonato.set(campData?.estado ?? '');
+
       const sorteo = this.construirSorteo(idC, idCat, inscritos, combates);
       this.sorteoData.set(sorteo);
 
@@ -65,6 +82,7 @@ export class SorteoComponent implements OnInit {
       this.loading.set(false);
     }
   }
+
 
   // ── Construcción del sorteo ───────────────────────────────────────────────
 
