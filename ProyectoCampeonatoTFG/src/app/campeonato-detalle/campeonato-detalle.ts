@@ -5,16 +5,17 @@ import { CampeonatoService } from '../service/campeonato-service';
 import { CategoriaService } from '../service/categoria-service';
 import { InscripcionService } from '../service/inscripcion-service';
 import { CombateService } from '../service/combate-service';
+import { InscripcionComponent } from '../inscripcion/inscripcion';
 import { Campeonato } from '../interfaces/campeonato';
 import { Categoria } from '../interfaces/categoria';
 import { Inscripcion } from '../interfaces/inscripcion';
 import { Combate } from '../interfaces/combate';
-import {Ronda} from '../interfaces/ronda';
+import { Ronda } from '../interfaces/ronda';
 
 @Component({
   selector: 'app-campeonato-detalle',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, InscripcionComponent],
   templateUrl: './campeonato-detalle.html',
   styleUrl: './campeonato-detalle.css',
 })
@@ -32,6 +33,9 @@ export class CampeonatoDetalle implements OnInit {
   inscripciones         = signal<Inscripcion[]>([]);
   combates              = signal<Combate[]>([]);
   modalAbierto          = signal(false);
+
+  /** Controla si el modal de inscripción está abierto */
+  inscripcionAbierta    = signal(false);
 
   readonly objectKeys = Object.keys;
 
@@ -53,7 +57,6 @@ export class CampeonatoDetalle implements OnInit {
 
     const result: Ronda[] = [];
 
-    // Rondas numéricas y especiales ordenadas
     for (const key of ['R1', 'R2', 'R3', 'R4', 'R5', 'QF', 'SF']) {
       if (!mapa.has(key)) continue;
       const etiq = key === 'SF' ? 'Semifinal' : key === 'QF' ? 'Cuartos de Final' : `Ronda ${key.replace('R', '')}`;
@@ -61,21 +64,18 @@ export class CampeonatoDetalle implements OnInit {
       mapa.delete(key);
     }
 
-    // Repesca
     for (const key of ['REP', 'REPESCA']) {
       if (!mapa.has(key)) continue;
       result.push({ etiqueta: 'Repesca', tipo: 'repesca', combates: mapa.get(key)! });
       mapa.delete(key);
     }
 
-    // Final
     for (const key of ['F', 'FINAL']) {
       if (!mapa.has(key)) continue;
       result.push({ etiqueta: 'Final', tipo: 'final', combates: mapa.get(key)! });
       mapa.delete(key);
     }
 
-    // Cualquier ronda desconocida
     for (const [key, list] of mapa.entries()) {
       result.push({ etiqueta: key, tipo: 'ronda', combates: list });
     }
@@ -129,13 +129,23 @@ export class CampeonatoDetalle implements OnInit {
     this.combates.set([]);
   }
 
+  abrirInscripcion()  { this.inscripcionAbierta.set(true); }
+  cerrarInscripcion() { this.inscripcionAbierta.set(false); }
+
+  onInscritoOk() {
+    this.inscripcionAbierta.set(false);
+    // Recarga inscripciones si hay modal de categoría abierto
+    const cat = this.categoriaSeleccionada();
+    if (cat) this.abrirModalCategoria(cat);
+  }
+
   /** Devuelve 'rojo' | 'azul' | null según el ganador del combate */
   ganadorCombate(c: Combate): 'rojo' | 'azul' | null {
     if (c.estado !== 'finalizado') return null;
-    if (!c.competidorAzul) return 'rojo'; // bye
+    if (!c.competidorAzul) return 'rojo';
     if (c.puntuacionRojo > c.puntuacionAzul) return 'rojo';
     if (c.puntuacionAzul > c.puntuacionRojo) return 'azul';
-    if (c.senshu === 'rojo') return 'azul'; // senshu = aviso, pierde quien lo tiene
+    if (c.senshu === 'rojo') return 'azul';
     if (c.senshu === 'azul') return 'rojo';
     return null;
   }
