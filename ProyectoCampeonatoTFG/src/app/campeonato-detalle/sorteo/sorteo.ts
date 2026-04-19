@@ -17,10 +17,9 @@ import { environment } from '../../../environments/environment';
 export class SorteoComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  sorteoData   = signal<Sorteo | null>(null);
-  loading      = signal(true);
-  error        = signal<string | null>(null);
-  guardando    = signal(false);
+  sorteoData  = signal<Sorteo | null>(null);
+  loading     = signal(true);
+  error       = signal<string | null>(null);
 
   idCampeonato = signal(0);
   idCategoria  = signal(0);
@@ -44,13 +43,7 @@ export class SorteoComponent implements OnInit {
     const idCat = Number(this.route.snapshot.paramMap.get('idCategoria'));
     this.idCampeonato.set(idC);
     this.idCategoria.set(idCat);
-    await this.cargarSorteo(idC, idCat);
-  }
 
-  // ── Carga / recarga del sorteo ────────────────────────────────────────────
-
-  private async cargarSorteo(idC: number, idCat: number) {
-    this.loading.set(true);
     try {
       const resIns = await fetch(
         `${environment.apiUrl}/api/inscripciones/campeonato/${idC}/categoria/${idCat}`
@@ -65,72 +58,11 @@ export class SorteoComponent implements OnInit {
 
       const sorteo = this.construirSorteo(idC, idCat, inscritos, combates);
       this.sorteoData.set(sorteo);
+
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar el sorteo');
     } finally {
       this.loading.set(false);
-    }
-  }
-
-  // ── Marcar ganador de un combate ──────────────────────────────────────────
-
-  /**
-   * Llama al PUT para marcar como finalizado el combate con el ganador indicado.
-   * Si el combate ya está finalizado, permite cambiarlo (desmarcar).
-   * Después recarga todo el sorteo para que la siguiente ronda se actualice.
-   */
-  async marcarGanador(combate: Combate, ganador: 'rojo' | 'azul') {
-    if (this.guardando()) return;
-
-    // Si ya tiene ese ganador → lo revertimos a pendiente
-    const yaEsGanador =
-      (ganador === 'rojo' && this.rojoGana(combate)) ||
-      (ganador === 'azul' && this.azulGana(combate));
-
-    const nuevoEstado      = yaEsGanador ? 'pendiente' : 'finalizado';
-    const puntuacionRojo   = yaEsGanador ? 0 : (ganador === 'rojo' ? 1 : 0);
-    const puntuacionAzul   = yaEsGanador ? 0 : (ganador === 'azul' ? 1 : 0);
-
-    const idC   = this.idCampeonato();
-    const idCat = this.idCategoria();
-    const tat   = combate.numeroTatami   ?? combate.id?.numeroTatami   ?? 1;
-    const num   = combate.numeroCombate  ?? combate.id?.numeroCombate  ?? 1;
-
-    const body = {
-      idCampeonato:    idC,
-      idCategoria:     idCat,
-      numeroTatami:    tat,
-      numeroCombate:   num,
-      idCompetidorRojo: combate.competidorRojo?.idUsuario ?? combate.competidorRojo?.id,
-      idCompetidorAzul: combate.competidorAzul?.idUsuario ?? combate.competidorAzul?.id ?? null,
-      ronda:           combate.ronda,
-      puntuacionRojo,
-      puntuacionAzul,
-      senshu:          null,
-      estado:          nuevoEstado,
-      horaProgramada:  '00:00:00',
-      horaInicioReal:  '2000-01-01T00:00:00',
-      duracionSegundos: 0,
-      observaciones:   null,
-    };
-
-    this.guardando.set(true);
-    try {
-      const res = await fetch(
-        `${environment.apiUrl}/api/combates/${idC}/${idCat}/${tat}/${num}`,
-        {
-          method:  'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(body),
-        }
-      );
-      if (!res.ok) throw new Error('Error al guardar el resultado');
-      // Recargamos todo el sorteo → la siguiente ronda se reconstruye con el ganador real
-      await this.cargarSorteo(idC, idCat);
-    } catch (e: any) {
-      alert('No se pudo guardar el resultado: ' + (e.message ?? 'error desconocido'));
-    } finally {
-      this.guardando.set(false);
     }
   }
 
@@ -159,6 +91,11 @@ export class SorteoComponent implements OnInit {
     return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
   }
 
+  /**
+   * Toma los combates de BD y construye SOLO las rondas que existen.
+   * No genera rondas siguientes — eso lo hará el árbitro en el futuro
+   * al cerrar combates en tiempo real con puntuación real.
+   */
   private construirBracketDesdeCombates(combates: any[]): Ronda[] {
     const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
 
@@ -176,79 +113,53 @@ export class SorteoComponent implements OnInit {
     for (const clave of clavesPresentes) {
       rondas.push({
         etiqueta: this.labelRonda(clave),
-        tipo:     clave === 'Final' || clave === 'F' ? 'final'
-          : clave === 'REP' || clave === 'REPESCA' ? 'repesca'
+        tipo:     clave === 'Final' || clave === 'F'          ? 'final'
+          : clave === 'REP'  || clave === 'REPESCA'     ? 'repesca'
             : 'ronda',
         combates: porClave.get(clave)!.map(c => this.mapCombate(c))
       });
     }
 
-    const rondasGeneradas = this.generarRondasFaltantes(rondas, ordenClaves, clavesPresentes);
-    return [...rondas, ...rondasGeneradas];
+    // ── Solo devolvemos lo que está en BD ──────────────────────────────────
+    // Las rondas siguientes aparecerán automáticamente cuando el árbitro
+    // registre los resultados en tiempo real y se guarden en BD.
+    return rondas;
   }
 
-  private generarRondasFaltantes(
-    rondasExistentes: Ronda[],
-    ordenClaves: string[],
-    clavesPresentes: string[]
-  ): Ronda[] {
-    const resultado: Ronda[] = [];
-    let ultimaRonda = rondasExistentes[rondasExistentes.length - 1];
-    let ganadores = this.extraerGanadores(ultimaRonda.combates);
+  /**
+   * Genera un bracket de primera ronda desde cero (sin combates en BD).
+   * Solo se usa cuando no hay ningún combate guardado todavía.
+   */
+  private generarBracketCompleto(inscritos: any[]): Ronda[] {
+    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
+    const rondas: Ronda[] = [];
+    let competidores: Competidor[] = inscritos.map(ins => this.inscritoACompetidor(ins));
+    let claveIdx = 0;
 
-    while (ganadores.length >= 2) {
-      const claveUltimaActual = clavesPresentes[clavesPresentes.length - 1 + resultado.length] ??
-        ordenClaves[Math.min(
-          ordenClaves.indexOf(clavesPresentes[clavesPresentes.length - 1]) + 1 + resultado.length,
-          ordenClaves.length - 1
-        )];
-
-      const idxSiguiente = ordenClaves.indexOf(claveUltimaActual) + 1;
-      if (idxSiguiente >= ordenClaves.length) break;
-
-      const claveNueva = ordenClaves[idxSiguiente];
-      const nuevaRondaCombates = this.emparejarCompetidores(ganadores, claveNueva, idxSiguiente + 1);
-
-      const nuevaRonda: Ronda = {
-        etiqueta: this.labelRonda(claveNueva),
-        tipo:     claveNueva === 'Final' ? 'final' : 'ronda',
-        combates: nuevaRondaCombates
-      };
-
-      resultado.push(nuevaRonda);
-      ganadores = this.extraerGanadores(nuevaRondaCombates);
-      ultimaRonda = nuevaRonda;
-      if (nuevaRondaCombates.length <= 1) break;
+    while (competidores.length >= 1 && claveIdx < ordenClaves.length) {
+      const clave    = ordenClaves[claveIdx];
+      const combates = this.emparejarCompetidores(competidores, clave, 1);
+      rondas.push({
+        etiqueta: this.labelRonda(clave),
+        tipo:     clave === 'Final' ? 'final' : 'ronda',
+        combates
+      });
+      if (combates.length <= 1) break;
+      competidores = combates.map(c => c.competidorRojo).filter(Boolean) as Competidor[];
+      claveIdx++;
     }
 
-    return resultado;
+    return rondas;
   }
 
-  private extraerGanadores(combates: Combate[]): Competidor[] {
-    const ganadores: Competidor[] = [];
-    for (const c of combates) {
-      if (c.estado === 'bye') {
-        if (c.competidorRojo) ganadores.push(c.competidorRojo);
-      } else if (c.estado === 'finalizado') {
-        if (c.puntuacionRojo > c.puntuacionAzul && c.competidorRojo) {
-          ganadores.push(c.competidorRojo);
-        } else if (c.competidorAzul) {
-          ganadores.push(c.competidorAzul);
-        }
-      } else {
-        if (c.competidorRojo) ganadores.push(c.competidorRojo);
-        else ganadores.push(null as any);
-      }
-    }
-    return ganadores;
-  }
+  // ── Helpers privados ──────────────────────────────────────────────────────
 
   private emparejarCompetidores(competidores: Competidor[], claveRonda: string, tatami: number): Combate[] {
     const combates: Combate[] = [];
     let numeroCombate = 1;
     for (let i = 0; i < competidores.length; i += 2) {
-      const rojo = competidores[i] ?? null;
-      const azul = competidores[i + 1] ?? null;
+      const rojo  = competidores[i]     ?? null;
+      const azul  = competidores[i + 1] ?? null;
       const esBye = azul === null && rojo !== null;
       combates.push({
         numeroTatami:   tatami,
@@ -264,33 +175,6 @@ export class SorteoComponent implements OnInit {
     }
     return combates;
   }
-
-  private generarBracketCompleto(inscritos: any[]): Ronda[] {
-    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
-    const rondas: Ronda[] = [];
-    let competidores: Competidor[] = inscritos.map(ins => this.inscritoACompetidor(ins));
-    let claveIdx = 0;
-
-    while (competidores.length >= 1 && claveIdx < ordenClaves.length) {
-      const clave = ordenClaves[claveIdx];
-      const combates = this.emparejarCompetidores(competidores, clave, 1);
-      rondas.push({
-        etiqueta: this.labelRonda(clave),
-        tipo:     clave === 'Final' ? 'final' : 'ronda',
-        combates
-      });
-      const ganadores = combates
-        .map(c => c.estado === 'bye' ? c.competidorRojo : c.competidorRojo)
-        .filter(Boolean) as Competidor[];
-      if (combates.length <= 1) break;
-      competidores = ganadores;
-      claveIdx++;
-    }
-
-    return rondas;
-  }
-
-  // ── Helpers privados ──────────────────────────────────────────────────────
 
   private inscritoACompetidor(ins: any): Competidor {
     const partes    = (ins.nombreCompetidor ?? '').trim().split(' ');
@@ -320,8 +204,8 @@ export class SorteoComponent implements OnInit {
       competidorAzul: c.competidorAzul ?? null,
       puntuacionRojo: c.puntuacionRojo ?? 0,
       puntuacionAzul: c.puntuacionAzul ?? 0,
-      senshu:  c.senshu  ?? null,
-      estado:  c.estado  ?? 'pendiente'
+      senshu:         c.senshu  ?? null,
+      estado:         c.estado  ?? 'pendiente'
     };
   }
 
