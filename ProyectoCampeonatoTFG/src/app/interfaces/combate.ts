@@ -1,9 +1,9 @@
 import { Competidor } from './competidor';
 
 export interface Combate {
-  id?: CombateId;           // opcional ahora
-  numeroTatami?: number;    // ← añadir
-  numeroCombate?: number;   // ← añadir
+  id?: CombateId;           // opcional — viene del backend
+  numeroTatami?: number;    // usado en sorteo (generado en frontend)
+  numeroCombate?: number;   // usado en sorteo (generado en frontend)
   ronda: string;
   estado: string;
   puntuacionRojo: number;
