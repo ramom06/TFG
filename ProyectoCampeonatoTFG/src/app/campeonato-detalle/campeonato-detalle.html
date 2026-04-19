@@ -289,7 +289,7 @@
 
                     <!-- Combates -->
                     <div class="flex flex-col gap-2">
-                      @for (combate of ronda.combates; track combate.id.numeroCombate) {
+                      @for (combate of ronda.combates; track (combate.id?.numeroCombate ?? combate.numeroCombate ?? $index)) {
                         <div class="rounded-lg border overflow-hidden"
                              [class]="ronda.tipo === 'final'
                                ? 'border-yellow-500/20 bg-yellow-950/10'

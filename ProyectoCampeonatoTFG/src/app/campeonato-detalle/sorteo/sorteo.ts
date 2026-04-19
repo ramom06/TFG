@@ -124,8 +124,10 @@ export class SorteoComponent implements OnInit {
     // Convertir todas las rondas que ya existen en BD
     for (const clave of clavesPresentes) {
       rondas.push({
-        nombre:   this.labelRonda(clave),
-        numero:   ordenClaves.indexOf(clave) + 1,
+        etiqueta: this.labelRonda(clave),
+        tipo:     clave === 'Final' || clave === 'F' ? 'final'
+          : clave === 'REP' || clave === 'REPESCA' ? 'repesca'
+            : 'ronda',
         combates: porClave.get(clave)!.map(c => this.mapCombate(c))
       });
     }
@@ -172,8 +174,8 @@ export class SorteoComponent implements OnInit {
       const nuevaRondaCombates = this.emparejarCompetidores(ganadores, claveNueva, idxSiguiente + 1);
 
       const nuevaRonda: Ronda = {
-        nombre:   this.labelRonda(claveNueva),
-        numero:   idxSiguiente + 1,
+        etiqueta: this.labelRonda(claveNueva),
+        tipo:     claveNueva === 'Final' ? 'final' : 'ronda',
         combates: nuevaRondaCombates
       };
 
@@ -263,8 +265,8 @@ export class SorteoComponent implements OnInit {
       const combates = this.emparejarCompetidores(competidores, clave, 1);
 
       rondas.push({
-        nombre:   this.labelRonda(clave),
-        numero:   claveIdx + 1,
+        etiqueta: this.labelRonda(clave),
+        tipo:     clave === 'Final' ? 'final' : 'ronda',
         combates
       });
 
@@ -351,6 +353,6 @@ export class SorteoComponent implements OnInit {
     return c.estado === 'finalizado' && c.puntuacionAzul > c.puntuacionRojo;
   }
 
-  trackRonda(_: number, r: Ronda)     { return r.numero; }
-  trackCombate(_: number, c: Combate) { return `${c.numeroCombate}_${c.numeroTatami}`; }
+  trackRonda(_: number, r: Ronda)     { return r.etiqueta; }
+  trackCombate(_: number, c: Combate) { return `${c.numeroCombate ?? c.id?.numeroCombate}_${c.numeroTatami ?? c.id?.numeroTatami}`; }
 }
