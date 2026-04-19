@@ -17,7 +17,7 @@ import { environment } from '../../../environments/environment';
 export class SorteoComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  sorteoData   = signal<Sorteo | null>(null);   // renombrado para evitar colisión con la interfaz
+  sorteoData   = signal<Sorteo | null>(null);
   loading      = signal(true);
   error        = signal<string | null>(null);
 
@@ -37,8 +37,9 @@ export class SorteoComponent implements OnInit {
   });
 
   async ngOnInit() {
-    const idC   = Number(this.route.snapshot.paramMap.get('id'));
-    const idCat = Number(this.route.snapshot.paramMap.get('idCategoria'));
+    // Los nombres de parámetro deben coincidir EXACTAMENTE con los de app.routes.ts
+    const idC   = Number(this.route.snapshot.paramMap.get('id'));           // :id
+    const idCat = Number(this.route.snapshot.paramMap.get('idCategoria'));  // :idCategoria
     this.idCampeonato.set(idC);
     this.idCategoria.set(idCat);
 
