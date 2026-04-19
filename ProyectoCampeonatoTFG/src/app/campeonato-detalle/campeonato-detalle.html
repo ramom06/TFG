@@ -232,12 +232,7 @@
 
       <!-- Contenido -->
       <div class="px-6 pb-6">
-        @if (inscripciones().length === 0) {
-          <div class="text-center py-10">
-            <p class="text-3xl mb-2">🥋</p>
-            <p class="text-sm text-[#8b95a3]">No hay competidores inscritos en esta categoría.</p>
-          </div>
-        } @else {
+        @if (inscripciones().length > 0) {
           <p class="text-xs text-[#4b5563] uppercase tracking-wider mb-3 font-semibold">
             {{ inscripciones().length }} competidor{{ inscripciones().length !== 1 ? 'es' : '' }}
             inscrito{{ inscripciones().length !== 1 ? 's' : '' }}

@@ -1,11 +1,11 @@
 import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Sorteo } from '../../interfaces/sorteo';
-import { Combate } from '../../interfaces/combate';
-import { Ronda } from '../../interfaces/ronda';
-import { Competidor } from '../../interfaces/competidor';
-import { environment } from '../../../environments/environment';
+import { Sorteo } from '../interfaces/sorteo';
+import { Combate } from '../interfaces/combate';
+import { Ronda } from '../interfaces/ronda';
+import { Competidor } from '../interfaces/competidor';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-sorteo',

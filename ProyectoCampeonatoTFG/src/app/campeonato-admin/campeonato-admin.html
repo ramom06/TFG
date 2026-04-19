@@ -35,6 +35,35 @@
     <h1 class="relative font-['Bebas_Neue',sans-serif] text-[clamp(44px,7vw,84px)] tracking-wider uppercase leading-none">
       Gestión de <span class="text-[#e01c2e]">Campeonatos</span>
     </h1>
+    <!-- ══ TABS DE NAVEGACIÓN — pegar justo debajo del <h1> en campeonato-admin.html ══ -->
+
+    <p class="relative mt-2 text-sm text-[#4b5563]">
+      Panel de administración
+    </p>
+
+    <!-- Tabs -->
+    <div class="relative flex items-center justify-center gap-2 mt-6">
+      <a routerLink="/admin/campeonatos"
+         class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+                text-[#eef0f4] bg-[#e01c2e]/15 border border-[#e01c2e]/30 transition-all">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+        </svg>
+        Campeonatos
+      </a>
+      <a routerLink="/admin/usuarios"
+         class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+                text-[#8b95a3] hover:text-[#eef0f4] hover:bg-white/5 transition-all border border-transparent">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Usuarios
+      </a>
+    </div>
     <p class="relative mt-3 text-sm text-[#8b95a3] font-light tracking-wide">
       Crea, edita y elimina campeonatos del sistema
     </p>
