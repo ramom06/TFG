@@ -8,7 +8,7 @@
     </a>
 
     @if (campeonato()) {
-      <div class="relative w-full rounded-2xl overflow-hidden mb-8 border border-white/[0.07]"  style="max-height: 480px;">
+      <div class="relative w-full rounded-2xl overflow-hidden mb-8 border border-white/[0.07]" style="max-height: 480px;">
         <img [src]="campeonato()!.urlPortada" [alt]="campeonato()!.nombre" class="w-full h-full object-contain bg-[#0d1117]" style="max-height: 480px;">
         <div class="absolute inset-0 bg-gradient-to-t from-[#06080f] via-[rgba(6,8,15,0.4)] to-transparent pointer-events-none"></div>
         <div class="absolute bottom-5 left-6 flex gap-2 flex-wrap">
@@ -23,9 +23,7 @@
 
       <div class="relative bg-[#0d1117] border border-white/[0.07] rounded-2xl p-7 mb-8 overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#e01c2e] to-transparent"></div>
-
         <h1 class="font-['Bebas_Neue',sans-serif] text-[clamp(28px,5vw,56px)] tracking-wider uppercase leading-none mb-4">{{ campeonato()!.nombre }}</h1>
-
         <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#8b95a3] mb-4">
           <span class="flex items-center gap-2">
             <svg class="opacity-50 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -40,7 +38,6 @@
             {{ campeonato()!.ubicacion }}
           </span>
         </div>
-
         <p class="text-sm text-[#8b95a3] leading-relaxed">
           {{ campeonato()!.descripcion || 'Sin descripción disponible.' }}
         </p>
@@ -55,7 +52,6 @@
         } @else {
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <!-- MASCULINO -->
             @if (objectKeys(masculino()).length > 0) {
               <div class="bg-[#0a0f1a] border border-blue-900/30 rounded-xl overflow-hidden">
                 <div class="flex items-center gap-3 px-5 py-3.5 border-b border-blue-900/30 bg-blue-950/20">
@@ -65,7 +61,9 @@
                 <div class="p-5 flex flex-col gap-5">
                   @for (modalidad of objectKeys(masculino()); track modalidad) {
                     <div>
-                      <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2"><span class="w-3 h-px bg-blue-500/50"></span>{{ modalidad }}</p>
+                      <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2">
+                        <span class="w-3 h-px bg-blue-500/50"></span>{{ modalidad }}
+                      </p>
                       <table class="w-full text-xs">
                         <thead>
                         <tr class="text-[#4b5563] uppercase tracking-wider">
@@ -98,17 +96,18 @@
               </div>
             }
 
-            <!-- FEMENINO -->
             @if (objectKeys(femenino()).length > 0) {
               <div class="bg-[#0a0f1a] border border-pink-900/30 rounded-xl overflow-hidden">
                 <div class="flex items-center gap-3 px-5 py-3.5 border-b border-pink-900/30 bg-pink-950/20">
-                  <span class="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-pink-400 shadow-[0_0_6px_rgba(244,114,182,0.6)]"></span>
                   <span class="text-xs font-bold uppercase tracking-[0.18em] text-pink-300">Femenino</span>
                 </div>
                 <div class="p-5 flex flex-col gap-5">
                   @for (modalidad of objectKeys(femenino()); track modalidad) {
                     <div>
-                      <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2"><span class="w-3 h-px bg-pink-500/50"></span>{{ modalidad }}</p>
+                      <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#4b5563] mb-2.5 flex items-center gap-2">
+                        <span class="w-3 h-px bg-pink-500/50"></span>{{ modalidad }}
+                      </p>
                       <table class="w-full text-xs">
                         <thead>
                         <tr class="text-[#4b5563] uppercase tracking-wider">
@@ -155,26 +154,23 @@
   </div>
 </section>
 
-<!-- ── MODAL INSCRITOS + SORTEO ── -->
+<!-- ── MODAL ── -->
 @if (modalAbierto()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-       (click)="cerrarModal()">
-
-    <!-- Backdrop -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="cerrarModal()">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
-    <!-- Panel -->
-    <div class="relative z-10 w-full max-w-2xl bg-[#0d1117] border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+    <div class="relative z-10 w-full max-w-2xl bg-[#0d1117] border border-white/[0.1] rounded-2xl shadow-2xl
+                max-h-[90vh] flex flex-col overflow-hidden"
          (click)="$event.stopPropagation()">
 
-      <!-- Barra de color según género -->
+      <!-- Barra color género -->
       <div class="h-[3px] shrink-0"
            [class]="categoriaSeleccionada()?.genero === 'M'
              ? 'bg-gradient-to-r from-blue-500 to-transparent'
              : 'bg-gradient-to-r from-pink-500 to-transparent'">
       </div>
 
-      <!-- Header modal -->
+      <!-- Header -->
       <div class="flex items-start justify-between p-6 pb-4 shrink-0">
         <div>
           <p class="text-[10px] font-bold uppercase tracking-[0.18em] mb-1"
@@ -187,17 +183,20 @@
           </h3>
         </div>
         <button (click)="cerrarModal()"
-                class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors text-[#8b95a3] hover:text-white ml-4 shrink-0">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center
+                       transition-colors text-[#8b95a3] hover:text-white ml-4 shrink-0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
       </div>
 
-      <!-- Contenido scrollable -->
-      <div class="px-6 pb-6 overflow-y-auto flex-1" style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;">
+      <!-- Cuerpo scrollable -->
+      <div class="px-6 pb-6 overflow-y-auto flex-1"
+           style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.07) transparent;">
 
-        <!-- Sin competidores -->
+        <!-- Sin inscritos -->
         @if (inscripciones().length === 0) {
           <div class="text-center py-10">
             <p class="text-3xl mb-2">🥋</p>
@@ -206,7 +205,7 @@
 
         } @else {
 
-          <!-- Lista de inscritos -->
+          <!-- Lista inscritos -->
           <p class="text-xs text-[#4b5563] uppercase tracking-wider mb-3 font-semibold">
             {{ inscripciones().length }} competidor{{ inscripciones().length !== 1 ? 'es' : '' }} inscrito{{ inscripciones().length !== 1 ? 's' : '' }}
           </p>
@@ -214,7 +213,8 @@
             @for (ins of inscripciones(); track ins.idCompetidor; let i = $index) {
               <div class="flex items-center gap-3 p-3 rounded-lg bg-[#141a24] border border-white/[0.05]">
                 <span class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
-                      [class]="categoriaSeleccionada()?.genero === 'M'? 'bg-blue-950 text-blue-400 border border-blue-800/50'
+                      [class]="categoriaSeleccionada()?.genero === 'M'
+                        ? 'bg-blue-950 text-blue-400 border border-blue-800/50'
                         : 'bg-pink-950 text-pink-400 border border-pink-800/50'">
                   {{ i + 1 }}
                 </span>
@@ -226,59 +226,70 @@
             }
           </div>
 
-          <!-- ── SORTEO / BRACKET ── -->
+          <!-- ── SORTEO ── -->
           @if (combates().length > 0) {
             <div class="border-t border-white/[0.06] pt-5">
-              <div class="flex items-center gap-2 mb-4">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#e01c2e]">
+
+              <!-- Cabecera sorteo -->
+              <div class="flex items-center gap-2 mb-3">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" class="text-[#e01c2e] shrink-0">
                   <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
                   <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
                 </svg>
                 <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#eef0f4]">Sorteo</p>
-                @if (!campeonatoFinalizado()) {
-                  <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 font-semibold uppercase tracking-wider">En curso</span>
+                @if (campeonatoFinalizado()) {
+                  <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider
+                               bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Finalizado</span>
                 } @else {
-                  <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold uppercase tracking-wider">Finalizado</span>
+                  <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider
+                               bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">En curso</span>
                 }
               </div>
 
-              <!-- Leyenda (solo si está finalizado) -->
+              <!-- Leyenda (solo finalizado) -->
               @if (campeonatoFinalizado()) {
-                <div class="flex items-center gap-4 mb-4 text-[11px] text-[#8b95a3]">
+                <div class="flex items-center gap-5 mb-4 text-[11px] text-[#8b95a3]">
                   <span class="flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]"></span>
                     Pasa de ronda
                   </span>
                   <span class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-[#374151]"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#1f2937]"></span>
                     Eliminado
                   </span>
                 </div>
               }
 
-              <!-- Rondas -->
-              <div class="flex flex-col gap-4">
+              <!-- Rondas del bracket -->
+              <div class="flex flex-col gap-5">
                 @for (ronda of bracket(); track ronda.etiqueta) {
 
-                  <!-- Cabecera de ronda -->
                   <div>
+                    <!-- Cabecera ronda -->
                     <div class="flex items-center gap-2 mb-2">
                       @if (ronda.tipo === 'final') {
-                        <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-yellow-400 flex items-center gap-1.5">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-yellow-400">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                          </svg>
                           {{ ronda.etiqueta }}
                         </span>
                       } @else if (ronda.tipo === 'repesca') {
-                        <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-orange-400">↩ {{ ronda.etiqueta }}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-orange-400">
+                          ↩ {{ ronda.etiqueta }}
+                        </span>
                       } @else {
-                        <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#4b5563]">{{ ronda.etiqueta }}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#4b5563]">
+                          {{ ronda.etiqueta }}
+                        </span>
                       }
                       <span class="flex-1 h-px bg-white/[0.05]"></span>
                     </div>
 
-                    <!-- Combates de la ronda -->
+                    <!-- Combates -->
                     <div class="flex flex-col gap-2">
-                      @for (combate of ronda.combates; track combate.numeroCombate) {
+                      @for (combate of ronda.combates; track combate.id.numeroCombate) {
                         <div class="rounded-lg border overflow-hidden"
                              [class]="ronda.tipo === 'final'
                                ? 'border-yellow-500/20 bg-yellow-950/10'
@@ -288,24 +299,22 @@
 
                           <!-- Competidor ROJO -->
                           <div class="flex items-center gap-2.5 px-3 py-2 border-b border-white/[0.04]">
-                            <!-- Punto ganador -->
                             @if (campeonatoFinalizado()) {
-                              <span class="w-2 h-2 rounded-full shrink-0"
+                              <span class="w-2 h-2 rounded-full shrink-0 transition-all"
                                     [class]="ganadorCombate(combate) === 'rojo'
                                       ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]'
                                       : 'bg-[#1f2937]'">
                               </span>
                             }
-                            <!-- Badge rojo -->
                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-900/40 text-red-400 uppercase tracking-wider shrink-0">R</span>
                             <span class="text-sm flex-1 truncate"
                                   [class]="campeonatoFinalizado() && ganadorCombate(combate) === 'rojo'
                                     ? 'text-[#eef0f4] font-semibold'
                                     : 'text-[#8b95a3]'">
-                              {{ combate.nombreRojo }}
+                              {{ nombreCompleto(combate.competidorRojo) }}
                             </span>
                             @if (campeonatoFinalizado() && combate.estado === 'finalizado') {
-                              <span class="text-xs font-bold shrink-0"
+                              <span class="text-xs font-bold tabular-nums shrink-0"
                                     [class]="ganadorCombate(combate) === 'rojo' ? 'text-emerald-400' : 'text-[#374151]'">
                                 {{ combate.puntuacionRojo }}
                               </span>
@@ -314,31 +323,31 @@
 
                           <!-- Competidor AZUL -->
                           <div class="flex items-center gap-2.5 px-3 py-2">
-                            <!-- Punto ganador -->
                             @if (campeonatoFinalizado()) {
-                              <span class="w-2 h-2 rounded-full shrink-0"
-                                    [class]="combate.nombreAzul === null
+                              <span class="w-2 h-2 rounded-full shrink-0 transition-all"
+                                    [class]="!combate.competidorAzul
                                       ? 'bg-[#1f2937]'
                                       : ganadorCombate(combate) === 'azul'
                                       ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]'
                                       : 'bg-[#1f2937]'">
                               </span>
                             }
-                            <!-- Badge azul -->
                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-900/40 text-blue-400 uppercase tracking-wider shrink-0">A</span>
-                            <span class="text-sm flex-1 truncate"
-                                  [class]="combate.nombreAzul === null
-                                    ? 'text-[#374151] italic'
-                                    : campeonatoFinalizado() && ganadorCombate(combate) === 'azul'
-                                    ? 'text-[#eef0f4] font-semibold'
-                                    : 'text-[#8b95a3]'">
-                              {{ combate.nombreAzul ?? 'Bye (pasa automáticamente)' }}
-                            </span>
-                            @if (campeonatoFinalizado() && combate.estado === 'finalizado' && combate.nombreAzul !== null) {
-                              <span class="text-xs font-bold shrink-0"
-                                    [class]="ganadorCombate(combate) === 'azul' ? 'text-emerald-400' : 'text-[#374151]'">
-                                {{ combate.puntuacionAzul }}
+                            @if (combate.competidorAzul) {
+                              <span class="text-sm flex-1 truncate"
+                                    [class]="campeonatoFinalizado() && ganadorCombate(combate) === 'azul'
+                                      ? 'text-[#eef0f4] font-semibold'
+                                      : 'text-[#8b95a3]'">
+                                {{ nombreCompleto(combate.competidorAzul) }}
                               </span>
+                              @if (campeonatoFinalizado() && combate.estado === 'finalizado') {
+                                <span class="text-xs font-bold tabular-nums shrink-0"
+                                      [class]="ganadorCombate(combate) === 'azul' ? 'text-emerald-400' : 'text-[#374151]'">
+                                  {{ combate.puntuacionAzul }}
+                                </span>
+                              }
+                            } @else {
+                              <span class="text-sm flex-1 text-[#374151] italic">Bye — pasa automáticamente</span>
                             }
                           </div>
 
@@ -354,7 +363,6 @@
 
         }
       </div>
-
     </div>
   </div>
 }

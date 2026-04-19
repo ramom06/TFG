@@ -1,7 +1,7 @@
 import {Combate} from './combate';
 
 export interface Ronda {
-  nombre: string;
-  numero: number;
+  etiqueta: string;
+  tipo: 'ronda' | 'repesca' | 'final';
   combates: Combate[];
 }

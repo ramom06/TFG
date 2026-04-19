@@ -1,13 +1,20 @@
 import {Competidor} from './competidor';
 
 export interface Combate {
-  numeroTatami: number;
-  numeroCombate: number;
+  id: CombateId;
   ronda: string;
-  competidorRojo: Competidor | null;
-  competidorAzul: Competidor | null;
+  estado: string;
   puntuacionRojo: number;
   puntuacionAzul: number;
   senshu: string | null;
-  estado: string;
+  observaciones: string | null;
+  competidorRojo: Competidor;
+  competidorAzul: Competidor | null;
+}
+
+export interface CombateId {
+  idCampeonato: number;
+  idCategoria: number;
+  numeroTatami: number;
+  numeroCombate: number;
 }
