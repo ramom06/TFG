@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "https://www.campeonatolive.online")
+@CrossOrigin(origins = "*")
 
 public class UsuarioController {
 
@@ -101,7 +101,7 @@ public class UsuarioController {
 
         // Devolvemos 'id' (no 'idUsuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
-                "id",             usuario.getIdUsuario(),
+                "id",             usuario.getId_usuario(),
                 "nombre",         usuario.getNombre(),
                 "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
                 "email",          usuario.getEmail(),

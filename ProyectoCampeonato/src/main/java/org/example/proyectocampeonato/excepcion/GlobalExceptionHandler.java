@@ -29,11 +29,7 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    /** ResponseStatusException (lanzadas con HttpStatus.CONFLICT, NOT_FOUND, etc.) */
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleResponseStatus(ResponseStatusException ex) {
-        return error(HttpStatus.valueOf(ex.getStatusCode().value()), ex.getReason());
-    }
+
 
     /**
      * Constraint de BD violada (DNI/email duplicado que se nos escapó antes de validar).

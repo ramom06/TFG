@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.proyectocampeonato.modelo.Combate;
 import org.example.proyectocampeonato.modelo.Combate_Id;
 import org.example.proyectocampeonato.service.CombateService;
-import org.example.proyectocampeonato.service.CombateService.CombateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +22,7 @@ public class CombateController {
         this.service = service;
     }
 
+    // GET /api/combates
     @GetMapping
     public ResponseEntity<List<Combate>> all() {
         log.info("Obteniendo todos los combates");
@@ -43,30 +43,35 @@ public class CombateController {
         return ResponseEntity.ok(service.getByCompetidor(idCompetidor));
     }
 
-    @PostMapping
-    public ResponseEntity<Combate> save(@RequestBody CombateRequest req) {
-        log.info("Creando combate tatami {} nº{}", req.numeroTatami(), req.numeroCombate());
-        return new ResponseEntity<>(service.save(req), HttpStatus.CREATED);
+    @GetMapping("/{idCampeonato}/{idCategoria}")
+    public ResponseEntity<Combate> one(
+            @PathVariable Long idCampeonato,
+            @PathVariable Long idCategoria) {
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
+        log.info("Obteniendo combate: {}", id);
+        return ResponseEntity.ok(service.one(id));
     }
 
-    @PutMapping("/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}")
+    @PostMapping
+    public ResponseEntity<Combate> save(@RequestBody Combate combate) {
+        log.info("Creando combate: {}", combate.getId());
+        return new ResponseEntity<>(service.save(combate), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{idCampeonato}/{idCategoria}")
     public ResponseEntity<Combate> replace(
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria,
-            @PathVariable Integer numeroTatami,
-            @PathVariable Integer numeroCombate,
-            @RequestBody CombateRequest req) {
+            @RequestBody Combate combate) {
         Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
         log.info("Actualizando combate: {}", id);
-        return ResponseEntity.ok(service.replace(id, req));
+        return ResponseEntity.ok(service.replace(id, combate));
     }
 
-    @DeleteMapping("/{idCampeonato}/{idCategoria}/{numeroTatami}/{numeroCombate}")
+    @DeleteMapping("/{idCampeonato}/{idCategoria}")
     public ResponseEntity<Void> delete(
             @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria,
-            @PathVariable Integer numeroTatami,
-            @PathVariable Integer numeroCombate) {
+            @PathVariable Long idCategoria) {
         Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
         log.info("Eliminando combate: {}", id);
         service.delete(id);

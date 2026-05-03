@@ -932,7 +932,7 @@ public class DataLoader implements CommandLineRunner {
                 .id_inscripcion(new Inscripcion_Id(
                         campeonato.getId_campeonato(),
                         categoria.getId_categoria(),
-                        competidor.getIdUsuario()
+                        competidor.getId_usuario()
                 ))
                 .campeonato(campeonato)
                 .categoria(categoria)

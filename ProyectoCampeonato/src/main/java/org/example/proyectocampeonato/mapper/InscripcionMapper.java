@@ -13,7 +13,7 @@ public class InscripcionMapper {
         InscripcionDTO dto = new InscripcionDTO();
         dto.setId_campeonato(inscripcion.getCampeonato().getId_campeonato());
         dto.setId_categoria(inscripcion.getCategoria().getId_categoria());
-        dto.setId_competidor(inscripcion.getCompetidor().getIdUsuario());
+        dto.setId_competidor(inscripcion.getCompetidor().getId_usuario());
         dto.setNombreCampeonato(inscripcion.getCampeonato().getNombre());
         dto.setNombreCategoria(inscripcion.getCategoria().getNombre());
         dto.setNombreCompetidor(
