@@ -57,7 +57,7 @@ class InscripcionTest {
                 .apellidos("Pérez")
                 .rol(Usuario.Rol.COMPETIDOR)
                 .build();
-        competidor.setIdUsuario(3L);
+        competidor.setId_usuario(3L);
 
         Inscripcion_Id inscId = new Inscripcion_Id(1L, 2L, 3L);
         inscripcion = Inscripcion.builder()

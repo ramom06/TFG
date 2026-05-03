@@ -259,7 +259,4 @@ export class SorteoComponent implements OnInit {
   }
 
   trackRonda(_: number, r: Ronda)     { return r.etiqueta; }
-  trackCombate(_: number, c: Combate) {
-    return `${c.numeroCombate ?? c.id?.numeroCombate}_${c.numeroTatami ?? c.id?.numeroTatami}`;
-  }
 }

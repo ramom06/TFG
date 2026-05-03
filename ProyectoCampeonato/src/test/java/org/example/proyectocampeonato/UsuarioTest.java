@@ -36,7 +36,7 @@ class UsuarioTest {
     @BeforeEach
     void setUp() {
         usuario = new Usuario();
-        usuario.setIdUsuario(1L);
+        usuario.setId_usuario(1L);
         usuario.setNombre("AdminUser");
         usuario.setApellidos("Sistema");
         usuario.setDni("00000000A");

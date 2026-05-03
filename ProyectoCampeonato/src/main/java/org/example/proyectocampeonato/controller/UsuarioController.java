@@ -23,9 +23,7 @@ public class UsuarioController {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioService service,
-                             UsuarioRepository usuarioRepository,
-                             PasswordEncoder passwordEncoder) {
+    public UsuarioController(UsuarioService service, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.service = service;
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
@@ -77,7 +75,7 @@ public class UsuarioController {
     /**
      * Login para competidores.
      * Devuelve id, nombre, apellidos, email, rol y genero.
-     * El campo 'id' (no 'idUsuario') es el que usa el frontend para identificar al competidor.
+     * El campo 'id' (no 'id_usuario') es el que usa el frontend para identificar al competidor.
      */
     @PostMapping("/login-competidor")
     public ResponseEntity<?> loginCompetidor(@RequestBody Map<String, String> body) {
@@ -99,7 +97,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Esta cuenta no es de competidor"));
 
-        // Devolvemos 'id' (no 'idUsuario') para que coincida con el frontend
+        // Devolvemos 'id' (no 'id_usuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
                 "id",             usuario.getId_usuario(),
                 "nombre",         usuario.getNombre(),

@@ -12,10 +12,9 @@ import java.util.List;
 @Repository
 public interface CombateRepository extends JpaRepository<Combate, Combate_Id> {
 
-    List<Combate> findByIdIdCampeonatoAndIdIdCategoria(Long id_campeonato, Long id_categoria);
+    @Query("SELECT c FROM Combate c WHERE c.id.id_campeonato = :idCampeonato AND c.id.id_categoria = :idCategoria")
+    List<Combate> findByIdIdCampeonatoAndIdIdCategoria(@Param("idCampeonato") Long idCampeonato, @Param("idCategoria") Long idCategoria);
 
-
-    // id_usuario es el PK heredado de Usuario en Competidor
     @Query("SELECT c FROM Combate c WHERE c.competidorRojo.id_usuario = :id OR c.competidorAzul.id_usuario = :id")
     List<Combate> findByCompetidor(@Param("id") Long id_competidor);
 }
