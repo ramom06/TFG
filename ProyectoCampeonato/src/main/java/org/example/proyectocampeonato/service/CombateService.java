@@ -62,7 +62,7 @@ public class CombateService {
 
     public Combate one(Combate_Id id) {
         return combateRepository.findById(id)
-                .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()));
+                .orElseThrow(() -> new CampeonatoNotFoundException(id.getId_campeonato()));
     }
 
     @Transactional
@@ -79,13 +79,13 @@ public class CombateService {
                     entidad.setId(id);
                     return combateRepository.save(entidad);
                 })
-                .orElseThrow(() -> new CampeonatoNotFoundException(id.getIdCampeonato()));
+                .orElseThrow(() -> new CampeonatoNotFoundException(id.getId_campeonato()));
     }
 
     @Transactional
     public void delete(Combate_Id id) {
         if (!combateRepository.existsById(id))
-            throw new CampeonatoNotFoundException(id.getIdCampeonato());
+            throw new CampeonatoNotFoundException(id.getId_campeonato());
         combateRepository.deleteById(id);
     }
 
@@ -103,22 +103,15 @@ public class CombateService {
 
         Combate_Id id = new Combate_Id(
                 req.idCampeonato(),
-                req.idCategoria(),
-                req.numeroTatami(),
-                req.numeroCombate()
+                req.idCategoria()
         );
 
         Combate.CombateBuilder builder = Combate.builder()
                 .id(id)
                 .ronda(req.ronda())
                 .estado(req.estado())
-                .senshu(req.senshu())
                 .puntuacionRojo(req.puntuacionRojo() != null ? req.puntuacionRojo() : 0)
                 .puntuacionAzul(req.puntuacionAzul() != null ? req.puntuacionAzul() : 0)
-                .horaProgramada(req.horaProgramada())
-                .horaInicioReal(req.horaInicioReal())
-                .duracionSegundos(req.duracionSegundos())
-                .observaciones(req.observaciones())
                 .competidorRojo(rojo)
                 .campeonatoCategoria(campeonatoCategoria);
 

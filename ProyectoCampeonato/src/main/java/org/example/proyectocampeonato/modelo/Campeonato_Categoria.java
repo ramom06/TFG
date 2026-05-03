@@ -1,15 +1,13 @@
 package org.example.proyectocampeonato.modelo;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.Date;
 
 
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,7 +16,7 @@ import java.util.Date;
 public class Campeonato_Categoria {
 
     @EmbeddedId
-    private Campeonato_Categoria_Id id;
+    private Campeonato_Categoria_Id id_Campeonato_Categoria;
 
     @ManyToOne
     @MapsId("id_campeonato")

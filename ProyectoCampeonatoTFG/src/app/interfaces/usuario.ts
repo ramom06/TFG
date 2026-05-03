@@ -13,6 +13,6 @@ export interface Usuario {
   password?: string;          // solo al crear/editar, nunca viene del backend
   rol: Rol;
   genero: 'M' | 'F';
-  fechaNacimiento: string;    // ISO date string p.ej. "1990-05-15"
+  fechaNacimiento: string;
   fechaRegistro?: string;
 }

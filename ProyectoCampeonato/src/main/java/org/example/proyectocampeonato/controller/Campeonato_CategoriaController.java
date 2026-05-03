@@ -22,14 +22,12 @@ public class Campeonato_CategoriaController {
         this.service = service;
     }
 
-    // GET /api/campeonatos/{idCampeonato}/categorias
     @GetMapping
     public ResponseEntity<List<Categoria>> getCategorias(@PathVariable Long idCampeonato) {
         log.info("Obteniendo categorías del campeonato con id: {}", idCampeonato);
         return ResponseEntity.ok(service.getCategoriasPorCampeonato(idCampeonato));
     }
 
-    // POST /api/campeonatos/{idCampeonato}/categorias/{idCategoria}
     @PostMapping("/{idCategoria}")
     public ResponseEntity<Campeonato_Categoria> asignar(
             @PathVariable Long idCampeonato,
@@ -39,7 +37,6 @@ public class Campeonato_CategoriaController {
                 .body(service.asignarCategoria(idCampeonato, idCategoria));
     }
 
-    // DELETE /api/campeonatos/{idCampeonato}/categorias/{idCategoria}
     @DeleteMapping("/{idCategoria}")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long idCampeonato,

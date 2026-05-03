@@ -1,22 +1,14 @@
 import { Competidor } from './competidor';
+import {Combate_id} from './combate_id';
 
 export interface Combate {
-  id?: CombateId;           // opcional — viene del backend
-  numeroTatami?: number;    // usado en sorteo (generado en frontend)
-  numeroCombate?: number;   // usado en sorteo (generado en frontend)
+  id: Combate_id;
   ronda: string;
   estado: string;
   puntuacionRojo: number;
   puntuacionAzul: number;
-  senshu: string | null;
-  observaciones?: string | null;
-  competidorRojo: Competidor;
+  competidorRojo: Competidor | null;
   competidorAzul: Competidor | null;
 }
 
-export interface CombateId {
-  idCampeonato: number;
-  idCategoria: number;
-  numeroTatami: number;
-  numeroCombate: number;
-}
+

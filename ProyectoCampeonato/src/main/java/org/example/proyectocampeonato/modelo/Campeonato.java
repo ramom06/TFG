@@ -37,7 +37,7 @@ public class Campeonato {
     private String estado;
 
     @Column(nullable = false)
-    private String nivel; //Regional, Nacional
+    private String nivel; //Provincial,Regional, Nacional
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;

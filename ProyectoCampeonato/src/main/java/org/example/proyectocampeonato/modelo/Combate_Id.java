@@ -10,8 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Combate_Id implements Serializable {
 
-    private Long idCampeonato;
-    private Long idCategoria;
-    private Integer numeroTatami;
-    private Integer numeroCombate;
+    private Long id_campeonato;
+    private Long id_categoria;
 }

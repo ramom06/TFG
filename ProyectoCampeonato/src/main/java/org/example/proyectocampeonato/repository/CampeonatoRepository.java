@@ -6,8 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CampeonatoRepository extends JpaRepository<Campeonato, Long>{
-
-    //Busca por id
-
-    //Busca por fecha
 }

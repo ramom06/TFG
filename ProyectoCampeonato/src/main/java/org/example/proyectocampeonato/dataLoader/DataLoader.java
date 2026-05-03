@@ -1,4 +1,4 @@
-package org.example.proyectocampeonato.DataLoader;
+package org.example.proyectocampeonato.dataLoader;
 
 import lombok.RequiredArgsConstructor;
 import org.example.proyectocampeonato.modelo.*;
@@ -20,7 +20,6 @@ public class DataLoader implements CommandLineRunner {
     private final ArbitroRepository arbitroRepository;
     private final CampeonatoRepository campeonatoRepository;
     private final CategoriaRepository categoriaRepository;
-    private final ClasficacionRepository clasficacionRepository;
     private final CombateRepository combateRepository;
     private final CompetidorRepository competidorRepository;
     private final Campeonato_CategoriaRepository campeonato_categoriaRepository;
@@ -919,7 +918,7 @@ public class DataLoader implements CommandLineRunner {
                     categoria.getId_categoria()
             );
             relaciones.add(Campeonato_Categoria.builder()
-                    .id(id)
+                    .id_Campeonato_Categoria(id)
                     .campeonato(campeonato)
                     .categoria(categoria)
                     .build());
@@ -960,9 +959,7 @@ public class DataLoader implements CommandLineRunner {
 
             Combate_Id id = new Combate_Id(
                     campeonato.getId_campeonato(),
-                    categoria.getId_categoria(),
-                    tatami,
-                    numeroCombate
+                    categoria.getId_categoria()
             );
 
             Combate c = Combate.builder()
@@ -974,11 +971,6 @@ public class DataLoader implements CommandLineRunner {
                     .campeonatoCategoria(cc)
                     .puntuacionRojo(0)
                     .puntuacionAzul(0)
-                    .senshu(null)
-                    .observaciones(azul == null ? "BYE - pasa automáticamente" : null)
-                    .horaProgramada(hora)
-                    .horaInicioReal(java.time.LocalDateTime.now()) // placeholder; se actualiza al iniciar
-                    .duracionSegundos(180) // 3 minutos estándar kumite
                     .build();
 
             combates.add(c);

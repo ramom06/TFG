@@ -14,25 +14,29 @@ import { RouterLink } from '@angular/router';
 })
 export class CampeonatoListComponent implements OnInit {
 
+
   campeonatos  = signal<Campeonato[]>([]);
   loading      = signal(true);
   error        = signal<string | null>(null);
-
   searchText   = signal('');
+
   filtroEstado = signal<Estado | 'todos'>('todos');
+
   filtroNivel  = signal<Nivel  | 'todos'>('todos');
+
   sortField    = signal<'fechaInicio' | 'nombre'>('fechaInicio');
+
   sortDir      = signal<'asc' | 'desc'>('asc');
 
-  // ── Lista filtrada y ordenada (derivada) ─────────────────
+
   filtered = computed(() => {
     let lista = this.campeonatos();
 
-    const txt = this.normalize(this.searchText());
+    let txt = this.normalize(this.searchText());
+
     if (txt)
       lista = lista.filter(c =>
-        this.normalize(c.nombre).includes(txt) ||
-        this.normalize(c.ubicacion).includes(txt)
+        this.normalize(c.nombre).includes(txt) || this.normalize(c.ubicacion).includes(txt)
       );
 
     if (this.filtroEstado() !== 'todos')
@@ -42,19 +46,20 @@ export class CampeonatoListComponent implements OnInit {
       lista = lista.filter(c => c.nivel.toLowerCase() === this.filtroNivel());
 
     return [...lista].sort((a, b) => {
-      const f = this.sortField();
-      const cmp = f === 'nombre'
-        ? a.nombre.localeCompare(b.nombre)
-        : new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime();
-      return this.sortDir() === 'asc' ? cmp : -cmp;
+      if(this.sortField() === 'nombre'){
+        return this.sortDir() === 'asc' ? a.nombre.localeCompare(b.nombre) : b.nombre.localeCompare(a.nombre);
+      }else {
+        return this.sortDir() === 'asc' ? new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime() : new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime();
+      }
     });
   });
 
-  constructor(private svc: CampeonatoService) {}
 
   async ngOnInit() {
+    const svc = new CampeonatoService();
+
     try {
-      const data = await this.svc.getAllCampeonatos();
+      const data = await svc.getAllCampeonatos();
       this.campeonatos.set(data);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar campeonatos');
@@ -66,14 +71,6 @@ export class CampeonatoListComponent implements OnInit {
   // ── Helpers para el template ─────────────────────────────
   toggleDir() {
     this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
-  }
-
-  resetFiltros() {
-    this.searchText.set('');
-    this.filtroEstado.set('todos');
-    this.filtroNivel.set('todos');
-    this.sortField.set('fechaInicio');
-    this.sortDir.set('asc');
   }
 
   badgeClass(estado: Estado): string {
@@ -88,16 +85,15 @@ export class CampeonatoListComponent implements OnInit {
     return { futuro: 'Próximo', activo: 'En curso', pasado: 'Finalizado' }[estado];
   }
 
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: '2-digit', month: 'short', year: 'numeric'
-    });
-  }
-
+  //Esta función filtra las tildes y las mayúsculas
   private normalize(text: string): string {
-    return text
-      .toLowerCase()
+    return text.toLowerCase()
+
+      //Separa internamente el carácter acentuado en 2
       .normalize('NFD')
+
+      // En todos los carácteres unicode con acentos y en todas las cadenas reemplaza con ''
+
       .replace(/[\u0300-\u036f]/g, '');
   }
 }

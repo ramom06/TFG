@@ -1,8 +1,8 @@
 import {Modalidad} from './categoria';
 
 export interface Campeonato_categoria {
-    idCampeonato: number,
-    idCategoria:number,
+    id_campeonato: number,
+    id_categoria:number,
     nombreCampeonato: string,
     nombreCategoria: string,
     fechaInicioCampeonato:Date,

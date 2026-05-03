@@ -53,7 +53,7 @@ class CampeonatoCategoriaTest {
 
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(1L, 2L);
         cc = new Campeonato_Categoria();
-        cc.setId(ccId);
+        cc.setId_Campeonato_Categoria(ccId);
         cc.setCampeonato(campeonato);
         cc.setCategoria(categoria);
     }
