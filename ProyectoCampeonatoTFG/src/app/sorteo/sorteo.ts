@@ -180,14 +180,11 @@ export class SorteoComponent implements OnInit {
       const azul  = competidores[i + 1] ?? null;
       const esBye = azul === null && rojo !== null;
       combates.push({
-        numeroTatami:   tatami,
-        numeroCombate:  numeroCombate++,
-        ronda:          claveRonda,
+        ronda:claveRonda,
         competidorRojo: rojo,
         competidorAzul: azul,
         puntuacionRojo: 0,
         puntuacionAzul: 0,
-        senshu:  null,
         estado:  esBye ? 'bye' : 'pendiente'
       });
     }
@@ -199,7 +196,7 @@ export class SorteoComponent implements OnInit {
     const nombre    = partes[0] ?? '';
     const apellidos = partes.slice(1).join(' ');
     return {
-      id:                   ins.idCompetidor,
+      id_competidor:ins.id_competidor,
       idUsuario:            ins.idCompetidor,
       nombre,
       apellidos,
@@ -215,14 +212,11 @@ export class SorteoComponent implements OnInit {
 
   private mapCombate(c: any): Combate {
     return {
-      numeroTatami:   c.id?.numeroTatami  ?? c.numeroTatami  ?? 1,
-      numeroCombate:  c.id?.numeroCombate ?? c.numeroCombate ?? 1,
       ronda:          c.ronda    ?? 'R1',
       competidorRojo: c.competidorRojo ?? null,
       competidorAzul: c.competidorAzul ?? null,
       puntuacionRojo: c.puntuacionRojo ?? 0,
       puntuacionAzul: c.puntuacionAzul ?? 0,
-      senshu:         c.senshu  ?? null,
       estado:         c.estado  ?? 'pendiente'
     };
   }
