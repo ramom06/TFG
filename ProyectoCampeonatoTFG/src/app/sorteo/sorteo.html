@@ -147,7 +147,6 @@
                           <div class="flex items-center px-2.5 py-[3px] border-y border-white/[0.04] bg-white/[0.02]">
                             <span class="text-[9px] text-[#374151] font-bold uppercase tracking-[0.12em] flex-1">
                               @if (combate.estado === 'bye') { BYE }
-                              @else { #{{ combate.numeroCombate }} · Tatami {{ combate.numeroTatami }} }
                             </span>
                             <span class="w-1.5 h-1.5 rounded-full shrink-0"
                                   [class]="combate.estado === 'finalizado'

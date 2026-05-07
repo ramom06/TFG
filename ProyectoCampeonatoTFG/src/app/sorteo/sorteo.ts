@@ -17,11 +17,10 @@ import { environment } from '../../environments/environment';
 export class SorteoComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
-  sorteoData  = signal<Sorteo | null>(null);
-  loading     = signal(true);
-  error       = signal<string | null>(null);
+  sorteoData       = signal<Sorteo | null>(null);
+  loading          = signal(true);
+  error            = signal<string | null>(null);
   estadoCampeonato = signal<string>('');
-
 
   idCampeonato = signal(0);
   idCategoria  = signal(0);
@@ -29,7 +28,6 @@ export class SorteoComponent implements OnInit {
   rondasVisibles = computed(() => {
     const s = this.sorteoData();
     if (!s) return [];
-    // Si el campeonato es "futuro", solo mostrar la primera ronda
     if (this.estadoCampeonato() === 'futuro') {
       return s.rondas.slice(0, 1);
     }
@@ -68,7 +66,6 @@ export class SorteoComponent implements OnInit {
       );
       const combates: any[] = resComb.ok ? await resComb.json() : [];
 
-
       const resCamp = await fetch(`${environment.apiUrl}/api/campeonatos/${idC}`);
       const campData = resCamp.ok ? await resCamp.json() : null;
       this.estadoCampeonato.set(campData?.estado ?? '');
@@ -82,7 +79,6 @@ export class SorteoComponent implements OnInit {
       this.loading.set(false);
     }
   }
-
 
   // ── Construcción del sorteo ───────────────────────────────────────────────
 
@@ -105,15 +101,10 @@ export class SorteoComponent implements OnInit {
     }
 
     const competidores = [...inscritos].sort(() => Math.random() - 0.5);
-    const rondas = this.generarBracketCompleto(competidores);
+    const rondas = this.generarBracketCompleto(competidores, idCampeonato, idCategoria);
     return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
   }
 
-  /**
-   * Toma los combates de BD y construye SOLO las rondas que existen.
-   * No genera rondas siguientes — eso lo hará el árbitro en el futuro
-   * al cerrar combates en tiempo real con puntuación real.
-   */
   private construirBracketDesdeCombates(combates: any[]): Ronda[] {
     const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
 
@@ -131,24 +122,17 @@ export class SorteoComponent implements OnInit {
     for (const clave of clavesPresentes) {
       rondas.push({
         etiqueta: this.labelRonda(clave),
-        tipo:     clave === 'Final' || clave === 'F'          ? 'final'
-          : clave === 'REP'  || clave === 'REPESCA'     ? 'repesca'
+        tipo:     clave === 'Final' || clave === 'F'      ? 'final'
+          : clave === 'REP' || clave === 'REPESCA'  ? 'repesca'
             : 'ronda',
         combates: porClave.get(clave)!.map(c => this.mapCombate(c))
       });
     }
 
-    // ── Solo devolvemos lo que está en BD ──────────────────────────────────
-    // Las rondas siguientes aparecerán automáticamente cuando el árbitro
-    // registre los resultados en tiempo real y se guarden en BD.
     return rondas;
   }
 
-  /**
-   * Genera un bracket de primera ronda desde cero (sin combates en BD).
-   * Solo se usa cuando no hay ningún combate guardado todavía.
-   */
-  private generarBracketCompleto(inscritos: any[]): Ronda[] {
+  private generarBracketCompleto(inscritos: any[], idCampeonato: number, idCategoria: number): Ronda[] {
     const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
     const rondas: Ronda[] = [];
     let competidores: Competidor[] = inscritos.map(ins => this.inscritoACompetidor(ins));
@@ -156,7 +140,7 @@ export class SorteoComponent implements OnInit {
 
     while (competidores.length >= 1 && claveIdx < ordenClaves.length) {
       const clave    = ordenClaves[claveIdx];
-      const combates = this.emparejarCompetidores(competidores, clave, 1);
+      const combates = this.emparejarCompetidores(competidores, clave, idCampeonato, idCategoria);
       rondas.push({
         etiqueta: this.labelRonda(clave),
         tipo:     clave === 'Final' ? 'final' : 'ronda',
@@ -172,20 +156,21 @@ export class SorteoComponent implements OnInit {
 
   // ── Helpers privados ──────────────────────────────────────────────────────
 
-  private emparejarCompetidores(competidores: Competidor[], claveRonda: string, tatami: number): Combate[] {
+  /** Genera combates locales (sin id de BD) para el bracket provisional */
+  private emparejarCompetidores(competidores: Competidor[], claveRonda: string, idCampeonato: number, idCategoria: number): Combate[] {
     const combates: Combate[] = [];
-    let numeroCombate = 1;
     for (let i = 0; i < competidores.length; i += 2) {
       const rojo  = competidores[i]     ?? null;
       const azul  = competidores[i + 1] ?? null;
       const esBye = azul === null && rojo !== null;
       combates.push({
-        ronda:claveRonda,
+        id_combate:     { idCampeonato, idCategoria },
+        ronda:          claveRonda,
         competidorRojo: rojo,
         competidorAzul: azul,
         puntuacionRojo: 0,
         puntuacionAzul: 0,
-        estado:  esBye ? 'bye' : 'pendiente'
+        estado:         esBye ? 'bye' : 'pendiente'
       });
     }
     return combates;
@@ -196,7 +181,7 @@ export class SorteoComponent implements OnInit {
     const nombre    = partes[0] ?? '';
     const apellidos = partes.slice(1).join(' ');
     return {
-      id_competidor:ins.id_competidor,
+      id_competidor:        ins.id_competidor,
       idUsuario:            ins.idCompetidor,
       nombre,
       apellidos,
@@ -210,14 +195,19 @@ export class SorteoComponent implements OnInit {
     };
   }
 
+  /** Mapea un combate de BD al tipo Combate (con id_combate obligatorio) */
   private mapCombate(c: any): Combate {
     return {
-      ronda:          c.ronda    ?? 'R1',
+      id_combate: {
+        idCampeonato: c.id?.idCampeonato ?? 0,
+        idCategoria:  c.id?.idCategoria  ?? 0,
+      },
+      ronda:          c.ronda          ?? 'R1',
       competidorRojo: c.competidorRojo ?? null,
       competidorAzul: c.competidorAzul ?? null,
       puntuacionRojo: c.puntuacionRojo ?? 0,
       puntuacionAzul: c.puntuacionAzul ?? 0,
-      estado:         c.estado  ?? 'pendiente'
+      estado:         c.estado         ?? 'pendiente'
     };
   }
 
@@ -252,5 +242,6 @@ export class SorteoComponent implements OnInit {
     return c.estado === 'finalizado' && c.puntuacionAzul > c.puntuacionRojo;
   }
 
-  trackRonda(_: number, r: Ronda)     { return r.etiqueta; }
+  trackRonda(_: number, r: Ronda)                        { return r.etiqueta; }
+  trackCombate(index: number, _: Combate) { return index; }
 }

@@ -10,7 +10,6 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './campeonato-list.html',
-  styleUrl: './campeonato-list.css',
 })
 export class CampeonatoListComponent implements OnInit {
 
