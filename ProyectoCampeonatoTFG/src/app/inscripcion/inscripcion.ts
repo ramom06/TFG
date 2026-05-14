@@ -137,7 +137,7 @@ export class InscripcionComponent implements OnInit {
       !this.regFedAuton() || !this.regFechaNac()
     ) return;
 
-    // Validar formato email básico
+    // Validar formato email básicos
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.regEmail())) {
       this.emailRegError.set('El formato del email no es válido');
       return;
