@@ -46,7 +46,7 @@ class ArbitroTest {
                 .licencia("LIC-2026-001")
                 .categoriaArbitral("Nacional")
                 .build();
-        arbitro.setId_usuario(1L);
+        arbitro.setId(1L);
     }
 
     // ── getAll ────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 package org.example.proyectocampeonato.modelo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
+@JsonIgnoreProperties({"campeonatoCategorias", "inscripciones"})
 @Table(name = "categoria")
 public class Categoria {
 
@@ -52,10 +53,8 @@ public class Categoria {
     private int edadMinima;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<Inscripcion> inscripciones = new HashSet<>();
 }

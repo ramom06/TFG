@@ -1,6 +1,6 @@
 package org.example.proyectocampeonato.modelo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @SuperBuilder
+@JsonIgnoreProperties({"inscripciones"})
 @Table(name = "competidor")
 public class Competidor extends Usuario {
 
@@ -23,6 +24,5 @@ public class Competidor extends Usuario {
     private String federacionAutonomica;
 
     @OneToMany(mappedBy = "competidor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<Inscripcion> inscripciones = new HashSet<>();
 }

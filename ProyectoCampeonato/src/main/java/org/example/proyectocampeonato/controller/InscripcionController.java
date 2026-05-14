@@ -23,7 +23,7 @@ public class InscripcionController {
         this.mapper = mapper;
     }
 
-    @GetMapping("/competidor/{id}")
+    @GetMapping("/competidor/{id_competidor}")
     public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long id_competidor) {return ResponseEntity.ok(mapper.toDTOList(service.getByCompetidor(id_competidor)));}
 
     @GetMapping("/campeonato/{id_campeonato}/categoria/{id_categoria}")

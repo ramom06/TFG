@@ -36,7 +36,7 @@ public class CombateService {
 
     @Transactional
     public Combate save(Combate combate) {
-        if (combate.getId() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El combate debe tener un id (id_campeonato + idCategoria)");
+        if (combate.getId() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El combate debe tener un id (id_campeonato + id_categoria + numeroCombate)");
         return combateRepository.save(combate);
     }
 

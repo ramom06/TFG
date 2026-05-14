@@ -43,11 +43,12 @@ public class CombateController {
         return ResponseEntity.ok(service.getByCompetidor(idCompetidor));
     }
 
-    @GetMapping("/{idCampeonato}/{idCategoria}")
+    @GetMapping("/{idCampeonato}/{idCategoria}/{numeroCombate}")
     public ResponseEntity<Combate> one(
             @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria) {
-        Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
+            @PathVariable Long idCategoria,
+            @PathVariable Integer numeroCombate) {
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria, numeroCombate);
         log.info("Obteniendo combate: {}", id);
         return ResponseEntity.ok(service.one(id));
     }
@@ -58,21 +59,23 @@ public class CombateController {
         return new ResponseEntity<>(service.save(combate), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{idCampeonato}/{idCategoria}")
+    @PutMapping("/{idCampeonato}/{idCategoria}/{numeroCombate}")
     public ResponseEntity<Combate> replace(
             @PathVariable Long idCampeonato,
             @PathVariable Long idCategoria,
+            @PathVariable Integer numeroCombate,
             @RequestBody Combate combate) {
-        Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria, numeroCombate);
         log.info("Actualizando combate: {}", id);
         return ResponseEntity.ok(service.replace(id, combate));
     }
 
-    @DeleteMapping("/{idCampeonato}/{idCategoria}")
+    @DeleteMapping("/{idCampeonato}/{idCategoria}/{numeroCombate}")
     public ResponseEntity<Void> delete(
             @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria) {
-        Combate_Id id = new Combate_Id(idCampeonato, idCategoria);
+            @PathVariable Long idCategoria,
+            @PathVariable Integer numeroCombate) {
+        Combate_Id id = new Combate_Id(idCampeonato, idCategoria, numeroCombate);
         log.info("Eliminando combate: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();

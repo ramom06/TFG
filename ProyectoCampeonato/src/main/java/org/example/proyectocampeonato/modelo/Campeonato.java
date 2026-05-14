@@ -1,6 +1,6 @@
 package org.example.proyectocampeonato.modelo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*; // Importante para las anotaciones de BD
 import lombok.*;
 
@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
+@JsonIgnoreProperties({"campeonatoCategorias"})
 @Table(name = "campeonato")
 public class Campeonato {
 
@@ -46,6 +47,5 @@ public class Campeonato {
     private String urlPortada;
 
     @OneToMany(mappedBy = "campeonato", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<Campeonato_Categoria> campeonatoCategorias = new HashSet<>();
 }

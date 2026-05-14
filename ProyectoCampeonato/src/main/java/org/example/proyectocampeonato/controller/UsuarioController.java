@@ -99,13 +99,16 @@ public class UsuarioController {
 
         // Devolvemos 'id' (no 'id_usuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
-                "id_usuario",             usuario.getId_usuario(),
+                "id",             usuario.getId(),
+                "id_usuario",     usuario.getId(),
                 "nombre",         usuario.getNombre(),
                 "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
                 "email",          usuario.getEmail(),
                 "rol",            usuario.getRol().name(),
                 "genero",         String.valueOf(usuario.getGenero()),
-                "fechaNacimiento", usuario.getFechaNacimiento() != null ? usuario.getFechaNacimiento().toString() : ""
+                "fechaNacimiento", usuario.getFechaNacimiento() != null
+                        ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(usuario.getFechaNacimiento())
+                        : ""
         ));
     }
 }

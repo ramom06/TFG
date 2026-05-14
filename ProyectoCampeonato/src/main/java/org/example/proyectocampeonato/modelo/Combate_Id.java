@@ -12,4 +12,5 @@ public class Combate_Id implements Serializable {
 
     private Long id_campeonato;
     private Long id_categoria;
+    private Integer numeroCombate;
 }

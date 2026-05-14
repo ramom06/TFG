@@ -1,13 +1,12 @@
 package org.example.proyectocampeonato.modelo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -22,7 +21,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
+    @Column(name = "id_usuario")
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;
@@ -46,6 +46,7 @@ public class Usuario {
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private Date fechaRegistro;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fecha_nacimiento", nullable = false)
     private Date fechaNacimiento;
 
