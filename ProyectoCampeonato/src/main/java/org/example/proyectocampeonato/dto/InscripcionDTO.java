@@ -5,13 +5,15 @@ import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class InscripcionDTO{
 
     private Long id_campeonato;
 
-    private Long id_competidor;
-
     private Long id_categoria;
+
+    private Long id_competidor;
 
     private String nombreCampeonato;
 

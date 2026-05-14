@@ -99,7 +99,7 @@ public class UsuarioController {
 
         // Devolvemos 'id' (no 'id_usuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
-                "id",             usuario.getId_usuario(),
+                "id_usuario",             usuario.getId_usuario(),
                 "nombre",         usuario.getNombre(),
                 "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
                 "email",          usuario.getEmail(),

@@ -15,5 +15,5 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Inscri
     List<Inscripcion> findByCompetidor(@Param("id_competidor") Long id_competidor);
 
     @Query("SELECT i FROM Inscripcion i WHERE i.campeonato.id_campeonato = :id_campeonato AND i.categoria.id_categoria = :id_categoria")
-    List<Inscripcion> findByCampeonatoAndCategoria(@Param("id_campeonato") Integer id_campeonato, @Param("id_categoria") Long id_categoria);
+    List<Inscripcion> findByCampeonatoAndCategoria(@Param("id_campeonato") Long id_campeonato, @Param("id_categoria") Long id_categoria);
 }

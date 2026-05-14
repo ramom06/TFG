@@ -31,28 +31,26 @@ public class InscripcionService {
         this.competidorRepository = competidorRepository;
     }
 
-    public List<Inscripcion> getByCompetidor(Long idCompetidor) {
-        return inscripcionRepository.findByCompetidor(idCompetidor);
-    }
+    public List<Inscripcion> getByCompetidor(Long id_competidor) {return inscripcionRepository.findByCompetidor(id_competidor);}
 
-    public List<Inscripcion> getByCampeonatoAndCategoria(Long idCampeonato, Long idCategoria) {
-        return inscripcionRepository.findByCampeonatoAndCategoria(Math.toIntExact(idCampeonato), idCategoria);
+    public List<Inscripcion> getByCampeonatoAndCategoria(Long id_campeonato, Long id_categoria) {
+        return inscripcionRepository.findByCampeonatoAndCategoria(id_campeonato, id_categoria);
     }
 
     @Transactional
-    public Inscripcion save(Long idCampeonato, Long idCategoria, Long idCompetidor) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+    public Inscripcion save(Long id_campeonato, Long id_categoria, Long id_competidor) {
+        Campeonato campeonato = campeonatoRepository.findById(id_campeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(id_campeonato));
 
-        Categoria categoria = categoriaRepository.findById(idCategoria)
+        Categoria categoria = categoriaRepository.findById(id_categoria)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
+                        HttpStatus.NOT_FOUND, "Categoría con id " + id_categoria + " no encontrada"));
 
-        Competidor competidor = competidorRepository.findById(idCompetidor)
+        Competidor competidor = competidorRepository.findById(id_competidor)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Competidor con id " + idCompetidor + " no encontrado"));
+                        HttpStatus.NOT_FOUND, "Competidor con id " + id_competidor + " no encontrado"));
 
-        Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
+        Inscripcion_Id id = new Inscripcion_Id(id_campeonato, id_categoria, id_competidor);
 
         if (inscripcionRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -70,8 +68,8 @@ public class InscripcionService {
     }
 
     @Transactional
-    public void delete(Long idCampeonato, Long idCategoria, Long idCompetidor) {
-        Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
+    public void delete(Long id_campeonato, Long id_categoria, Long id_competidor) {
+        Inscripcion_Id id = new Inscripcion_Id(id_campeonato, id_categoria, id_competidor);
         if (!inscripcionRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Inscripción no encontrada");
         }
