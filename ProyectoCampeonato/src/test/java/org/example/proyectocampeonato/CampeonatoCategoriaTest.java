@@ -42,18 +42,18 @@ class CampeonatoCategoriaTest {
                 .estado("futuro")
                 .nivel("Nacional")
                 .build();
-        campeonato.setId_campeonato(1L);
+        campeonato.setIdCampeonato(1L);
 
         categoria = Categoria.builder()
                 .nombre("Senior Masculino Kata")
                 .modalidad("kata")
                 .genero("M")
                 .build();
-        categoria.setId_categoria(2L);
+        categoria.setIdCategoria(2L);
 
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(1L, 2L);
         cc = new Campeonato_Categoria();
-        cc.setId_Campeonato_Categoria(ccId);
+        cc.setIdCampeonatoCategoria(ccId);
         cc.setCampeonato(campeonato);
         cc.setCategoria(categoria);
     }
