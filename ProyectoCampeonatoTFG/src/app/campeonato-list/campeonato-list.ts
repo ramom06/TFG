@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule }       from '@angular/common';
 import { FormsModule }        from '@angular/forms';
 import { CampeonatoService }  from '../service/campeonato-service';
-import { Campeonato, Estado, Nivel } from '../interfaces/campeonato';
+import { Campeonato, Estado, EstadoVisual, Nivel } from '../interfaces/campeonato';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -56,7 +56,7 @@ export class CampeonatoListComponent implements OnInit {
   // El estado del backend ("futuro", "inscripciones_cerradas", "pasado") puede no
   // coincidir con la realidad temporal (un campeonato "futuro" con fechaFin pasada
   // sigue marcado mal). Para la UI calculamos el estado por fechas.
-  estadoCalculado(c: Campeonato): Estado {
+  estadoCalculado(c: Campeonato): EstadoVisual {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const inicio = new Date(c.fechaInicio); inicio.setHours(0, 0, 0, 0);
     const fin    = new Date(c.fechaFin);    fin.setHours(0, 0, 0, 0);
@@ -84,7 +84,7 @@ export class CampeonatoListComponent implements OnInit {
     this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
   }
 
-  badgeClass(estado: Estado): string {
+  badgeClass(estado: EstadoVisual): string {
     return {
       futuro: 'badge-futuro',
       activo: 'badge-activo',
@@ -92,7 +92,7 @@ export class CampeonatoListComponent implements OnInit {
     }[estado];
   }
 
-  estadoLabel(estado: Estado): string {
+  estadoLabel(estado: EstadoVisual): string {
     return { futuro: 'Próximo', activo: 'En curso', pasado: 'Finalizado' }[estado];
   }
 

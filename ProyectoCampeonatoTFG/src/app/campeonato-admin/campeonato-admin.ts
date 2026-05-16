@@ -316,11 +316,21 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
   }
 
   badgeClass(estado: Estado): string {
-    return { futuro: 'badge-futuro', activo: 'badge-activo', pasado: 'badge-pasado' }[estado];
+    return {
+      futuro:                  'badge-futuro',
+      activo:                  'badge-activo',
+      inscripciones_cerradas:  'badge-activo',
+      pasado:                  'badge-pasado',
+    }[estado];
   }
 
   estadoLabel(estado: Estado): string {
-    return { futuro: 'Próximo', activo: 'En curso', pasado: 'Finalizado' }[estado];
+    return {
+      futuro:                  'Próximo',
+      activo:                  'En curso',
+      inscripciones_cerradas:  'Inscripciones cerradas',
+      pasado:                  'Finalizado',
+    }[estado];
   }
 
   get f() { return this.form.controls; }
