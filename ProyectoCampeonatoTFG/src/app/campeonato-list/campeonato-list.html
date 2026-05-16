@@ -58,7 +58,7 @@
           <div class="relative aspect-video overflow-hidden bg-[#141a24]">
             <img src="{{ c.urlPortada }}" alt="{{ c.nombre }}"  class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-105"/>
             <div class="absolute bottom-2.5 left-3 z-10 flex gap-1.5">
-              <span [ngClass]="badgeClass(c.estado)"  class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm border">{{ estadoLabel(c.estado) }}</span>
+              <span [ngClass]="badgeClass(estadoCalculado(c))"  class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm border">{{ estadoLabel(estadoCalculado(c)) }}</span>
               <span class="inline-flex items-center px-2.5 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm border bg-[rgba(224,28,46,0.12)] text-[#e01c2e] border-[rgba(224,28,46,0.35)]">{{ c.nivel }}</span>
             </div>
           </div>

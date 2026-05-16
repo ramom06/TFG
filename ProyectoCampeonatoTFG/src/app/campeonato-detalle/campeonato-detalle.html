@@ -45,6 +45,42 @@
             Campeonato finalizado — inscripciones cerradas
           </div>
         }
+
+        <!-- ── ACCIONES ADMIN ──────────────────────────────────────────── -->
+        @if (esAdmin()) {
+          <div class="mt-6 pt-6 border-t border-white/[0.06]">
+            <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#4b5563] mb-3">Acciones de administrador</p>
+
+            <div class="flex flex-wrap gap-3">
+              <button (click)="cerrarInscripciones()"
+                      [disabled]="!puedeCerrarInscripciones() || procesando()"
+                      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold
+                             bg-white/[0.04] border border-white/[0.12] text-[#eef0f4]
+                             hover:bg-white/[0.08] hover:border-[#e01c2e]/40 transition-all
+                             disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.04] disabled:hover:border-white/[0.12]"
+                      [title]="puedeCerrarInscripciones() ? 'Cierra inscripciones y sortea la primera ronda' : 'Solo disponible desde 3 días antes del inicio'">
+                Cerrar inscripciones y sortear
+              </button>
+
+              <button (click)="desarrollarBracket()"
+                      [disabled]="!puedeDesarrollarBracket() || procesando()"
+                      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold
+                             bg-white/[0.04] border border-white/[0.12] text-[#eef0f4]
+                             hover:bg-white/[0.08] hover:border-[#e01c2e]/40 transition-all
+                             disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.04] disabled:hover:border-white/[0.12]"
+                      [title]="puedeDesarrollarBracket() ? 'Desarrolla todo el bracket hasta el ganador' : 'Solo disponible tras la fecha de fin'">
+                Desarrollar bracket
+              </button>
+            </div>
+
+            @if (mensajeAccion()) {
+              <p class="mt-3 text-xs text-emerald-400">{{ mensajeAccion() }}</p>
+            }
+            @if (errorAccion()) {
+              <p class="mt-3 text-xs text-[#e01c2e]">{{ errorAccion() }}</p>
+            }
+          </div>
+        }
       </div>
 
       <!-- ── CATEGORÍAS ── -->

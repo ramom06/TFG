@@ -39,7 +39,7 @@ export class CampeonatoListComponent implements OnInit {
       );
 
     if (this.filtroEstado() !== 'todos')
-      lista = lista.filter(c => c.estado === this.filtroEstado());
+      lista = lista.filter(c => this.estadoCalculado(c) === this.filtroEstado());
 
     if (this.filtroNivel() !== 'todos')
       lista = lista.filter(c => c.nivel.toLowerCase() === this.filtroNivel());
@@ -52,6 +52,18 @@ export class CampeonatoListComponent implements OnInit {
       }
     });
   });
+
+  // El estado del backend ("futuro", "inscripciones_cerradas", "pasado") puede no
+  // coincidir con la realidad temporal (un campeonato "futuro" con fechaFin pasada
+  // sigue marcado mal). Para la UI calculamos el estado por fechas.
+  estadoCalculado(c: Campeonato): Estado {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const inicio = new Date(c.fechaInicio); inicio.setHours(0, 0, 0, 0);
+    const fin    = new Date(c.fechaFin);    fin.setHours(0, 0, 0, 0);
+    if (fin < hoy)    return 'pasado';
+    if (inicio > hoy) return 'futuro';
+    return 'activo';
+  }
 
 
   async ngOnInit() {

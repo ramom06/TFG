@@ -48,4 +48,30 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     });
     if (!response.ok) throw new Error('Error al eliminar el campeonato');
   }
+
+  async cerrarInscripciones(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.apiUrl}/${id}/cerrar-inscripciones`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(this.extraerMensaje(txt) ?? 'Error al cerrar inscripciones');
+    }
+    return await response.json();
+  }
+
+  async desarrollarBracket(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.apiUrl}/${id}/desarrollar-bracket`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(this.extraerMensaje(txt) ?? 'Error al desarrollar el bracket');
+    }
+    return await response.json();
+  }
+
+  private extraerMensaje(txt: string): string | null {
+    try { return JSON.parse(txt)?.message ?? null; } catch { return null; }
+  }
 }

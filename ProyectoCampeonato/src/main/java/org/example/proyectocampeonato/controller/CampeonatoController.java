@@ -3,6 +3,7 @@ package org.example.proyectocampeonato.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.example.proyectocampeonato.modelo.Campeonato;
 import org.example.proyectocampeonato.service.CampeonatoService;
+import org.example.proyectocampeonato.service.SorteoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,11 @@ import java.util.List;
 public class CampeonatoController {
 
     private final CampeonatoService service;
+    private final SorteoService sorteoService;
 
-    public CampeonatoController(CampeonatoService service) {
+    public CampeonatoController(CampeonatoService service, SorteoService sorteoService) {
         this.service = service;
+        this.sorteoService = sorteoService;
     }
 
     @GetMapping
@@ -50,5 +53,23 @@ public class CampeonatoController {
         log.info("Eliminando campeonato con id: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // POST /api/campeonatos/{id}/cerrar-inscripciones
+    // Cierra inscripciones y genera el sorteo de primera ronda.
+    // Solo permitido desde 3 días antes del inicio del campeonato.
+    @PostMapping("/{id}/cerrar-inscripciones")
+    public ResponseEntity<Campeonato> cerrarInscripciones(@PathVariable Long id) {
+        log.info("Cerrando inscripciones y sorteando primera ronda del campeonato {}", id);
+        return ResponseEntity.ok(sorteoService.cerrarInscripcionesYSortear(id));
+    }
+
+    // POST /api/campeonatos/{id}/desarrollar-bracket
+    // Desarrolla el bracket completo hasta el ganador.
+    // Solo permitido a partir de la fecha de fin del campeonato.
+    @PostMapping("/{id}/desarrollar-bracket")
+    public ResponseEntity<Campeonato> desarrollarBracket(@PathVariable Long id) {
+        log.info("Desarrollando bracket completo del campeonato {}", id);
+        return ResponseEntity.ok(sorteoService.desarrollarBracket(id));
     }
 }

@@ -3,6 +3,7 @@ package org.example.proyectocampeonato.dataLoader;
 import lombok.RequiredArgsConstructor;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.*;
+import org.example.proyectocampeonato.service.SorteoService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,7 @@ public class DataLoader implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final SorteoService sorteoService;
 
     // Helper para convertir LocalDate a Date
     private Date toDate(LocalDate localDate) {
@@ -52,7 +54,24 @@ public class DataLoader implements CommandLineRunner {
             jdbcTemplate.update("DELETE FROM categoria");
             jdbcTemplate.update("DELETE FROM campeonato");
             cargarDatos();
+            sortearCampeonatosFinalizados();
         }
+    }
+
+    /**
+     * Para los campeonatos cargados en estado "pasado", genera (de forma determinista
+     * dentro de cada arranque) el sorteo completo: primera ronda + bracket hasta el ganador.
+     * Así los campeonatos finalizados siempre tienen combates persistidos.
+     */
+    private void sortearCampeonatosFinalizados() {
+        List<Campeonato> pasados = campeonatoRepository.findAll().stream()
+                .filter(c -> "pasado".equals(c.getEstado()))
+                .toList();
+
+        for (Campeonato c : pasados) {
+            sorteoService.forzarSorteoYDesarrollo(c.getIdCampeonato());
+        }
+        System.out.println("Sorteo y desarrollo aplicado a " + pasados.size() + " campeonatos finalizados.");
     }
 
     private void cargarDatos() {

@@ -25,14 +25,10 @@ export class SorteoComponent implements OnInit {
   idCampeonato = signal(0);
   idCategoria  = signal(0);
 
-  rondasVisibles = computed(() => {
-    const s = this.sorteoData();
-    if (!s) return [];
-    if (this.estadoCampeonato() === 'futuro') {
-      return s.rondas.slice(0, 1);
-    }
-    return s.rondas;
-  });
+  // Hay sorteo persistido cuando el backend devuelve combates
+  hayCombates = computed(() => (this.sorteoData()?.rondas.length ?? 0) > 0);
+
+  rondasVisibles = computed(() => this.sorteoData()?.rondas ?? []);
 
   ganador = computed(() => {
     const s = this.sorteoData();
@@ -43,6 +39,8 @@ export class SorteoComponent implements OnInit {
     if (ultimaRonda.combates.length === 0) return null;
     const combFinal = ultimaRonda.combates[0];
     if (combFinal.estado !== 'finalizado') return null;
+    // Bye en final: el rojo es el ganador
+    if (!combFinal.competidorAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionRojo > combFinal.puntuacionAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionAzul > combFinal.puntuacionRojo) return combFinal.competidorAzul;
     return null;
@@ -58,8 +56,7 @@ export class SorteoComponent implements OnInit {
       const resIns = await fetch(
         `${environment.apiUrl}/api/inscripciones/campeonato/${idC}/categoria/${idCat}`
       );
-      if (!resIns.ok) throw new Error('No se pudieron cargar los inscritos');
-      const inscritos: any[] = await resIns.json();
+      const inscritos: any[] = resIns.ok ? await resIns.json() : [];
 
       const resComb = await fetch(
         `${environment.apiUrl}/api/combates/campeonato/${idC}/categoria/${idCat}`
@@ -70,8 +67,14 @@ export class SorteoComponent implements OnInit {
       const campData = resCamp.ok ? await resCamp.json() : null;
       this.estadoCampeonato.set(campData?.estado ?? '');
 
-      const sorteo = this.construirSorteo(idC, idCat, inscritos, combates);
-      this.sorteoData.set(sorteo);
+      const nombreCategoria  = inscritos[0]?.nombreCategoria  ?? '';
+      const nombreCampeonato = inscritos[0]?.nombreCampeonato ?? campData?.nombre ?? '';
+
+      const rondas = combates.length > 0
+        ? this.construirBracketDesdeCombates(combates)
+        : [];
+
+      this.sorteoData.set({ idCampeonato: idC, idCategoria: idCat, nombreCategoria, nombreCampeonato, rondas });
 
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar el sorteo');
@@ -80,142 +83,58 @@ export class SorteoComponent implements OnInit {
     }
   }
 
-  // ── Construcción del sorteo ───────────────────────────────────────────────
+  // ── Construcción del bracket a partir de los combates del backend ─────────
 
-  private construirSorteo(
-    idCampeonato: number,
-    idCategoria: number,
-    inscritos: any[],
-    combates: any[]
-  ): Sorteo {
-    const nombreCategoria  = inscritos[0]?.nombreCategoria  ?? '';
-    const nombreCampeonato = inscritos[0]?.nombreCampeonato ?? '';
-
-    if (combates.length > 0) {
-      const rondas = this.construirBracketDesdeCombates(combates);
-      return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
-    }
-
-    if (inscritos.length === 0) {
-      return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas: [] };
-    }
-
-    const competidores = [...inscritos].sort(() => Math.random() - 0.5);
-    const rondas = this.generarBracketCompleto(competidores, idCampeonato, idCategoria);
-    return { idCampeonato, idCategoria, nombreCategoria, nombreCampeonato, rondas };
-  }
+  // Orden de menor a mayor (más combates a menos): primera ronda primero, final al final.
+  private readonly ORDEN_RONDAS = ['dieciseisavos', 'octavos', 'cuartos', 'semifinal', 'final'];
 
   private construirBracketDesdeCombates(combates: any[]): Ronda[] {
-    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
-
     const porClave = new Map<string, any[]>();
     for (const c of combates) {
-      const key = c.ronda ?? 'R1';
+      const key = (c.ronda ?? '').toLowerCase();
       if (!porClave.has(key)) porClave.set(key, []);
       porClave.get(key)!.push(c);
     }
 
-    const clavesPresentes = ordenClaves.filter(k => porClave.has(k));
+    // Tomamos solo las claves conocidas que estén presentes, en orden de bracket
+    const clavesPresentes = this.ORDEN_RONDAS.filter(k => porClave.has(k));
     if (clavesPresentes.length === 0) return [];
 
-    const rondas: Ronda[] = [];
-    for (const clave of clavesPresentes) {
-      rondas.push({
+    return clavesPresentes.map(clave => {
+      const combatesRonda = porClave.get(clave)!
+        .sort((a, b) => (a.idCombate?.numeroCombate ?? 0) - (b.idCombate?.numeroCombate ?? 0))
+        .map(c => this.mapCombate(c));
+      return {
         etiqueta: this.labelRonda(clave),
-        tipo:     clave === 'Final' || clave === 'F'      ? 'final'
-          : clave === 'REP' || clave === 'REPESCA'  ? 'repesca'
-            : 'ronda',
-        combates: porClave.get(clave)!.map(c => this.mapCombate(c))
-      });
-    }
-
-    return rondas;
-  }
-
-  private generarBracketCompleto(inscritos: any[], idCampeonato: number, idCategoria: number): Ronda[] {
-    const ordenClaves = ['R1', 'R2', 'R3', 'Semifinal', 'Final'];
-    const rondas: Ronda[] = [];
-    let competidores: Competidor[] = inscritos.map(ins => this.inscritoACompetidor(ins));
-    let claveIdx = 0;
-
-    while (competidores.length >= 1 && claveIdx < ordenClaves.length) {
-      const clave    = ordenClaves[claveIdx];
-      const combates = this.emparejarCompetidores(competidores, clave, idCampeonato, idCategoria);
-      rondas.push({
-        etiqueta: this.labelRonda(clave),
-        tipo:     clave === 'Final' ? 'final' : 'ronda',
-        combates
-      });
-      if (combates.length <= 1) break;
-      competidores = combates.map(c => c.competidorRojo).filter(Boolean) as Competidor[];
-      claveIdx++;
-    }
-
-    return rondas;
-  }
-
-  // ── Helpers privados ──────────────────────────────────────────────────────
-
-  /** Genera combates locales (sin id de BD) para el bracket provisional */
-  private emparejarCompetidores(competidores: Competidor[], claveRonda: string, idCampeonato: number, idCategoria: number): Combate[] {
-    const combates: Combate[] = [];
-    for (let i = 0; i < competidores.length; i += 2) {
-      const rojo  = competidores[i]     ?? null;
-      const azul  = competidores[i + 1] ?? null;
-      const esBye = azul === null && rojo !== null;
-      combates.push({
-        idCombate:      { idCampeonato, idCategoria },
-        ronda:          claveRonda,
-        competidorRojo: rojo,
-        competidorAzul: azul,
-        puntuacionRojo: 0,
-        puntuacionAzul: 0,
-        estado:         esBye ? 'bye' : 'pendiente'
-      });
-    }
-    return combates;
-  }
-
-  private inscritoACompetidor(ins: any): Competidor {
-    const partes    = (ins.nombreCompetidor ?? '').trim().split(' ');
-    const nombre    = partes[0] ?? '';
-    const apellidos = partes.slice(1).join(' ');
-    return {
-      idUsuario:            ins.idCompetidor,
-      nombre,
-      apellidos,
-      club:                 ins.clubCompetidor ?? '',
-      federacionAutonomica: '',
-      dni:                  '',
-      email:                '',
-      rol:                  'COMPETIDOR' as any,
-      genero:               'M',
-      fechaNacimiento:      ''
-    };
+        tipo:     clave === 'final' ? 'final' : 'ronda',
+        combates: combatesRonda,
+      };
+    });
   }
 
   private mapCombate(c: any): Combate {
+    const esBye = !c.competidorAzul && c.competidorRojo;
     return {
       idCombate: {
         idCampeonato: c.idCombate?.idCampeonato ?? 0,
         idCategoria:  c.idCombate?.idCategoria  ?? 0,
       },
-      ronda:          c.ronda          ?? 'R1',
+      ronda:          c.ronda          ?? '',
       competidorRojo: c.competidorRojo ?? null,
       competidorAzul: c.competidorAzul ?? null,
       puntuacionRojo: c.puntuacionRojo ?? 0,
       puntuacionAzul: c.puntuacionAzul ?? 0,
-      estado:         c.estado         ?? 'pendiente'
+      estado:         esBye ? 'bye' : (c.estado ?? 'pendiente'),
     };
   }
 
   private labelRonda(r: string): string {
     const map: Record<string, string> = {
-      R1:        '1ª Ronda',
-      R2:        '2ª Ronda',
-      R3:        'Cuartos de final',
-      Semifinal: 'Semifinal',
-      Final:     'Final'
+      dieciseisavos: 'Dieciseisavos',
+      octavos:       'Octavos',
+      cuartos:       'Cuartos de final',
+      semifinal:     'Semifinal',
+      final:         'Final',
     };
     return map[r] ?? r;
   }
@@ -233,13 +152,17 @@ export class SorteoComponent implements OnInit {
   }
 
   rojoGana(c: Combate): boolean {
-    return c.estado === 'finalizado' && c.puntuacionRojo > c.puntuacionAzul;
+    if (c.estado !== 'finalizado') return false;
+    if (!c.competidorAzul) return true; // bye: rojo gana
+    return c.puntuacionRojo > c.puntuacionAzul;
   }
 
   azulGana(c: Combate): boolean {
-    return c.estado === 'finalizado' && c.puntuacionAzul > c.puntuacionRojo;
+    if (c.estado !== 'finalizado') return false;
+    if (!c.competidorAzul) return false;
+    return c.puntuacionAzul > c.puntuacionRojo;
   }
 
-  trackRonda(_: number, r: Ronda)                        { return r.etiqueta; }
+  trackRonda(_: number, r: Ronda)         { return r.etiqueta; }
   trackCombate(index: number, _: Combate) { return index; }
 }
