@@ -34,6 +34,13 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (campeonatoRepository.count() == 0) {
+            // Limpiar posibles datos huérfanos de deploys anteriores incompletos
+            inscripcionRepository.deleteAll();
+            combateRepository.deleteAll();
+            campeonato_categoriaRepository.deleteAll();
+            competidorRepository.deleteAll();
+            usuarioRepository.deleteAll();
+            categoriaRepository.deleteAll();
             cargarDatos();
         }
     }
