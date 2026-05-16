@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/inscripciones")
+@CrossOrigin(origins = "*")
 public class InscripcionController {
 
     private final InscripcionService service;
@@ -23,38 +24,37 @@ public class InscripcionController {
         this.mapper = mapper;
     }
 
-    @GetMapping("/competidor/{id_competidor}")
-    public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long id_competidor) {return ResponseEntity.ok(mapper.toDTOList(service.getByCompetidor(id_competidor)));}
-
-    @GetMapping("/campeonato/{id_campeonato}/categoria/{id_categoria}")
-    public ResponseEntity<List<InscripcionDTO>> getByCampeonatoAndCategoria(
-            @PathVariable Long id_campeonato,
-            @PathVariable Long id_categoria) {
-        log.info("Obteniendo inscripciones del campeonato {} en categoría {}", id_campeonato, id_categoria);
-        return ResponseEntity.ok(mapper.toDTOList(service.getByCampeonatoAndCategoria(id_campeonato, id_categoria)));
+    @GetMapping("/competidor/{idCompetidor}")
+    public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long idCompetidor) {
+        return ResponseEntity.ok(mapper.toDTOList(service.getByCompetidor(idCompetidor)));
     }
 
-    // POST /api/inscripciones/{id_campeonato}/{id_categoria}/{id_competidor}
-    @PostMapping("/{id_campeonato}/{id_categoria}/{id_competidor}")
+    @GetMapping("/campeonato/{idCampeonato}/categoria/{idCategoria}")
+    public ResponseEntity<List<InscripcionDTO>> getByCampeonatoAndCategoria(
+            @PathVariable Long idCampeonato,
+            @PathVariable Long idCategoria) {
+        log.info("Obteniendo inscripciones del campeonato {} en categoría {}", idCampeonato, idCategoria);
+        return ResponseEntity.ok(mapper.toDTOList(service.getByCampeonatoAndCategoria(idCampeonato, idCategoria)));
+    }
+
+    @PostMapping("/{idCampeonato}/{idCategoria}/{idCompetidor}")
     public ResponseEntity<InscripcionDTO> save(
-            @PathVariable Long id_campeonato,
-            @PathVariable Long id_categoria,
-            @PathVariable Long id_competidor) {
-        log.info("Inscribiendo competidor {} en campeonato {} categoría {}",
-                id_competidor, id_campeonato, id_categoria);
+            @PathVariable Long idCampeonato,
+            @PathVariable Long idCategoria,
+            @PathVariable Long idCompetidor) {
+        log.info("Inscribiendo competidor {} en campeonato {} categoría {}", idCompetidor, idCampeonato, idCategoria);
         return new ResponseEntity<>(
-                mapper.toDTO(service.save(id_campeonato, id_categoria, id_competidor)),
+                mapper.toDTO(service.save(idCampeonato, idCategoria, idCompetidor)),
                 HttpStatus.CREATED
         );
     }
 
-    // DELETE /api/inscripciones/{id_campeonato}/{id_categoria}/{id_competidor}
-    @DeleteMapping("/{id_campeonato}/{id_categoria}/{id_competidor}")
+    @DeleteMapping("/{idCampeonato}/{idCategoria}/{idCompetidor}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long id_campeonato,
-            @PathVariable Long id_categoria,
-            @PathVariable Long id_competidor) {
-        service.delete(id_campeonato, id_categoria, id_competidor);
+            @PathVariable Long idCampeonato,
+            @PathVariable Long idCategoria,
+            @PathVariable Long idCompetidor) {
+        service.delete(idCampeonato, idCategoria, idCompetidor);
         return ResponseEntity.noContent().build();
     }
 }

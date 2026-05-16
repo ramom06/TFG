@@ -77,7 +77,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          @for (cat of entry.value; track cat.id_categoria) {
+                          @for (cat of entry.value; track cat.idCategoria) {
                             <tr class="border-t border-white/[0.04] hover:bg-white/[0.03] cursor-pointer transition-colors" (click)="abrirModalParticipantes(cat)">
                               <td class="py-2 text-[#eef0f4] font-medium">{{ cat.nombre }}</td>
                               <td class="py-2 text-center text-[#8b95a3]">
@@ -90,7 +90,7 @@
                                 @else { — }
                               </td>
                               <td class="py-2 text-center">
-                                <a [routerLink]="['/campeonato', campeonato()!.id_campeonato, 'categoria', cat.id_categoria, 'sorteo']" (click)="$event.stopPropagation()"
+                                <a [routerLink]="['/campeonato', campeonato()!.idCampeonato, 'categoria', cat.idCategoria, 'sorteo']" (click)="$event.stopPropagation()"
                                    class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold
                                   bg-[#e01c2e]/10 border border-[#e01c2e]/25 text-[#e01c2e]
                                   hover:bg-[#e01c2e]/20 hover:border-[#e01c2e]/50 transition-all whitespace-nowrap">
@@ -127,7 +127,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          @for (cat of entry.value; track cat.id_categoria) {
+                          @for (cat of entry.value; track cat.idCategoria) {
                             <tr class="border-t border-white/[0.04] hover:bg-white/[0.03] cursor-pointer transition-colors"  (click)="abrirModalParticipantes(cat)">
                               <td class="py-2 text-[#eef0f4] font-medium">{{ cat.nombre }}</td>
                               <td class="py-2 text-center text-[#8b95a3]">
@@ -140,7 +140,7 @@
                                 @else { — }
                               </td>
                               <td class="py-2 text-center">
-                                <a [routerLink]="['/campeonato', campeonato()!.id_campeonato, 'categoria', cat.id_categoria, 'sorteo']"
+                                <a [routerLink]="['/campeonato', campeonato()!.idCampeonato, 'categoria', cat.idCategoria, 'sorteo']"
                                    (click)="$event.stopPropagation()"
                                    class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold
                                           bg-[#e01c2e]/10 border border-[#e01c2e]/25 text-[#e01c2e]
@@ -228,7 +228,7 @@
                 </svg>
                 <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#eef0f4]">Sorteo</p>
               </div>
-              <a [routerLink]="['/campeonato', campeonato()!.id_campeonato, 'categoria', categoriaSeleccionada()!.id_categoria, 'sorteo']"
+              <a [routerLink]="['/campeonato', campeonato()!.idCampeonato, 'categoria', categoriaSeleccionada()!.idCategoria, 'sorteo']"
                  (click)="cerrarModal()"
                  class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
                         bg-[#e01c2e]/10 border border-[#e01c2e]/25 text-[#e01c2e] text-sm font-semibold

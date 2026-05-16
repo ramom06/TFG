@@ -164,7 +164,7 @@ export class SorteoComponent implements OnInit {
       const azul  = competidores[i + 1] ?? null;
       const esBye = azul === null && rojo !== null;
       combates.push({
-        id_combate:     { idCampeonato, idCategoria },
+        idCombate:      { idCampeonato, idCategoria },
         ronda:          claveRonda,
         competidorRojo: rojo,
         competidorAzul: azul,
@@ -181,7 +181,6 @@ export class SorteoComponent implements OnInit {
     const nombre    = partes[0] ?? '';
     const apellidos = partes.slice(1).join(' ');
     return {
-      id_competidor:        ins.id_competidor,
       idUsuario:            ins.idCompetidor,
       nombre,
       apellidos,
@@ -195,12 +194,11 @@ export class SorteoComponent implements OnInit {
     };
   }
 
-  /** Mapea un combate de BD al tipo Combate (con id_combate obligatorio) */
   private mapCombate(c: any): Combate {
     return {
-      id_combate: {
-        idCampeonato: c.id?.idCampeonato ?? 0,
-        idCategoria:  c.id?.idCategoria  ?? 0,
+      idCombate: {
+        idCampeonato: c.idCombate?.idCampeonato ?? 0,
+        idCategoria:  c.idCombate?.idCategoria  ?? 0,
       },
       ronda:          c.ronda          ?? 'R1',
       competidorRojo: c.competidorRojo ?? null,

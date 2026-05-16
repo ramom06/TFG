@@ -16,7 +16,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 // Para todos los endpoints
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*") //Permitimos conexiones de Angular
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
             }

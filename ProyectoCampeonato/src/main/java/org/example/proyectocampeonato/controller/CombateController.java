@@ -55,7 +55,7 @@ public class CombateController {
 
     @PostMapping
     public ResponseEntity<Combate> save(@RequestBody Combate combate) {
-        log.info("Creando combate: {}", combate.getId());
+        log.info("Creando combate: {}", combate.getIdCombate());
         return new ResponseEntity<>(service.save(combate), HttpStatus.CREATED);
     }
 

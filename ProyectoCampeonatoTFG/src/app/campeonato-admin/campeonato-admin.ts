@@ -149,7 +149,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
   // Devuelve el grupo seleccionado para un grupo (true si todos están, false si ninguno, null si parcial)
   grupoTodosSeleccionados(grupo: GrupoCategoria): boolean {
     const todas = [...grupo.masculino, ...grupo.femenino];
-    return todas.length > 0 && todas.every(c => this.categoriasSeleccionadas().has(c.id_categoria));
+    return todas.length > 0 && todas.every(c => this.categoriasSeleccionadas().has(c.idCategoria));
   }
 
   toggleCategoria(id: number): void {
@@ -162,9 +162,9 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     const todas = [...grupo.masculino, ...grupo.femenino];
     const s = new Set(this.categoriasSeleccionadas());
     if (this.grupoTodosSeleccionados(grupo)) {
-      todas.forEach(c => s.delete(c.id_categoria));
+      todas.forEach(c => s.delete(c.idCategoria));
     } else {
-      todas.forEach(c => s.add(c.id_categoria));
+      todas.forEach(c => s.add(c.idCategoria));
     }
     this.categoriasSeleccionadas.set(s);
   }
@@ -184,7 +184,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
 
   async abrirModalEditar(c: Campeonato): Promise<void> {
     this.modoEdicion.set(true);
-    this.campeonatoEditId.set(c.id_campeonato);
+    this.campeonatoEditId.set(c.idCampeonato);
     this.form.patchValue({
       nombre:      c.nombre,
       fechaInicio: this.toInputDate(c.fechaInicio),
@@ -197,8 +197,8 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     });
     // Cargar las categorías que ya tiene este campeonato
     try {
-      const catsActuales = await this.catSvc.getCategoriasPorCampeonato(c.id_campeonato);
-      this.categoriasSeleccionadas.set(new Set(catsActuales.map(cat => cat.id_categoria)));
+      const catsActuales = await this.catSvc.getCategoriasPorCampeonato(c.idCampeonato);
+      this.categoriasSeleccionadas.set(new Set(catsActuales.map(cat => cat.idCategoria)));
     } catch {
       this.categoriasSeleccionadas.set(new Set());
     }
@@ -231,7 +231,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
       }
 
       // Sincronizar categorías: primero eliminar las que ya no están, luego añadir las nuevas
-      await this.sincronizarCategorias(campeonatoGuardado.id_campeonato);
+      await this.sincronizarCategorias(campeonatoGuardado.idCampeonato);
 
       this.cerrarModal();
       await this.cargarCampeonatos();
@@ -251,7 +251,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
       const r = await fetch(apiBase);
       if (r.ok) {
         const cats: Categoria[] = await r.json();
-        actuales = cats.map(c => c.id_categoria);
+        actuales = cats.map(c => c.idCategoria);
       }
     } catch { /* si falla, asumimos vacío */ }
 
@@ -285,7 +285,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     if (!c) return;
     this.saving.set(true);
     try {
-      await this.svc.deleteCampeonato(c.id_campeonato);
+      await this.svc.deleteCampeonato(c.idCampeonato);
       this.mostrarExito(`"${c.nombre}" eliminado correctamente`);
       this.cancelarBorrar();
       await this.cargarCampeonatos();

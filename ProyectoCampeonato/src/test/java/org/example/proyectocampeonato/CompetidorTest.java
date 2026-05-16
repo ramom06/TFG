@@ -48,7 +48,7 @@ class CompetidorTest {
                 .club("Dojo Shoto")
                 .federacionAutonomica("Comunidad de Madrid")
                 .build();
-        competidor.setId(1L);
+        competidor.setIdUsuario(1L);
     }
 
     @Test

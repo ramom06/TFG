@@ -397,18 +397,18 @@
                 </div>
                 <div class="p-3 flex flex-col gap-1 max-h-[200px] overflow-y-auto"
                      style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent">
-                  @for (cat of seccionKata(); track cat.id_categoria) {
+                  @for (cat of seccionKata(); track cat.idCategoria) {
                     <label class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
-                           [class]="estaYaInscrito(cat.id_categoria)
+                           [class]="estaYaInscrito(cat.idCategoria)
                              ? 'opacity-50 cursor-not-allowed'
                              : 'hover:bg-white/5 cursor-pointer'">
                       <input type="radio" name="cat-kata"
-                             [checked]="estaSeleccionada(cat.id_categoria) || estaYaInscrito(cat.id_categoria)"
-                             [disabled]="estaYaInscrito(cat.id_categoria)"
-                             (change)="toggleCategoria(cat.id_categoria)"
+                             [checked]="estaSeleccionada(cat.idCategoria) || estaYaInscrito(cat.idCategoria)"
+                             [disabled]="estaYaInscrito(cat.idCategoria)"
+                             (change)="toggleCategoria(cat.idCategoria)"
                              class="w-4 h-4 accent-[#e01c2e] shrink-0" />
                       <span class="text-[13px] text-[#eef0f4] flex-1">{{ cat.nombre }}</span>
-                      @if (estaYaInscrito(cat.id_categoria)) {
+                      @if (estaYaInscrito(cat.idCategoria)) {
                         <span class="text-[10px] font-bold text-green-500 uppercase shrink-0">Ya inscrito</span>
                       }
                       @if (cat.edadMinima || cat.edadMaxima) {
@@ -434,18 +434,18 @@
                 </div>
                 <div class="p-3 flex flex-col gap-1 max-h-[200px] overflow-y-auto"
                      style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent">
-                  @for (cat of seccionKumite(); track cat.id_categoria) {
+                  @for (cat of seccionKumite(); track cat.idCategoria) {
                     <label class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
-                           [class]="estaYaInscrito(cat.id_categoria)
+                           [class]="estaYaInscrito(cat.idCategoria)
                              ? 'opacity-50 cursor-not-allowed'
                              : 'hover:bg-white/5 cursor-pointer'">
                       <input type="radio" name="cat-kum"
-                             [checked]="estaSeleccionada(cat.id_categoria) || estaYaInscrito(cat.id_categoria)"
-                             [disabled]="estaYaInscrito(cat.id_categoria)"
-                             (change)="toggleCategoria(cat.id_categoria)"
+                             [checked]="estaSeleccionada(cat.idCategoria) || estaYaInscrito(cat.idCategoria)"
+                             [disabled]="estaYaInscrito(cat.idCategoria)"
+                             (change)="toggleCategoria(cat.idCategoria)"
                              class="w-4 h-4 accent-[#e01c2e] shrink-0" />
                       <span class="text-[13px] text-[#eef0f4] flex-1">{{ cat.nombre }}</span>
-                      @if (estaYaInscrito(cat.id_categoria)) {
+                      @if (estaYaInscrito(cat.idCategoria)) {
                         <span class="text-[10px] font-bold text-green-500 uppercase shrink-0">Ya inscrito</span>
                       }
                       @if (cat.pesoMaximo && !cat.pesoMinimo) {
@@ -484,7 +484,7 @@
           <p class="text-[10px] text-[#8b95a3] uppercase font-bold tracking-widest mb-2">
             Resumen de inscripción
           </p>
-          @for (cat of categoriasParaConfirmar(); track cat.id_categoria) {
+          @for (cat of categoriasParaConfirmar(); track cat.idCategoria) {
             <div class="text-[#eef0f4] text-[13px] py-1.5 border-b border-white/5 last:border-0 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-[#e01c2e] shrink-0"></span>
               {{ cat.nombre }}

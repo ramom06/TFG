@@ -35,7 +35,7 @@ public class CampeonatoService {
     public Campeonato replace(Long id, Campeonato campeonato) {
         return campeonatoRepository.findById(id)
                 .map(existing -> {
-                    campeonato.setId_campeonato(id);
+                    campeonato.setIdCampeonato(id);
                     return campeonatoRepository.save(campeonato);
                 })
                 .orElseThrow(() -> new CampeonatoNotFoundException(id));

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface Campeonato_CategoriaRepository extends JpaRepository<Campeonato_Categoria, Campeonato_Categoria_Id> {
-    // En CategoriaRepository.java
-    @Query("SELECT cc.categoria FROM Campeonato_Categoria cc WHERE cc.campeonato.id_campeonato = :id")
+
+    @Query("SELECT cc.categoria FROM Campeonato_Categoria cc WHERE cc.campeonato.idCampeonato = :id")
     List<Categoria> findCategoriasByCampeonatoId(@Param("id") Long id);
 }

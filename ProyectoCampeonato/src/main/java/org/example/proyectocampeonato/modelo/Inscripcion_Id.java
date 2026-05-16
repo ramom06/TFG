@@ -1,5 +1,6 @@
 package org.example.proyectocampeonato.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +12,15 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//Esta clase es el id de la clase Inscripcion
 public class Inscripcion_Id implements Serializable {
 
-    private Long id_campeonato;
-    private Long id_categoria;
-    private Long id_competidor;
+    @Column(name = "id_campeonato")
+    private Long idCampeonato;
+
+    @Column(name = "id_categoria")
+    private Long idCategoria;
+
+    @Column(name = "id_competidor")
+    private Long idCompetidor;
 
 }

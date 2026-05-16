@@ -19,20 +19,20 @@ import lombok.NoArgsConstructor;
 public class Inscripcion {
 
     @EmbeddedId
-    private Inscripcion_Id id_inscripcion;
+    private Inscripcion_Id idInscripcion;
 
     @ManyToOne
-    @MapsId("id_campeonato")
+    @MapsId("idCampeonato")
     @JoinColumn(name = "id_campeonato")
     private Campeonato campeonato;
 
     @ManyToOne
-    @MapsId("id_categoria")
+    @MapsId("idCategoria")
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
 
     @ManyToOne
-    @MapsId("id_competidor")
+    @MapsId("idCompetidor")
     @JoinColumn(name = "id_competidor")
     private Competidor competidor;
 

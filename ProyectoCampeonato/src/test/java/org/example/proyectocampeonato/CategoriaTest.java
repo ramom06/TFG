@@ -38,7 +38,7 @@ class CategoriaTest {
                 .edadMaxima(99)
                 .pesoMaximo(75.0)
                 .build();
-        categoria.setId_categoria(1L);
+        categoria.setIdCategoria(1L);
     }
 
     // ── getAll ────────────────────────────────────────────────────────────────
@@ -114,7 +114,7 @@ class CategoriaTest {
         Categoria resultado = categoriaService.replace(1L, actualizada);
 
         assertThat(resultado.getNombre()).isEqualTo("Senior Masculino <84kg");
-        assertThat(resultado.getId_categoria()).isEqualTo(1L);
+        assertThat(resultado.getIdCategoria()).isEqualTo(1L);
     }
 
     @Test

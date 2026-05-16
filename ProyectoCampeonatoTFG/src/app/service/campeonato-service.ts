@@ -22,7 +22,7 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     return await response.json();
   }
 
-  async createCampeonato(campeonato: Omit<Campeonato, 'id_campeonato'>): Promise<Campeonato> {
+  async createCampeonato(campeonato: Omit<Campeonato, 'idCampeonato'>): Promise<Campeonato> {
     const response = await fetch(this.apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     return await response.json();
   }
 
-  async updateCampeonato(id: number, campeonato: Omit<Campeonato, 'id_campeonato'>): Promise<Campeonato> {
+  async updateCampeonato(id: number, campeonato: Omit<Campeonato, 'idCampeonato'>): Promise<Campeonato> {
     const response = await fetch(`${this.apiUrl}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

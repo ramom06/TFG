@@ -37,7 +37,7 @@ public class CategoriaService {
     public Categoria replace(Long id, Categoria categoria) {
         return categoriaRepository.findById(id)
                 .map(existing -> {
-                    categoria.setId_categoria(id);
+                    categoria.setIdCategoria(id);
                     return categoriaRepository.save(categoria);
                 })
                 .orElseThrow(() -> new ResponseStatusException(

@@ -51,7 +51,7 @@ public class CampeonatoCategoriaService {
         }
 
         Campeonato_Categoria cc = new Campeonato_Categoria();
-        cc.setId_Campeonato_Categoria(ccId);
+        cc.setIdCampeonatoCategoria(ccId);
         cc.setCampeonato(campeonato);
         cc.setCategoria(categoria);
 

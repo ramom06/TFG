@@ -1,7 +1,7 @@
 import { Rol } from './usuario';
 
 export interface CompetidorSesion {
-  id: number;
+  idUsuario: number;
   nombre: string;
   apellidos: string;
   email: string;

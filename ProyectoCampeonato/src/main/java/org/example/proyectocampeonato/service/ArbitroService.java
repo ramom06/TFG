@@ -65,7 +65,7 @@ public class ArbitroService {
                         validarEmailUnico(arbitro.getEmail());
                     if (!existing.getLicencia().equals(arbitro.getLicencia()))
                         validarLicenciaUnica(arbitro.getLicencia());
-                    arbitro.setId(id);
+                    arbitro.setIdUsuario(id);
                     arbitro.setRol(Usuario.Rol.ARBITRO);
                     arbitro.setFechaRegistro(existing.getFechaRegistro());
                     if (arbitro.getPassword() != null && !arbitro.getPassword().isBlank()) {

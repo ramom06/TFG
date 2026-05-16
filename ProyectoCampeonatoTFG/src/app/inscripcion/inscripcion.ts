@@ -91,7 +91,7 @@ export class InscripcionComponent implements OnInit {
   );
 
   categoriasParaConfirmar = computed(() =>
-    this.categorias().filter(c => this.seleccionadas().has(c.id_categoria))
+    this.categorias().filter(c => this.seleccionadas().has(c.idCategoria))
   );
 
   readonly objectKeys = Object.keys;
@@ -195,14 +195,14 @@ export class InscripcionComponent implements OnInit {
   private async cargarCategorias() {
     const competidor = this.auth.currentCompetidor();
     const [cats, misIns] = await Promise.all([
-      this.catSvc.getCategoriasPorCampeonato(this.campeonato.id_campeonato),
+      this.catSvc.getCategoriasPorCampeonato(this.campeonato.idCampeonato),
       competidor
-        ? this.inscSvc.getMisInscripciones(competidor.id).catch(() => [] as Inscripcion[])
+        ? this.inscSvc.getMisInscripciones(competidor.idUsuario).catch(() => [] as Inscripcion[])
         : Promise.resolve([] as Inscripcion[]),
     ]);
     this.categorias.set(cats);
     const yaInsc = misIns
-      .filter(i => i.idCampeonato === this.campeonato.id_campeonato)
+      .filter(i => i.idCampeonato === this.campeonato.idCampeonato)
       .map(i => i.idCategoria);
     this.yaInscritas.set(new Set(yaInsc));
   }
@@ -227,11 +227,11 @@ export class InscripcionComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const compId = this.auth.currentCompetidor()?.id;
+      const compId = this.auth.currentCompetidor()?.idUsuario;
       if (!compId) throw new Error('No se encontró tu sesión. Por favor, vuelve a iniciar sesión.');
       await Promise.all(
         Array.from(this.seleccionadas()).map(idCat =>
-          this.inscSvc.inscribir(this.campeonato.id_campeonato, idCat, compId)
+          this.inscSvc.inscribir(this.campeonato.idCampeonato, idCat, compId)
         )
       );
       this.inscritoOk.emit();

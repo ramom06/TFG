@@ -147,7 +147,7 @@
             </tr>
             </thead>
             <tbody>
-              @for (c of filteredCampeonatos(); track c.id_campeonato) {
+              @for (c of filteredCampeonatos(); track c.idCampeonato) {
                 <tr class="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -157,7 +157,7 @@
                       </div>
                       <div>
                         <p class="font-semibold text-[#eef0f4] leading-tight line-clamp-1">{{ c.nombre }}</p>
-                        <p class="text-[11px] text-[#4b5563] mt-0.5">#{{ c.id_campeonato }}</p>
+                        <p class="text-[11px] text-[#4b5563] mt-0.5">#{{ c.idCampeonato }}</p>
                       </div>
                     </div>
                   </td>
@@ -183,7 +183,7 @@
                   </td>
                   <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <a [routerLink]="['/campeonato', c.id_campeonato]"
+                      <a [routerLink]="['/campeonato', c.idCampeonato]"
                          class="p-2 rounded-lg text-[#4b5563] hover:text-[#8b95a3] hover:bg-white/[0.05] transition-all" title="Ver">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
@@ -389,10 +389,10 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-blue-400/60"></span>Masculino
                           </p>
                           <div class="space-y-1">
-                            @for (cat of grupo.masculino; track cat.id_categoria) {
+                            @for (cat of grupo.masculino; track cat.idCategoria) {
                               <label class="flex items-center gap-2 cursor-pointer group/cat">
-                                <input type="checkbox" [checked]="estaSeleccionada(cat.id_categoria)"
-                                       (change)="toggleCategoria(cat.id_categoria)"
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.idCategoria)"
+                                       (change)="toggleCategoria(cat.idCategoria)"
                                        class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
                                 <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
                                   {{ cat.nombre }}
@@ -409,10 +409,10 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-pink-400/60"></span>Femenino
                           </p>
                           <div class="space-y-1">
-                            @for (cat of grupo.femenino; track cat.id_categoria) {
+                            @for (cat of grupo.femenino; track cat.idCategoria) {
                               <label class="flex items-center gap-2 cursor-pointer group/cat">
-                                <input type="checkbox" [checked]="estaSeleccionada(cat.id_categoria)"
-                                       (change)="toggleCategoria(cat.id_categoria)"
+                                <input type="checkbox" [checked]="estaSeleccionada(cat.idCategoria)"
+                                       (change)="toggleCategoria(cat.idCategoria)"
                                        class="w-3.5 h-3.5 accent-[#e01c2e] cursor-pointer rounded" />
                                 <span class="text-[11px] text-[#8b95a3] group-hover/cat:text-[#eef0f4] transition-colors leading-tight">
                                   {{ cat.nombre }}

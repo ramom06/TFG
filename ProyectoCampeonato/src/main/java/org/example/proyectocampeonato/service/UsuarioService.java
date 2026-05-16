@@ -57,7 +57,7 @@ public class UsuarioService {
                         validarNombreUnico(usuario.getNombre());
                     if (!existing.getEmail().equals(usuario.getEmail()))
                         validarEmailUnico(usuario.getEmail());
-                    usuario.setId(id);
+                    usuario.setIdUsuario(id);
                     usuario.setFechaRegistro(existing.getFechaRegistro());
                     if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
                         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));

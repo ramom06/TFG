@@ -34,7 +34,7 @@ export class CompetidorAuthService {
     const data = await res.json();
 
     const sesion: CompetidorSesion = {
-      id:              data.id ?? data.idUsuario,
+      idUsuario:       data.idUsuario ?? data.id,
       nombre:          data.nombre,
       apellidos:       data.apellidos ?? '',
       email:           data.email,

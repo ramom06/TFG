@@ -97,10 +97,9 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Esta cuenta no es de competidor"));
 
-        // Devolvemos 'id' (no 'id_usuario') para que coincida con el frontend
         return ResponseEntity.ok(Map.of(
-                "id",             usuario.getId(),
-                "id_usuario",     usuario.getId(),
+                "id",             usuario.getIdUsuario(),
+                "id_usuario",     usuario.getIdUsuario(),
                 "nombre",         usuario.getNombre(),
                 "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
                 "email",          usuario.getEmail(),

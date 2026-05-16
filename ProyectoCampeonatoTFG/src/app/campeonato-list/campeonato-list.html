@@ -52,9 +52,9 @@
   @if (!loading() && !error()) {
     <div class="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-      @for (c of filtered(); track c.id_campeonato) {
+      @for (c of filtered(); track c.idCampeonato) {
         <div class="group card-anim bg-[#0d1117] border border-white/[0.07] rounded-2xl overflow-hidden cursor-pointer flex flex-col transition-all duration-200 ease-out hover:-translate-y-1.5 hover:border-[#e01c2e] hover:shadow-[0_16px_48px_rgba(0,0,0,0.55),0_0_0_1px_rgba(224,28,46,0.18)]"
-          [routerLink]="['/campeonato', c.id_campeonato]">
+          [routerLink]="['/campeonato', c.idCampeonato]">
           <div class="relative aspect-video overflow-hidden bg-[#141a24]">
             <img src="{{ c.urlPortada }}" alt="{{ c.nombre }}"  class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-105"/>
             <div class="absolute bottom-2.5 left-3 z-10 flex gap-1.5">

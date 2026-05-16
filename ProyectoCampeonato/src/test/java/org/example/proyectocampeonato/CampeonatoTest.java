@@ -36,7 +36,7 @@ class CampeonatoTest {
                 .estado("futuro")
                 .nivel("Nacional")
                 .build();
-        campeonato.setId_campeonato(1L);
+        campeonato.setIdCampeonato(1L);
     }
 
     @Test

@@ -5,7 +5,11 @@
       "Bash(xargs ls)",
       "Bash(curl -s -X GET \"https://tfg-production-7985.up.railway.app/api/competidores\" -H \"Accept: application/json\")",
       "WebFetch(domain:www.campeonatolive.online)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonatoTFG\\\\src\" -Recurse -File)"
     ]
   }
 }

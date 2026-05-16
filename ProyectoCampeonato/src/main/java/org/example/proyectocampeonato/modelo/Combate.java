@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Combate {
 
     @EmbeddedId
-    private Combate_Id id;
+    private Combate_Id idCombate;
 
     @Column(nullable = false)
     private String ronda;

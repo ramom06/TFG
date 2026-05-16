@@ -9,11 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 public class InscripcionDTO{
 
-    private Long id_campeonato;
+    private Long idCampeonato;
 
-    private Long id_categoria;
+    private Long idCategoria;
 
-    private Long id_competidor;
+    private Long idCompetidor;
 
     private String nombreCampeonato;
 

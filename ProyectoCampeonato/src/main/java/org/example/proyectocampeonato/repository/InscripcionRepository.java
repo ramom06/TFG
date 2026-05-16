@@ -10,10 +10,9 @@ import java.util.List;
 
 public interface InscripcionRepository extends JpaRepository<Inscripcion, Inscripcion_Id> {
 
-    // Obtenemos las inscripciones de un competidor
-    @Query("SELECT i FROM Inscripcion i WHERE i.competidor.id = :id_competidor")
-    List<Inscripcion> findByCompetidor(@Param("id_competidor") Long id_competidor);
+    @Query("SELECT i FROM Inscripcion i WHERE i.competidor.idUsuario = :idCompetidor")
+    List<Inscripcion> findByCompetidor(@Param("idCompetidor") Long idCompetidor);
 
-    @Query("SELECT i FROM Inscripcion i WHERE i.campeonato.id_campeonato = :id_campeonato AND i.categoria.id_categoria = :id_categoria")
-    List<Inscripcion> findByCampeonatoAndCategoria(@Param("id_campeonato") Long id_campeonato, @Param("id_categoria") Long id_categoria);
+    @Query("SELECT i FROM Inscripcion i WHERE i.campeonato.idCampeonato = :idCampeonato AND i.categoria.idCategoria = :idCategoria")
+    List<Inscripcion> findByCampeonatoAndCategoria(@Param("idCampeonato") Long idCampeonato, @Param("idCategoria") Long idCategoria);
 }

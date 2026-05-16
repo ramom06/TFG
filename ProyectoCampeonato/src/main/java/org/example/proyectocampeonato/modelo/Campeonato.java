@@ -20,7 +20,8 @@ public class Campeonato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_campeonato;
+    @Column(name = "id_campeonato")
+    private Long idCampeonato;
 
     @Column(nullable = false)
     private String nombre;

@@ -3,9 +3,6 @@ package org.example.proyectocampeonato.modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 
 @Getter @Setter
 @NoArgsConstructor
@@ -16,15 +13,15 @@ import java.util.Date;
 public class Campeonato_Categoria {
 
     @EmbeddedId
-    private Campeonato_Categoria_Id id_Campeonato_Categoria;
+    private Campeonato_Categoria_Id idCampeonatoCategoria;
 
     @ManyToOne
-    @MapsId("id_campeonato")
+    @MapsId("idCampeonato")
     @JoinColumn(name = "id_campeonato")
     private Campeonato campeonato;
 
     @ManyToOne
-    @MapsId("id_categoria")
+    @MapsId("idCategoria")
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
 }

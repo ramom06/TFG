@@ -70,7 +70,7 @@ public class CompetidorService {
                         throw new ResponseStatusException(
                                 HttpStatus.CONFLICT, "El email '" + competidor.getEmail() + "' ya está registrado");
                     }
-                    competidor.setId(id);
+                    competidor.setIdUsuario(id);
                     competidor.setRol(Usuario.Rol.COMPETIDOR);
                     if (competidor.getPassword() != null && !competidor.getPassword().isBlank()) {
                         competidor.setPassword(passwordEncoder.encode(competidor.getPassword()));

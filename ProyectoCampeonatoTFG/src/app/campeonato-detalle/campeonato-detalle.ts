@@ -44,7 +44,7 @@ export class CampeonatoDetalle implements OnInit {
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const campeonatos = await this.CampServ.getAllCampeonatos();
-    this.campeonato.set(campeonatos.find(c => c.id_campeonato === id) || null);
+    this.campeonato.set(campeonatos.find(c => c.idCampeonato === id) || null);
     try {
       this.categorias.set(await this.CatServ.getCategoriasPorCampeonato(id));
     } catch {
@@ -61,14 +61,14 @@ export class CampeonatoDetalle implements OnInit {
     this.modalAbierto.set(true);
 
     try {
-      this.inscripciones.set(await this.InscServ.getInscritosPorCategoria(camp.id_campeonato, cat.id_categoria));
+      this.inscripciones.set(await this.InscServ.getInscritosPorCategoria(camp.idCampeonato, cat.idCategoria));
     } catch {
       this.inscripciones.set([]);
     }
 
     if (this.inscripciones().length > 0) {
       try {
-        this.combates.set(await this.CombServ.getCombatesPorCategoriaYCampeonato(camp.id_campeonato, cat.id_categoria));
+        this.combates.set(await this.CombServ.getCombatesPorCategoriaYCampeonato(camp.idCampeonato, cat.idCategoria));
       } catch {
         this.combates.set([]);
       }

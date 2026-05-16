@@ -3,7 +3,7 @@ export type Estado = 'futuro' | 'activo' | 'pasado';
 
 
 export interface Campeonato {
-  id_campeonato: number;
+  idCampeonato: number;
   nombre: string;
   fechaInicio: string;
   fechaFin: string;
