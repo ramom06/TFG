@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
     private final InscripcionRepository inscripcionRepository;
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     // Helper para convertir LocalDate a Date
     private Date toDate(LocalDate localDate) {
@@ -33,14 +35,22 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // Eliminar restos de la entidad Arbitro (ya no existe en el código).
+        // Se ejecuta siempre: la FK arbitro -> usuario impide cualquier operación
+        // sobre usuario mientras la tabla huérfana exista.
+        jdbcTemplate.execute("DROP TABLE IF EXISTS arbitro");
+        jdbcTemplate.update("DELETE FROM usuario WHERE tipo_usuario = 'ARBITRO'");
+
         if (campeonatoRepository.count() == 0) {
-            // Limpiar posibles datos huérfanos de deploys anteriores incompletos
-            inscripcionRepository.deleteAll();
-            combateRepository.deleteAll();
-            campeonato_categoriaRepository.deleteAll();
-            competidorRepository.deleteAll();
-            usuarioRepository.deleteAll();
-            categoriaRepository.deleteAll();
+            // SQL nativo en orden inverso a las FKs. Evita el SELECT implícito de
+            // deleteAll() de JPA, que falla si quedan discriminators desconocidos.
+            jdbcTemplate.update("DELETE FROM inscripcion");
+            jdbcTemplate.update("DELETE FROM combate");
+            jdbcTemplate.update("DELETE FROM campeonato_categoria");
+            jdbcTemplate.update("DELETE FROM competidor");
+            jdbcTemplate.update("DELETE FROM usuario");
+            jdbcTemplate.update("DELETE FROM categoria");
+            jdbcTemplate.update("DELETE FROM campeonato");
             cargarDatos();
         }
     }
