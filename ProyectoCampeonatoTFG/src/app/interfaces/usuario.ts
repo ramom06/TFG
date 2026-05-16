@@ -1,6 +1,5 @@
 export enum Rol {
   ADMIN      = 'ADMIN',
-  ARBITRO    = 'ARBITRO',
   COMPETIDOR = 'COMPETIDOR',
 }
 

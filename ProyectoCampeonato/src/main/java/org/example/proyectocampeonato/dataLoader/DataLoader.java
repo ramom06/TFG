@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    private final ArbitroRepository arbitroRepository;
     private final CampeonatoRepository campeonatoRepository;
     private final CategoriaRepository categoriaRepository;
     private final CombateRepository combateRepository;
@@ -876,24 +875,6 @@ public class DataLoader implements CommandLineRunner {
                 List.of(sub21M1, sub21M2, sub21M3, sub21M4, sub21M5, sub21M6), 2, java.time.LocalTime.of(9, 0), 15));
 
         combateRepository.saveAll(combates);
-
-        // 4. CREAR ÁRBITROS
-        // Arbitro extiende Usuario, campos reales: licencia, categoriaArbitral
-        // Campos de Usuario: nombre, apellidos, email, password, rol, fechaNacimiento, genero, dni
-        Arbitro arb1 = Arbitro.builder()
-                .nombre("Luis")
-                .apellidos("Gómez Juez")
-                .dni("12345678Z")
-                .email("luis.gomez@arbitros.es")
-                .password("password")
-                .rol(Usuario.Rol.ARBITRO)
-                .fechaNacimiento(toDate(LocalDate.of(1975, 5, 15)))
-                .genero('M')
-                .licencia("LIC-2026-001")
-                .categoriaArbitral("Nacional")
-                .build();
-        arbitroRepository.save(arb1);
-
 
         Usuario admin = Usuario.builder()
                 .nombre("Admin")

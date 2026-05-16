@@ -55,7 +55,6 @@ export class UsuarioAdmin implements OnInit {
 
   roles: Array<{ value: string; label: string }> = [
     { value: 'ADMIN',      label: 'Administrador' },
-    { value: 'ARBITRO',    label: 'Árbitro'        },
     { value: 'COMPETIDOR', label: 'Competidor'     },
   ];
 
@@ -215,8 +214,7 @@ export class UsuarioAdmin implements OnInit {
   rolColor(rol: string): string {
     switch (rol) {
       case 'ADMIN':      return 'text-[#e01c2e] bg-[#e01c2e]/10 border-[#e01c2e]/20';
-      case 'ARBITRO':    return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
-      case 'COMPETIDOR': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+case 'COMPETIDOR': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
       default:           return 'text-[#8b95a3] bg-white/5 border-white/10';
     }
   }
