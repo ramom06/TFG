@@ -102,7 +102,7 @@
                  class="w-full bg-[#141a24] rounded-lg px-4 py-2.5 text-[#eef0f4]
                         border outline-none focus:border-[#e01c2e] transition-colors"
                  [class.border-red-500]="dniLoginErr()"
-                 [class.border-white/10]="!dniLoginErr()"/>
+                 [class.border-white-10]="!dniLoginErr()"/>
           @if (dniLoginErr()) {
             <p class="mt-1 text-[11px] text-red-400">{{ dniLoginErr() }}</p>
           }
@@ -211,7 +211,7 @@
                           text-[13px] text-[#eef0f4] outline-none focus:border-[#e01c2e] tracking-widest transition-colors"
                    [class.border-red-500]="(intentoReg() && !dniRegVal().valido) || dniRegError()"
                    [class.border-green-500]="regDni().length === 9 && dniRegVal().valido && !dniRegError()"
-                   [class.border-white/10]="regDni().length < 9 && !intentoReg()" />
+                   [class.border-white-10]="regDni().length < 9 && !intentoReg()" />
             <!-- Mensaje en tiempo real -->
             @if (regDni().length > 0) {
               @if (regDni().length === 9 && dniRegVal().valido && !dniRegError()) {
@@ -253,7 +253,7 @@
                  class="w-full bg-[#141a24] border rounded-lg px-3 py-2
                         text-[13px] text-[#eef0f4] outline-none focus:border-[#e01c2e] transition-colors"
                  [class.border-red-500]="(intentoReg() && !regEmail()) || emailRegError()"
-                 [class.border-white/10]="!emailRegError() && !(intentoReg() && !regEmail())" />
+                 [class.border-white-10]="!emailRegError() && !(intentoReg() && !regEmail())" />
           @if (intentoReg() && !regEmail()) {
             <p class="mt-1 text-[11px] text-red-400">El email es obligatorio</p>
           }

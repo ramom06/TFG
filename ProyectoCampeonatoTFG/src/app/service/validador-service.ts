@@ -44,7 +44,7 @@ export class ValidadorService {
     const resultado = [];
 
     for (const regla of this.REGLAS_PASSWORD) {
-      resultado.push({texto: regla.texto, ok: regla.cumple(password)});
+      resultado.push({id:regla.id, texto: regla.texto, ok: regla.cumple(password)});
     }
 
     return resultado;
