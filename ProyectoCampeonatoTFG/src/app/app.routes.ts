@@ -3,7 +3,7 @@ import { CampeonatoDetalle }        from './campeonato-detalle/campeonato-detall
 import { CampeonatoListComponent }  from './campeonato-list/campeonato-list';
 import { CampeonatoAdminComponent } from './campeonato-admin/campeonato-admin';
 import { AdminLoginComponent }      from './admin-login/admin-login';
-import { SorteoComponent }          from './sorteo/sorteo';  // ← ruta real en el repo
+import { SorteoComponent }          from './sorteo/sorteo';
 import { guards }                   from './guards/guards';
 import {UsuarioAdmin} from './usuario-admin/usuario-admin';
 
@@ -26,6 +26,6 @@ export const routes: Routes = [
     path: 'admin/usuarios',
     component: UsuarioAdmin,
     title: 'Gestión de Usuarios',
-    canActivate: [guards]   // misma protección que campeonatos
+    canActivate: [guards]
   },
 ];

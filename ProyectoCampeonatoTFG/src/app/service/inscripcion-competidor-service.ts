@@ -18,7 +18,6 @@ export class InscripcionCompetidorService {
     return res.json();
   }
 
-  // Obtiene todas las inscripciones de un competidor
   async getMisInscripciones(idCompetidor: number): Promise<Inscripcion[]> {
     const res = await fetch(`${this.apiUrl}/competidor/${idCompetidor}`);
     if (!res.ok) throw new Error('Error al cargar inscripciones');

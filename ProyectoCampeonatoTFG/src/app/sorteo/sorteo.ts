@@ -12,7 +12,6 @@ import { environment } from '../../environments/environment';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './sorteo.html',
-  styleUrl: './sorteo.css',
 })
 export class SorteoComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -39,7 +38,6 @@ export class SorteoComponent implements OnInit {
     if (ultimaRonda.combates.length === 0) return null;
     const combFinal = ultimaRonda.combates[0];
     if (combFinal.estado !== 'finalizado') return null;
-    // Bye en final: el rojo es el ganador
     if (!combFinal.competidorAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionRojo > combFinal.puntuacionAzul) return combFinal.competidorRojo;
     if (combFinal.puntuacionAzul > combFinal.puntuacionRojo) return combFinal.competidorAzul;
@@ -47,34 +45,28 @@ export class SorteoComponent implements OnInit {
   });
 
   async ngOnInit() {
-    const idC   = Number(this.route.snapshot.paramMap.get('id'));
+    const idCamp   = Number(this.route.snapshot.paramMap.get('id'));
     const idCat = Number(this.route.snapshot.paramMap.get('idCategoria'));
-    this.idCampeonato.set(idC);
+    this.idCampeonato.set(idCamp);
     this.idCategoria.set(idCat);
 
     try {
-      const resIns = await fetch(
-        `${environment.apiUrl}/api/inscripciones/campeonato/${idC}/categoria/${idCat}`
-      );
+      const resIns = await fetch(`${environment.apiUrl}/api/inscripciones/campeonato/${idCamp}/categoria/${idCat}`);
       const inscritos: any[] = resIns.ok ? await resIns.json() : [];
 
-      const resComb = await fetch(
-        `${environment.apiUrl}/api/combates/campeonato/${idC}/categoria/${idCat}`
-      );
+      const resComb = await fetch(`${environment.apiUrl}/api/combates/campeonato/${idCamp}/categoria/${idCat}`);
       const combates: any[] = resComb.ok ? await resComb.json() : [];
 
-      const resCamp = await fetch(`${environment.apiUrl}/api/campeonatos/${idC}`);
+      const resCamp = await fetch(`${environment.apiUrl}/api/campeonatos/${idCamp}`);
       const campData = resCamp.ok ? await resCamp.json() : null;
       this.estadoCampeonato.set(campData?.estado ?? '');
 
       const nombreCategoria  = inscritos[0]?.nombreCategoria  ?? '';
       const nombreCampeonato = inscritos[0]?.nombreCampeonato ?? campData?.nombre ?? '';
 
-      const rondas = combates.length > 0
-        ? this.construirSorteoDesdeCombates(combates)
-        : [];
+      const rondas = combates.length > 0 ? this.construirSorteoDesdeCombates(combates) : [];
 
-      this.sorteoData.set({ idCampeonato: idC, idCategoria: idCat, nombreCategoria, nombreCampeonato, rondas });
+      this.sorteoData.set({ idCampeonato: idCamp, idCategoria: idCat, nombreCategoria, nombreCampeonato, rondas });
 
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar el sorteo');
@@ -83,20 +75,17 @@ export class SorteoComponent implements OnInit {
     }
   }
 
-  // ── Construcción del sorteo a partir de los combates del backend ─────────
-
-  // Orden de menor a mayor (más combates a menos): primera ronda primero, final al final.
   private readonly ORDEN_RONDAS = ['dieciseisavos', 'octavos', 'cuartos', 'semifinal', 'final'];
 
   private construirSorteoDesdeCombates(combates: any[]): Ronda[] {
     const porClave = new Map<string, any[]>();
-    for (const c of combates) {
-      const key = (c.ronda ?? '').toLowerCase();
+
+    for (const combate of combates) {
+      const key = (combate.ronda ?? '').toLowerCase();
       if (!porClave.has(key)) porClave.set(key, []);
-      porClave.get(key)!.push(c);
+      porClave.get(key)!.push(combate);
     }
 
-    // Tomamos solo las claves conocidas que estén presentes, en orden del sorteo
     const clavesPresentes = this.ORDEN_RONDAS.filter(k => porClave.has(k));
     if (clavesPresentes.length === 0) return [];
 
@@ -140,16 +129,9 @@ export class SorteoComponent implements OnInit {
     return map[r] ?? r;
   }
 
-  // ── Helpers para el template ──────────────────────────────────────────────
-
   nombreCompetidor(comp: Competidor | null): string {
     if (!comp) return 'BYE';
     return `${comp.nombre} ${comp.apellidos}`.trim();
-  }
-
-  abrevClub(club: string | undefined): string {
-    if (!club) return '—';
-    return club.replace(/[^A-ZÁÉÍÓÚÑ]/gi, '').toUpperCase().slice(0, 3);
   }
 
   rojoGana(c: Combate): boolean {
@@ -164,6 +146,6 @@ export class SorteoComponent implements OnInit {
     return c.puntuacionAzul > c.puntuacionRojo;
   }
 
-  trackRonda(_: number, r: Ronda)         { return r.etiqueta; }
+  trackRonda(_: number, r: Ronda){ return r.etiqueta; }
   trackCombate(index: number, _: Combate) { return index; }
 }

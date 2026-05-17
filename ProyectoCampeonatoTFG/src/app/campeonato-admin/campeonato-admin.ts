@@ -9,9 +9,9 @@ import { Campeonato, Estado, EstadoVisual, Nivel } from '../interfaces/campeonat
 import { Categoria } from '../interfaces/categoria';
 import { environment } from '../../environments/environment';
 
-/** Grupo de categorías para el selector del formulario */
+// Grupo de categorías para el selector del formulario
 export interface GrupoCategoria {
-  grupo: string;  // ej: "Junior", "Senior"
+  grupo: string;
   masculino: Categoria[];
   femenino: Categoria[];
 }
@@ -31,15 +31,11 @@ export class CampeonatoAdminComponent implements OnInit {
   error        = signal<string | null>(null);
   successMsg   = signal<string | null>(null);
 
-  // Todas las categorías disponibles (para el selector)
   todasCategorias = signal<Categoria[]>([]);
-  // IDs de categorías seleccionadas para el campeonato que se está editando/creando
+
   categoriasSeleccionadas = signal<Set<number>>(new Set());
 
-  // Grupos de categorías para mostrar en el selector
-  gruposCategorias = computed<GrupoCategoria[]>(() =>
-    this.agruparCategorias(this.todasCategorias())
-  );
+  gruposCategorias = computed<GrupoCategoria[]>(() => this.agruparCategorias(this.todasCategorias()));
 
   // Modal crear/editar
   modalAbierto     = signal(false);
@@ -51,6 +47,7 @@ export class CampeonatoAdminComponent implements OnInit {
   campeonatoABorrar  = signal<Campeonato | null>(null);
 
   searchText = signal('');
+
   filteredCampeonatos = computed(() => {
     const txt = this.searchText().toLowerCase();
     if (!txt) return this.campeonatos();
@@ -63,11 +60,10 @@ export class CampeonatoAdminComponent implements OnInit {
   form!: FormGroup;
 
   constructor(
-    private svc: CampeonatoService,
-    private catSvc: CategoriaService,
+    private camptService: CampeonatoService,
+    private catService: CategoriaService,
     private auth: AutenticacionService,
-    private router: Router,
-    private fb: FormBuilder
+    private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +73,7 @@ export class CampeonatoAdminComponent implements OnInit {
   }
 
   private buildForm(): void {
-    this.form = this.fb.group({
+    this.form = this.formBuilder.group({
       nombre:     ['', [Validators.required, Validators.minLength(3)]],
       fechaInicio:['', Validators.required],
       fechaFin:   ['', Validators.required],
@@ -93,10 +89,8 @@ export class CampeonatoAdminComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const data = await this.svc.getAllCampeonatos();
-      this.campeonatos.set(data.sort((a, b) =>
-        new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()
-      ));
+      const data = await this.camptService.getAllCampeonatos();
+      this.campeonatos.set(data.sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()));
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al cargar campeonatos');
     } finally {
@@ -106,18 +100,14 @@ export class CampeonatoAdminComponent implements OnInit {
 
   async cargarTodasCategorias(): Promise<void> {
     try {
-      // Usamos el endpoint GET /api/categorias (ya existe)
-const response = await fetch(`${environment.apiUrl}/api/categorias`);
+      const response = await fetch(`${environment.apiUrl}/api/categorias`);
       if (!response.ok) throw new Error();
       const data: Categoria[] = await response.json();
       this.todasCategorias.set(data);
-    } catch {
-      // No bloquea si falla
-    }
+    } catch {}
   }
-
-  // ── Agrupación de categorías ─────────────────────────────
   private agruparCategorias(cats: Categoria[]): GrupoCategoria[] {
+
     const mapGrupo = (cat: Categoria): string => {
       const min = cat.edadMinima ?? 0;
       const max = cat.edadMaxima ?? 99;
@@ -173,7 +163,6 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     return this.categoriasSeleccionadas().has(id);
   }
 
-  // ── Modales ──────────────────────────────────────────────
   abrirModalCrear(): void {
     this.modoEdicion.set(false);
     this.campeonatoEditId.set(null);
@@ -195,9 +184,8 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
       descripcion: c.descripcion ?? '',
       urlPortada:  c.urlPortada,
     });
-    // Cargar las categorías que ya tiene este campeonato
     try {
-      const catsActuales = await this.catSvc.getCategoriasPorCampeonato(c.idCampeonato);
+      const catsActuales = await this.catService.getCategoriasPorCampeonato(c.idCampeonato);
       this.categoriasSeleccionadas.set(new Set(catsActuales.map(cat => cat.idCategoria)));
     } catch {
       this.categoriasSeleccionadas.set(new Set());
@@ -217,20 +205,19 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     this.saving.set(true);
     this.error.set(null);
 
-    const payload = { ...this.form.value, descripcion: this.form.value.descripcion || null };
+    const preparoDatos = { ...this.form.value, descripcion: this.form.value.descripcion || null };
 
     try {
       let campeonatoGuardado: Campeonato;
 
       if (this.modoEdicion() && this.campeonatoEditId() !== null) {
-        campeonatoGuardado = await this.svc.updateCampeonato(this.campeonatoEditId()!, payload);
+        campeonatoGuardado = await this.camptService.updateCampeonato(this.campeonatoEditId()!, preparoDatos);
         this.mostrarExito('Campeonato actualizado correctamente');
       } else {
-        campeonatoGuardado = await this.svc.createCampeonato(payload);
+        campeonatoGuardado = await this.camptService.createCampeonato(preparoDatos);
         this.mostrarExito('Campeonato creado correctamente');
       }
 
-      // Sincronizar categorías: primero eliminar las que ya no están, luego añadir las nuevas
       await this.sincronizarCategorias(campeonatoGuardado.idCampeonato);
 
       this.cerrarModal();
@@ -242,6 +229,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     }
   }
 
+  //Mantener relacion Campeonato - Categoria
   private async sincronizarCategorias(idCampeonato: number): Promise<void> {
     const apiBase = `${environment.apiUrl}/api/campeonatos/${idCampeonato}/categorias`;
 
@@ -253,7 +241,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
         const cats: Categoria[] = await r.json();
         actuales = cats.map(c => c.idCategoria);
       }
-    } catch { /* si falla, asumimos vacío */ }
+    } catch {}
 
     const deseadas = Array.from(this.categoriasSeleccionadas());
 
@@ -285,7 +273,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     if (!c) return;
     this.saving.set(true);
     try {
-      await this.svc.deleteCampeonato(c.idCampeonato);
+      await this.camptService.deleteCampeonato(c.idCampeonato);
       this.mostrarExito(`"${c.nombre}" eliminado correctamente`);
       this.cancelarBorrar();
       await this.cargarCampeonatos();
@@ -301,7 +289,6 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     this.auth.logout();
   }
 
-  // ── Helpers ──────────────────────────────────────────────
   private mostrarExito(msg: string): void {
     this.successMsg.set(msg);
     setTimeout(() => this.successMsg.set(null), 3500);
@@ -315,8 +302,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  // Estado visual calculado por fechas reales (no por el campo del backend, que
-  // puede estar desactualizado). Es lo que se muestra en el badge.
+  // Estado visual calculado por fechas reales
   estadoCalculado(c: Campeonato): EstadoVisual {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const inicio = new Date(c.fechaInicio); inicio.setHours(0, 0, 0, 0);
@@ -342,47 +328,49 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     }[estado];
   }
 
-  // Devuelve true si el backend marca el campeonato como ya sorteado.
-  // Lo usamos para etiquetar visualmente que la primera ronda está hecha.
   sorteoHecho(c: Campeonato): boolean {
     return c.estado === 'inscripciones_cerradas' || c.estado === 'pasado';
   }
 
-  // ── Acciones de sorteo (forzadas, sin validación de fecha) ──────────────
 
-  // ID del campeonato sobre el que hay una acción en curso, para deshabilitar
-  // los botones de su fila mientras se procesa.
-  accionEnCursoId = signal<number | null>(null);
+  // Id del campeonato
+  idCampeonatoSorteado = signal<number | null>(null);
 
   async sortearPrimeraRonda(c: Campeonato): Promise<void> {
-    if (this.accionEnCursoId() !== null) return;
+    if (this.idCampeonatoSorteado() !== null) return;
+
     if (!confirm(`Sortear primera ronda para "${c.nombre}"?\nLas categorías que ya tengan combates no se modificarán.`)) return;
-    this.accionEnCursoId.set(c.idCampeonato);
+
+    this.idCampeonatoSorteado.set(c.idCampeonato);
     this.error.set(null);
+
     try {
-      const actualizado = await this.svc.sortearPrimeraRonda(c.idCampeonato);
+      const actualizado = await this.camptService.sortearPrimeraRonda(c.idCampeonato);
       this.actualizarEnLista(actualizado);
       this.mostrarExito(`Primera ronda sorteada para "${c.nombre}"`);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al generar la primera ronda');
     } finally {
-      this.accionEnCursoId.set(null);
+      this.idCampeonatoSorteado.set(null);
     }
   }
 
   async sortearCompleto(c: Campeonato): Promise<void> {
-    if (this.accionEnCursoId() !== null) return;
+    if (this.idCampeonatoSorteado() !== null) return;
+
     if (!confirm(`Sortear el campeonato completo (hasta el ganador) "${c.nombre}"?`)) return;
-    this.accionEnCursoId.set(c.idCampeonato);
+
+    this.idCampeonatoSorteado.set(c.idCampeonato);
     this.error.set(null);
+
     try {
-      const actualizado = await this.svc.sortearCompleto(c.idCampeonato);
+      const actualizado = await this.camptService.sortearCompleto(c.idCampeonato);
       this.actualizarEnLista(actualizado);
       this.mostrarExito(`Sorteo completo generado para "${c.nombre}"`);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al generar el sorteo completo');
     } finally {
-      this.accionEnCursoId.set(null);
+      this.idCampeonatoSorteado.set(null);
     }
   }
 

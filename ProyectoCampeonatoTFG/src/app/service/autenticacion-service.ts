@@ -15,7 +15,6 @@ export class AutenticacionService {
 
   constructor(private router: Router) {}
 
-  //login con DNI + contraseña */
   async login(dni: string, password: string): Promise<void> {
 
     //Le envia al login del backend los datos en forma de json

@@ -50,7 +50,6 @@ private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
     if (!response.ok) throw new Error('Error al eliminar el campeonato');
   }
 
-  // Sortea solo la primera ronda del campeonato.
   async sortearPrimeraRonda(id: number): Promise<Campeonato> {
     const response = await fetch(`${this.sorteosUrl}/${id}/sortear-primera-ronda`, {
       method: 'POST',
@@ -59,7 +58,6 @@ private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
     return await response.json();
   }
 
-  // Sortea el campeonato completo hasta el ganador.
   async sortearCompleto(id: number): Promise<Campeonato> {
     const response = await fetch(`${this.sorteosUrl}/${id}/sortear-completo`, {
       method: 'POST',

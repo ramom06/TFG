@@ -231,7 +231,7 @@ public class SorteoService {
     private int nextPowerOf2(int n) {
         // 2 elevado a 0.
         int p = 1;
-        
+
         while (p < n) {
             p = p * 2;
         }

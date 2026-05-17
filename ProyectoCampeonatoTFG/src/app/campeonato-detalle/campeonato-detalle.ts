@@ -37,9 +37,6 @@ export class CampeonatoDetalle implements OnInit {
 
   masculino = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'M')));
   femenino  = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'F')));
-  modalidadesMasculino = computed(() => Object.keys(this.masculino()));
-  modalidadesFemenino  = computed(() => Object.keys(this.femenino()));
-  campeonatoFinalizado = computed(() => this.campeonato()?.estado === 'pasado');
   inscripcionesCerradas = computed(() => this.campeonato()?.estado === 'inscripciones_cerradas');
   inscripcionesAbiertas = computed(() => {
     const estado = this.campeonato()?.estado;

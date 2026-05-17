@@ -11,7 +11,6 @@ import { Usuario, Rol } from '../interfaces/usuario';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './usuario-admin.html',
-  styleUrl: './usuario-admin.css',
 })
 export class UsuarioAdmin implements OnInit {
 
@@ -70,7 +69,7 @@ export class UsuarioAdmin implements OnInit {
     await this.cargarUsuarios();
   }
 
-  // ── Formulario ──────────────────────────────────────────────
+  // Formulario
 
   private buildForm(u?: Usuario): void {
     this.form = this.fb.group({
@@ -85,7 +84,7 @@ export class UsuarioAdmin implements OnInit {
     });
   }
 
-  // ── Carga ────────────────────────────────────────────────────
+  //Carga
 
   async cargarUsuarios(): Promise<void> {
     this.loading.set(true);
@@ -100,7 +99,7 @@ export class UsuarioAdmin implements OnInit {
     }
   }
 
-  // ── Modal crear ──────────────────────────────────────────────
+  // Modal crear
 
   abrirModalCrear(): void {
     this.modoEdicion.set(false);

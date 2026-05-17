@@ -53,9 +53,6 @@ export class CampeonatoListComponent implements OnInit {
     });
   });
 
-  // El estado del backend ("futuro", "inscripciones_cerradas", "pasado") puede no
-  // coincidir con la realidad temporal (un campeonato "futuro" con fechaFin pasada
-  // sigue marcado mal). Para la UI calculamos el estado por fechas.
   estadoCalculado(c: Campeonato): EstadoVisual {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     const inicio = new Date(c.fechaInicio); inicio.setHours(0, 0, 0, 0);
@@ -64,7 +61,6 @@ export class CampeonatoListComponent implements OnInit {
     if (inicio > hoy) return 'futuro';
     return 'activo';
   }
-
 
   async ngOnInit() {
     const svc = new CampeonatoService();
@@ -77,11 +73,6 @@ export class CampeonatoListComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
-  }
-
-  // ── Helpers para el template ─────────────────────────────
-  toggleDir() {
-    this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
   }
 
   badgeClass(estado: EstadoVisual): string {

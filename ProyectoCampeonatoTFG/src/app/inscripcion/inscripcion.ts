@@ -28,13 +28,13 @@ export class InscripcionComponent implements OnInit {
   @Output() cerrar     = new EventEmitter<void>();
   @Output() inscritoOk = new EventEmitter<void>();
 
-  // ── Flujo ────────────────────────────────────────────────
+  // Flujo
   flujo = signal<'elegir' | 'login' | 'registro' | 'categorias' | 'confirmar'>('elegir');
 
   loading = signal(false);
   error   = signal<string | null>(null);
 
-  // ── Login ─────────────────────────────────────────────────
+  // Login
   dniLogin      = signal('');
   passwordLogin = signal('');
   showPassLogin = signal(false);
@@ -44,7 +44,7 @@ export class InscripcionComponent implements OnInit {
   dniLoginErr  = computed(() => this.intentoLogin() && !this.dniLoginVal().valido ? this.dniLoginVal().mensaje : null);
   passLoginErr = computed(() => this.intentoLogin() && !this.passwordLogin() ? 'Introduce tu contraseña' : null);
 
-  // ── Registro ──────────────────────────────────────────────
+  // Registro
   regNombre      = signal('');
   regApellidos   = signal('');
   regDni         = signal('');
@@ -56,36 +56,36 @@ export class InscripcionComponent implements OnInit {
   regGenero      = signal<'M' | 'F'>('M');
   showPassReg    = signal(false);
   intentoReg     = signal(false);
-  // Errores de validación del registro
+
   dniRegError    = signal<string | null>(null);
   emailRegError  = signal<string | null>(null);
 
+  //Reglas
   dniRegVal    = computed(() => this.validadorSvc.validarDNI(this.regDni()));
   passRegReglas = computed(() => this.validadorSvc.getReglasEstado(this.regPassword()));
   passRegValida = computed(() => this.validadorSvc.isPasswordValida(this.regPassword()));
 
-  // ── Categorías ────────────────────────────────────────────
   categorias    = signal<Categoria[]>([]);
   seleccionadas = signal<Set<number>>(new Set());
   yaInscritas   = signal<Set<number>>(new Set());
   consentimiento = signal(false);
 
-  /** Género del competidor logueado (para filtrar categorías) */
+  // Género del competidor logueado
   private generoUsuario = computed(() => this.auth.currentCompetidor()?.genero ?? null);
 
-  /** Categorías filtradas por el género del usuario logueado */
+  // Categorías filtradas por el género del usuario logueado
   private categoriasFiltradas = computed(() => {
     const genero = this.generoUsuario();
     if (!genero) return this.categorias();
     return this.categorias().filter(c => c.genero === genero);
   });
 
-  /** Sección Kumite (filtrado por género y modalidad) */
+  // Sección Kumite
   seccionKumite = computed(() =>
     this.categoriasFiltradas().filter(c => c.modalidad?.toLowerCase() === 'kumite')
   );
 
-  /** Sección Kata (filtrado por género y modalidad) */
+  // Sección Kata
   seccionKata = computed(() =>
     this.categoriasFiltradas().filter(c => c.modalidad?.toLowerCase() === 'kata')
   );
@@ -103,11 +103,11 @@ export class InscripcionComponent implements OnInit {
     }
   }
 
-  // ── Paso 1: elegir ────────────────────────────────────────
+  // elegir
   irALogin()    { this.error.set(null); this.flujo.set('login');    }
   irARegistro() { this.error.set(null); this.flujo.set('registro'); }
 
-  // ── Paso 2a: login ────────────────────────────────────────
+  // login
   async login() {
     this.intentoLogin.set(true);
     if (!this.dniLoginVal().valido || !this.passwordLogin()) return;
@@ -125,7 +125,7 @@ export class InscripcionComponent implements OnInit {
     }
   }
 
-  // ── Paso 2b: registro ─────────────────────────────────────
+  // registro
   async registro() {
     this.intentoReg.set(true);
     this.dniRegError.set(null);
@@ -166,18 +166,9 @@ export class InscripcionComponent implements OnInit {
       });
 
       if (res.status === 409) {
-        // Intentar detectar qué campo está duplicado
-        const errBody = await res.json().catch(() => ({}));
-        const msg: string = errBody?.message ?? errBody?.error ?? '';
-        if (msg.toLowerCase().includes('dni') || msg.toLowerCase().includes('nombre')) {
-          this.dniRegError.set('Ya existe una cuenta con este DNI');
-        } else if (msg.toLowerCase().includes('email')) {
-          this.emailRegError.set('Ya existe una cuenta con este email');
-        } else {
-          this.error.set('Ya existe una cuenta con ese DNI o email');
-        }
-        return;
+        this.error.set('Ya existe una cuenta con ese DNI o email');return;
       }
+
       if (!res.ok) throw new Error('Error al crear la cuenta');
 
       // Login automático tras registro
@@ -191,13 +182,12 @@ export class InscripcionComponent implements OnInit {
     }
   }
 
-  // ── Paso 3: categorías ────────────────────────────────────
+  // categorías
   private async cargarCategorias() {
     const competidor = this.auth.currentCompetidor();
     const [cats, misIns] = await Promise.all([
       this.catSvc.getCategoriasPorCampeonato(this.campeonato.idCampeonato),
-      competidor
-        ? this.inscSvc.getMisInscripciones(competidor.idUsuario).catch(() => [] as Inscripcion[])
+      competidor ? this.inscSvc.getMisInscripciones(competidor.idUsuario).catch(() => [] as Inscripcion[])
         : Promise.resolve([] as Inscripcion[]),
     ]);
     this.categorias.set(cats);
@@ -210,8 +200,6 @@ export class InscripcionComponent implements OnInit {
   toggleCategoria(id: number) {
     if (this.yaInscritas().has(id)) return;
 
-    // Solo se permite 1 categoría por modalidad: al seleccionar una,
-    // se descartan las demás del mismo grupo (kata/kumite) del Set.
     const cat = this.categorias().find(c => c.idCategoria === id);
     if (!cat) return;
     const modalidad = cat.modalidad?.toLowerCase();
@@ -229,7 +217,6 @@ export class InscripcionComponent implements OnInit {
     this.seleccionadas.set(s);
   }
 
-  /** True si el competidor ya tiene una inscripción de esta modalidad en el campeonato */
   yaInscritoEnModalidad(modalidad: string): boolean {
     const m = modalidad.toLowerCase();
     return this.categorias()
@@ -244,7 +231,7 @@ export class InscripcionComponent implements OnInit {
     if (this.seleccionadas().size > 0) this.flujo.set('confirmar');
   }
 
-  // ── Paso 4: confirmar ─────────────────────────────────────
+  // confirmar
   async confirmarInscripcion() {
     if (!this.consentimiento()) return;
     this.loading.set(true);
@@ -268,7 +255,7 @@ export class InscripcionComponent implements OnInit {
   formatDate(d: string) { return new Date(d).toLocaleDateString('es-ES'); }
   cerrarModal()         { this.cerrar.emit(); }
 
-  /** Etiqueta de género para el título de sección */
+  //Etiqueta de género para el título de sección
   get tituloGenero(): string {
     const g = this.generoUsuario();
     return g === 'M' ? 'Masculino' : g === 'F' ? 'Femenino' : '';

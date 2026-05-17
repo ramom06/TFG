@@ -9,7 +9,6 @@ import { AutenticacionService } from '../service/autenticacion-service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './admin-login.html',
-  styleUrl: './admin-login.css',
 })
 export class AdminLoginComponent {
 
@@ -20,9 +19,7 @@ export class AdminLoginComponent {
   showPass = signal(false);
 
   constructor(private auth: AutenticacionService, private router: Router) {
-    if (this.auth.isAdmin()) {
-      this.router.navigate(['/admin/campeonatos']);
-    }
+    if (this.auth.isAdmin()) this.router.navigate(['/admin/campeonatos']);
   }
 
   async submit(): Promise<void> {
