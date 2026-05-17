@@ -22,32 +22,19 @@ public class CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> all() {
-        log.info("Obteniendo todas las categorías");
-        return ResponseEntity.ok(service.getAll());
-    }
+    public ResponseEntity<List<Categoria>> all() {return ResponseEntity.ok(service.getAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> one(@PathVariable Long id) {
-        log.info("Obteniendo categoría con id: {}", id);
-        return ResponseEntity.ok(service.one(id));
-    }
+    public ResponseEntity<Categoria> one(@PathVariable Long id) {return ResponseEntity.ok(service.one(id));}
 
     @PostMapping
-    public ResponseEntity<Categoria> save(@RequestBody Categoria categoria) {
-        log.info("Creando categoría: {}", categoria.getNombre());
-        return new ResponseEntity<>(service.save(categoria), HttpStatus.CREATED);
-    }
+    public ResponseEntity<Categoria> save(@RequestBody Categoria categoria) {return new ResponseEntity<>(service.save(categoria), HttpStatus.CREATED);}
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> replace(@PathVariable Long id, @RequestBody Categoria categoria) {
-        log.info("Actualizando categoría con id: {}", id);
-        return ResponseEntity.ok(service.replace(id, categoria));
-    }
+    public ResponseEntity<Categoria> replace(@PathVariable Long id, @RequestBody Categoria categoria) {return ResponseEntity.ok(service.replace(id, categoria));}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Eliminando categoría con id: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

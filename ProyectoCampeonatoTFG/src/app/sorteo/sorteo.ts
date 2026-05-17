@@ -71,7 +71,7 @@ export class SorteoComponent implements OnInit {
       const nombreCampeonato = inscritos[0]?.nombreCampeonato ?? campData?.nombre ?? '';
 
       const rondas = combates.length > 0
-        ? this.construirBracketDesdeCombates(combates)
+        ? this.construirSorteoDesdeCombates(combates)
         : [];
 
       this.sorteoData.set({ idCampeonato: idC, idCategoria: idCat, nombreCategoria, nombreCampeonato, rondas });
@@ -83,12 +83,12 @@ export class SorteoComponent implements OnInit {
     }
   }
 
-  // ── Construcción del bracket a partir de los combates del backend ─────────
+  // ── Construcción del sorteo a partir de los combates del backend ─────────
 
   // Orden de menor a mayor (más combates a menos): primera ronda primero, final al final.
   private readonly ORDEN_RONDAS = ['dieciseisavos', 'octavos', 'cuartos', 'semifinal', 'final'];
 
-  private construirBracketDesdeCombates(combates: any[]): Ronda[] {
+  private construirSorteoDesdeCombates(combates: any[]): Ronda[] {
     const porClave = new Map<string, any[]>();
     for (const c of combates) {
       const key = (c.ronda ?? '').toLowerCase();
@@ -96,7 +96,7 @@ export class SorteoComponent implements OnInit {
       porClave.get(key)!.push(c);
     }
 
-    // Tomamos solo las claves conocidas que estén presentes, en orden de bracket
+    // Tomamos solo las claves conocidas que estén presentes, en orden del sorteo
     const clavesPresentes = this.ORDEN_RONDAS.filter(k => porClave.has(k));
     if (clavesPresentes.length === 0) return [];
 

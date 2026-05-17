@@ -25,35 +25,20 @@ public class InscripcionController {
     }
 
     @GetMapping("/competidor/{idCompetidor}")
-    public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long idCompetidor) {
-        return ResponseEntity.ok(mapper.toDTOList(service.getByCompetidor(idCompetidor)));
-    }
+    public ResponseEntity<List<InscripcionDTO>> getByCompetidor(@PathVariable Long idCompetidor) {return ResponseEntity.ok(mapper.toDTOList(service.getByCompetidor(idCompetidor)));}
 
     @GetMapping("/campeonato/{idCampeonato}/categoria/{idCategoria}")
-    public ResponseEntity<List<InscripcionDTO>> getByCampeonatoAndCategoria(
-            @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria) {
-        log.info("Obteniendo inscripciones del campeonato {} en categoría {}", idCampeonato, idCategoria);
+    public ResponseEntity<List<InscripcionDTO>> getByCampeonatoAndCategoria(@PathVariable Long idCampeonato, @PathVariable Long idCategoria) {
         return ResponseEntity.ok(mapper.toDTOList(service.getByCampeonatoAndCategoria(idCampeonato, idCategoria)));
     }
 
     @PostMapping("/{idCampeonato}/{idCategoria}/{idCompetidor}")
-    public ResponseEntity<InscripcionDTO> save(
-            @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria,
-            @PathVariable Long idCompetidor) {
-        log.info("Inscribiendo competidor {} en campeonato {} categoría {}", idCompetidor, idCampeonato, idCategoria);
-        return new ResponseEntity<>(
-                mapper.toDTO(service.save(idCampeonato, idCategoria, idCompetidor)),
-                HttpStatus.CREATED
-        );
+    public ResponseEntity<InscripcionDTO> save(@PathVariable Long idCampeonato, @PathVariable Long idCategoria, @PathVariable Long idCompetidor) {
+        return new ResponseEntity<>(mapper.toDTO(service.save(idCampeonato, idCategoria, idCompetidor)), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{idCampeonato}/{idCategoria}/{idCompetidor}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria,
-            @PathVariable Long idCompetidor) {
+    public ResponseEntity<Void> delete(@PathVariable Long idCampeonato, @PathVariable Long idCategoria, @PathVariable Long idCompetidor) {
         service.delete(idCampeonato, idCategoria, idCompetidor);
         return ResponseEntity.noContent().build();
     }

@@ -24,7 +24,12 @@
       "Bash(./mvnw compile *)",
       "Bash(./mvnw clean *)",
       "Bash(npx -y tsc --noEmit -p tsconfig.json)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(python -c ' *)",
+      "Bash(where python3 *)",
+      "Bash(unzip -p DocumentacionCampeonatoLive_v2.docx word/document.xml)",
+      "Bash(sed '/^[[:space:]]*$/d')",
+      "Read(//tmp/**)"
     ]
   }
 }

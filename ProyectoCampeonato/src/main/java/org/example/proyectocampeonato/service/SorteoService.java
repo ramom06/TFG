@@ -22,7 +22,7 @@ public class SorteoService {
     // Estados del Campeonato (compatibles con DataLoader y frontend):
     //   "futuro"                  → inscripciones abiertas
     //   "inscripciones_cerradas"  → primera ronda sorteada, esperando desarrollo
-    //   "pasado"                  → bracket completo desarrollado
+    //   "pasado"                  → sorteo completo desarrollado
     public static final String ESTADO_INSCRIPCIONES_OK = "inscripciones_cerradas";
     public static final String ESTADO_FINALIZADO       = "pasado";
 
@@ -96,19 +96,19 @@ public class SorteoService {
             return;
         }
 
-        // >= 2 competidores: armar bracket con byes
-        int bracketSize = nextPowerOf2(competidores.size());
-        int numByes     = bracketSize - competidores.size();
+        // >= 2 competidores: armar cuadro de sorteo con byes
+        int tamanoSorteo = nextPowerOf2(competidores.size());
+        int numByes      = tamanoSorteo - competidores.size();
 
-        List<Competidor> bracket = new ArrayList<>(competidores);
-        for (int i = 0; i < numByes; i++) bracket.add(null);
-        Collections.shuffle(bracket, random);
+        List<Competidor> participantesOrdenados = new ArrayList<>(competidores);
+        for (int i = 0; i < numByes; i++) participantesOrdenados.add(null);
+        Collections.shuffle(participantesOrdenados, random);
 
-        String ronda = nombreRonda(bracketSize);
+        String ronda = nombreRonda(tamanoSorteo);
         int numero   = 1;
-        for (int i = 0; i < bracket.size(); i += 2) {
-            Competidor rojo = bracket.get(i);
-            Competidor azul = bracket.get(i + 1);
+        for (int i = 0; i < participantesOrdenados.size(); i += 2) {
+            Competidor rojo = participantesOrdenados.get(i);
+            Competidor azul = participantesOrdenados.get(i + 1);
 
             // Si el rojo es null, intercambiamos: el bye se representa con azul=null
             if (rojo == null) { rojo = azul; azul = null; }
@@ -160,19 +160,19 @@ public class SorteoService {
         for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
             Long idCategoria = cc.getCategoria().getIdCategoria();
             sortearPrimeraRondaCategoria(idCampeonato, idCategoria);
-            // Flush para que desarrollarBracketCategoria vea los combates recién creados
+            // Flush para que desarrollarSorteoCategoria vea los combates recién creados
             combateRepository.flush();
-            desarrollarBracketCategoria(idCampeonato, idCategoria);
+            desarrollarSorteoCategoria(idCampeonato, idCategoria);
         }
 
         c.setEstado(ESTADO_FINALIZADO);
         return campeonatoRepository.save(c);
     }
 
-    // ── Desarrollo del bracket completo (tras fechaFin) ──────────────────────
+    // ── Desarrollo del sorteo completo (tras fechaFin) ───────────────────────
 
     @Transactional
-    public Campeonato desarrollarBracket(Long idCampeonato) {
+    public Campeonato desarrollarSorteo(Long idCampeonato) {
         Campeonato c = campeonatoRepository.findById(idCampeonato)
                 .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
@@ -185,20 +185,20 @@ public class SorteoService {
         LocalDate fin = toLocalDate(c.getFechaFin());
         if (hoy.isBefore(fin)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El bracket solo puede desarrollarse a partir del " + fin +
+                    "El sorteo solo puede desarrollarse a partir del " + fin +
                     " (fin del campeonato)");
         }
 
         for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
             Long idCategoria = cc.getCategoria().getIdCategoria();
-            desarrollarBracketCategoria(idCampeonato, idCategoria);
+            desarrollarSorteoCategoria(idCampeonato, idCategoria);
         }
 
         c.setEstado(ESTADO_FINALIZADO);
         return campeonatoRepository.save(c);
     }
 
-    private void desarrollarBracketCategoria(Long idCampeonato, Long idCategoria) {
+    private void desarrollarSorteoCategoria(Long idCampeonato, Long idCategoria) {
         List<Combate> todos = combateRepository
                 .findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
         if (todos.isEmpty()) return; // categoría sin inscritos, nada que hacer
@@ -239,8 +239,8 @@ public class SorteoService {
             List<Competidor> ganadores = new ArrayList<>(rondaActual.size());
             for (Combate cm : rondaActual) ganadores.add(ganadorDe(cm));
 
-            int bracketSiguiente   = ganadores.size();
-            String rondaSiguiente  = nombreRonda(bracketSiguiente);
+            int tamanoSiguienteRonda = ganadores.size();
+            String rondaSiguiente    = nombreRonda(tamanoSiguienteRonda);
 
             List<Combate> nuevaRonda = new ArrayList<>();
             for (int i = 0; i < ganadores.size(); i += 2) {
@@ -315,14 +315,14 @@ public class SorteoService {
         return p;
     }
 
-    private String nombreRonda(int bracketSize) {
-        return switch (bracketSize) {
+    private String nombreRonda(int tamano) {
+        return switch (tamano) {
             case 2  -> "final";
             case 4  -> "semifinal";
             case 8  -> "cuartos";
             case 16 -> "octavos";
             case 32 -> "dieciseisavos";
-            default -> "ronda_" + bracketSize;
+            default -> "ronda_" + tamano;
         };
     }
 

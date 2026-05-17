@@ -8,7 +8,8 @@ import { environment } from '../../environments/environment';
 })
 export class CampeonatoService implements CampeonatoProvider {
 
-private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
+private readonly apiUrl       = `${environment.apiUrl}/api/campeonatos`;
+private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
 
   async getAllCampeonatos(): Promise<Campeonato[]> {
     const response = await fetch(this.apiUrl);
@@ -50,7 +51,7 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
   }
 
   async cerrarInscripciones(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.apiUrl}/${id}/cerrar-inscripciones`, {
+    const response = await fetch(`${this.sorteosUrl}/${id}/cerrar-inscripciones`, {
       method: 'POST',
     });
     if (!response.ok) {
@@ -60,20 +61,20 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     return await response.json();
   }
 
-  async desarrollarBracket(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.apiUrl}/${id}/desarrollar-bracket`, {
+  async desarrollarSorteo(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.sorteosUrl}/${id}/desarrollar`, {
       method: 'POST',
     });
     if (!response.ok) {
       const txt = await response.text();
-      throw new Error(this.extraerMensaje(txt) ?? 'Error al desarrollar el bracket');
+      throw new Error(this.extraerMensaje(txt) ?? 'Error al desarrollar el sorteo');
     }
     return await response.json();
   }
 
   // Versión admin: sin validación de fecha. Solo primera ronda.
   async forzarPrimeraRonda(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.apiUrl}/${id}/forzar-primera-ronda`, {
+    const response = await fetch(`${this.sorteosUrl}/${id}/forzar-primera-ronda`, {
       method: 'POST',
     });
     if (!response.ok) {
@@ -83,9 +84,9 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     return await response.json();
   }
 
-  // Versión admin: sin validación de fecha. Bracket completo hasta el ganador.
+  // Versión admin: sin validación de fecha. Sorteo completo hasta el ganador.
   async forzarSorteoCompleto(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.apiUrl}/${id}/forzar-sorteo-completo`, {
+    const response = await fetch(`${this.sorteosUrl}/${id}/forzar-completo`, {
       method: 'POST',
     });
     if (!response.ok) {

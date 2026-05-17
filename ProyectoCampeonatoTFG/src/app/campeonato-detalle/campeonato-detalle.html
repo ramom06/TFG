@@ -66,14 +66,14 @@
                 Cerrar inscripciones y sortear
               </button>
 
-              <button (click)="desarrollarBracket()"
-                      [disabled]="!puedeDesarrollarBracket() || procesando()"
+              <button (click)="desarrollarSorteo()"
+                      [disabled]="!puedeDesarrollarSorteo() || procesando()"
                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold
                              bg-white/[0.04] border border-white/[0.12] text-[#eef0f4]
                              hover:bg-white/[0.08] hover:border-[#e01c2e]/40 transition-all
                              disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.04] disabled:hover:border-white/[0.12]"
-                      [title]="puedeDesarrollarBracket() ? 'Desarrolla todo el bracket hasta el ganador' : 'Solo disponible tras la fecha de fin'">
-                Desarrollar bracket
+                      [title]="puedeDesarrollarSorteo() ? 'Desarrolla el sorteo completo hasta el ganador' : 'Solo disponible tras la fecha de fin'">
+                Desarrollar sorteo
               </button>
             </div>
 

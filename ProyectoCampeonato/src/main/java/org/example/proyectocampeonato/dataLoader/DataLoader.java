@@ -68,7 +68,7 @@ public class DataLoader implements CommandLineRunner {
 
     /**
      * Para los campeonatos cargados en estado "pasado", genera (de forma determinista
-     * dentro de cada arranque) el sorteo completo: primera ronda + bracket hasta el ganador.
+     * dentro de cada arranque) el sorteo completo: primera ronda + desarrollo hasta el ganador.
      * Así los campeonatos finalizados siempre tienen combates persistidos.
      */
     private void sortearCampeonatosFinalizados() {

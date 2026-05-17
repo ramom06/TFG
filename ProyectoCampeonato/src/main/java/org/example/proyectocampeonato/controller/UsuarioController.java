@@ -31,43 +31,36 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<List<Usuario>> all() {
-        log.info("Obteniendo todos los usuarios");
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> one(@PathVariable Long id) {
-        log.info("Obteniendo usuario con id: {}", id);
         return ResponseEntity.ok(service.one(id));
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<Usuario> byUsername(@PathVariable String username) {
-        log.info("Obteniendo usuario por username: {}", username);
         return ResponseEntity.ok(service.findByNombre(username));
     }
 
     @GetMapping("/rol/{rol}")
     public ResponseEntity<List<Usuario>> byRol(@PathVariable Usuario.Rol rol) {
-        log.info("Obteniendo usuarios con rol: {}", rol);
         return ResponseEntity.ok(service.findByRol(rol));
     }
 
     @PostMapping
     public ResponseEntity<Usuario> save(@RequestBody Usuario usuario) {
-        log.info("Creando usuario: {}", usuario.getNombre());
         return new ResponseEntity<>(service.save(usuario), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> replace(@PathVariable Long id, @RequestBody Usuario usuario) {
-        log.info("Actualizando usuario con id: {}", id);
         return ResponseEntity.ok(service.replace(id, usuario));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Eliminando usuario con id: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

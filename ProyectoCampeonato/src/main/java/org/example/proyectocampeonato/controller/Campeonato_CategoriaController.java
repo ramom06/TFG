@@ -23,25 +23,15 @@ public class Campeonato_CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> getCategorias(@PathVariable Long idCampeonato) {
-        log.info("Obteniendo categorías del campeonato con id: {}", idCampeonato);
-        return ResponseEntity.ok(service.getCategoriasPorCampeonato(idCampeonato));
-    }
+    public ResponseEntity<List<Categoria>> getCategorias(@PathVariable Long idCampeonato) {return ResponseEntity.ok(service.getCategoriasPorCampeonato(idCampeonato));}
 
     @PostMapping("/{idCategoria}")
-    public ResponseEntity<Campeonato_Categoria> asignar(
-            @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria) {
-        log.info("Asignando categoría {} al campeonato {}", idCategoria, idCampeonato);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.asignarCategoria(idCampeonato, idCategoria));
+    public ResponseEntity<Campeonato_Categoria> asignar(@PathVariable Long idCampeonato, @PathVariable Long idCategoria) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.asignarCategoria(idCampeonato, idCategoria));
     }
 
     @DeleteMapping("/{idCategoria}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable Long idCampeonato,
-            @PathVariable Long idCategoria) {
-        log.info("Eliminando categoría {} del campeonato {}", idCategoria, idCampeonato);
+    public ResponseEntity<Void> eliminar(@PathVariable Long idCampeonato, @PathVariable Long idCategoria) {
         service.eliminarCategoria(idCampeonato, idCategoria);
         return ResponseEntity.noContent().build();
     }

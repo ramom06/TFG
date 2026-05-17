@@ -22,32 +22,19 @@ public class CompetidorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Competidor>> getAll() {
-        log.info("Obteniendo todos los competidores");
-        return ResponseEntity.ok(service.getAll());
-    }
+    public ResponseEntity<List<Competidor>> getAll() {return ResponseEntity.ok(service.getAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Competidor> one(@PathVariable Long id) {
-        log.info("Obteniendo competidor con id: {}", id);
-        return ResponseEntity.ok(service.one(id));
-    }
+    public ResponseEntity<Competidor> one(@PathVariable Long id) {return ResponseEntity.ok(service.one(id));}
 
     @PostMapping
-    public ResponseEntity<Competidor> save(@RequestBody Competidor competidor) {
-        log.info("Creando competidor: {} {}", competidor.getNombre(), competidor.getApellidos());
-        return new ResponseEntity<>(service.save(competidor), HttpStatus.CREATED);
-    }
+    public ResponseEntity<Competidor> save(@RequestBody Competidor competidor) {return new ResponseEntity<>(service.save(competidor), HttpStatus.CREATED);}
 
     @PutMapping("/{id}")
-    public ResponseEntity<Competidor> replace(@PathVariable Long id, @RequestBody Competidor competidor) {
-        log.info("Actualizando competidor con id: {}", id);
-        return ResponseEntity.ok(service.replace(id, competidor));
-    }
+    public ResponseEntity<Competidor> replace(@PathVariable Long id, @RequestBody Competidor competidor) {return ResponseEntity.ok(service.replace(id, competidor));}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Eliminando competidor con id: {}", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

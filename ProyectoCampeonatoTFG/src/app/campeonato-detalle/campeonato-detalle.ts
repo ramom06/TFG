@@ -68,8 +68,8 @@ export class CampeonatoDetalle implements OnInit {
     return hoy >= limite;
   });
 
-  // Desarrollo del bracket permitido a partir de la fecha de fin
-  puedeDesarrollarBracket = computed(() => {
+  // Desarrollo del sorteo permitido a partir de la fecha de fin
+  puedeDesarrollarSorteo = computed(() => {
     const c = this.campeonato();
     if (!c) return false;
     if (c.estado === 'pasado') return false;
@@ -147,18 +147,18 @@ export class CampeonatoDetalle implements OnInit {
     }
   }
 
-  async desarrollarBracket() {
+  async desarrollarSorteo() {
     const c = this.campeonato();
     if (!c || this.procesando()) return;
     this.procesando.set(true);
     this.mensajeAccion.set(null);
     this.errorAccion.set(null);
     try {
-      const actualizado = await this.CampServ.desarrollarBracket(c.idCampeonato);
+      const actualizado = await this.CampServ.desarrollarSorteo(c.idCampeonato);
       this.campeonato.set(actualizado);
-      this.mensajeAccion.set('Bracket desarrollado hasta el ganador.');
+      this.mensajeAccion.set('Sorteo desarrollado hasta el ganador.');
     } catch (e: any) {
-      this.errorAccion.set(e.message ?? 'Error al desarrollar el bracket');
+      this.errorAccion.set(e.message ?? 'Error al desarrollar el sorteo');
     } finally {
       this.procesando.set(false);
     }
