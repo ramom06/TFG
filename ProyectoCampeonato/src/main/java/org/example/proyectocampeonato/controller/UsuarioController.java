@@ -73,6 +73,39 @@ public class UsuarioController {
     }
 
     /**
+     * Login para administradores.
+     * Devuelve id, nombre, email y rol.
+     * Devuelve 401 si las credenciales no son válidas y 403 si el usuario no tiene rol ADMIN.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> loginAdmin(@RequestBody Map<String, String> body) {
+        String dni      = body.get("dni");
+        String password = body.get("password");
+
+        var usuarioOpt = usuarioRepository.findByDni(dni);
+        if (usuarioOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales incorrectas"));
+
+        Usuario usuario = usuarioOpt.get();
+
+        if (!passwordEncoder.matches(password, usuario.getPassword()))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales incorrectas"));
+
+        if (usuario.getRol() != Usuario.Rol.ADMIN)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "No tienes permisos de administrador"));
+
+        return ResponseEntity.ok(Map.of(
+                "id",     usuario.getIdUsuario(),
+                "nombre", usuario.getNombre(),
+                "email",  usuario.getEmail(),
+                "rol",    usuario.getRol().name()
+        ));
+    }
+
+    /**
      * Login para competidores.
      * Devuelve id, nombre, apellidos, email, rol y genero.
      * El campo 'id' (no 'id_usuario') es el que usa el frontend para identificar al competidor.
