@@ -14,13 +14,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Inscripcion_Id implements Serializable {
 
-    @Column(name = "id_campeonato")
+    @Column(name = "idCampeonato")
     private Long idCampeonato;
 
-    @Column(name = "id_categoria")
+    @Column(name = "idCategoria")
     private Long idCategoria;
 
-    @Column(name = "id_competidor")
+    @Column(name = "idCompetidor")
     private Long idCompetidor;
 
 }

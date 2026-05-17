@@ -11,10 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Combate_Id implements Serializable {
 
-    @Column(name = "id_campeonato")
     private Long idCampeonato;
 
-    @Column(name = "id_categoria")
     private Long idCategoria;
 
     private Integer numeroCombate;

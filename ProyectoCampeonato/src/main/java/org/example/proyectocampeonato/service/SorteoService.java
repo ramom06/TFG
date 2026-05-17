@@ -19,10 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SorteoService {
 
-    // Estados del Campeonato (compatibles con DataLoader y frontend):
-    //   "futuro"                  → inscripciones abiertas
-    //   "inscripciones_cerradas"  → primera ronda sorteada, esperando desarrollo
-    //   "pasado"                  → sorteo completo desarrollado
     public static final String ESTADO_INSCRIPCIONES_OK = "inscripciones_cerradas";
     public static final String ESTADO_FINALIZADO       = "pasado";
 
@@ -37,26 +33,22 @@ public class SorteoService {
 
     private final Random random = new Random();
 
-    // ── Cierre + sorteo de primera ronda ─────────────────────────────────────
-
     @Transactional
     public Campeonato cerrarInscripcionesYSortear(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato c = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
-        // Idempotencia: si ya está cerrado o finalizado, devolver sin tocar nada
+        // si ya está cerrado o finalizado, devolver igual
         if (ESTADO_INSCRIPCIONES_OK.equals(c.getEstado()) || ESTADO_FINALIZADO.equals(c.getEstado())) {
             return c;
         }
 
-        // Validar ventana temporal: solo desde (fechaInicio - 3 días) en adelante
+        //Solo desde (fechaInicio - 3 días) en adelante
         LocalDate hoy        = LocalDate.now();
         LocalDate inicio     = toLocalDate(c.getFechaInicio());
         LocalDate fechaLimite = inicio.minusDays(DIAS_CIERRE_INSCRIPCIONES);
+
         if (hoy.isBefore(fechaLimite)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Las inscripciones solo pueden cerrarse a partir del " + fechaLimite +
-                    " (3 días antes del inicio del campeonato)");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las inscripciones solo pueden cerrarse a partir del " + fechaLimite + " (3 días antes del inicio del campeonato)");
         }
 
         // Sortear primera ronda para cada categoría inscrita en el campeonato
@@ -70,9 +62,9 @@ public class SorteoService {
     }
 
     private void sortearPrimeraRondaCategoria(Long idCampeonato, Long idCategoria) {
-        // Idempotencia por categoría: si ya hay combates, no se vuelve a sortear
-        List<Combate> existentes = combateRepository
-                .findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
+        // si ya hay combates, no se vuelve a sortear
+
+        List<Combate> existentes = combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
         if (!existentes.isEmpty()) return;
 
         List<Competidor> competidores = inscripcionRepository
@@ -82,7 +74,7 @@ public class SorteoService {
 
         if (competidores.isEmpty()) return;
 
-        // 1 competidor: ganador directo, sin combatir
+        // 1 competidor: ganador directo
         if (competidores.size() == 1) {
             combateRepository.save(Combate.builder()
                     .idCombate(new Combate_Id(idCampeonato, idCategoria, 1))

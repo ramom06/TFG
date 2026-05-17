@@ -36,18 +36,14 @@ public class CampeonatoCategoriaService {
 
     @Transactional
     public Campeonato_Categoria asignarCategoria(Long idCampeonato, Long idCategoria) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Campeonato con id " + idCampeonato + " no encontrado"));
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Campeonato con id " + idCampeonato + " no encontrado"));
 
-        Categoria categoria = categoriaRepository.findById(idCategoria)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
+        Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
 
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
+
         if (repository.existsById(ccId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "La categoría ya está asignada a ese campeonato");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "La categoría ya está asignada a ese campeonato");
         }
 
         Campeonato_Categoria cc = new Campeonato_Categoria();
@@ -61,9 +57,9 @@ public class CampeonatoCategoriaService {
     @Transactional
     public void eliminarCategoria(Long idCampeonato, Long idCategoria) {
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
+
         if (!repository.existsById(ccId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "No existe la categoría " + idCategoria + " en el campeonato " + idCampeonato);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la categoría " + idCategoria + " en el campeonato " + idCampeonato);
         }
         repository.deleteById(ccId);
     }

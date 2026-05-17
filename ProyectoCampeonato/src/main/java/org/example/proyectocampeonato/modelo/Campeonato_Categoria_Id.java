@@ -14,10 +14,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class Campeonato_Categoria_Id implements Serializable {
 
-    @Column(name = "id_campeonato")
     private Long idCampeonato;
 
-    @Column(name = "id_categoria")
     private Long idCategoria;
 
 }

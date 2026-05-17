@@ -23,17 +23,17 @@ public class Inscripcion {
 
     @ManyToOne
     @MapsId("idCampeonato")
-    @JoinColumn(name = "id_campeonato")
+    @JoinColumn(name = "idCampeonato")
     private Campeonato campeonato;
 
     @ManyToOne
     @MapsId("idCategoria")
-    @JoinColumn(name = "id_categoria")
+    @JoinColumn(name = "idCategoria")
     private Categoria categoria;
 
     @ManyToOne
     @MapsId("idCompetidor")
-    @JoinColumn(name = "id_competidor")
+    @JoinColumn(name = "idCompetidor")
     private Competidor competidor;
 
 }

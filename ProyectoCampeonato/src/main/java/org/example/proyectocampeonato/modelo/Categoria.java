@@ -18,15 +18,13 @@ import java.util.Set;
 @Entity
 @Builder
 @JsonIgnoreProperties({"campeonatoCategorias", "inscripciones"})
-@Table(name = "categoria")
 public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_categoria")
     private Long idCategoria;
 
-    @Column(name = "nombre", nullable = false)
+    @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
@@ -35,20 +33,18 @@ public class Categoria {
     @Column(nullable = false)
     private String genero;
 
-    @Column(name = "peso_minimo")
     @Min(value = 0, message = "{categoria.peso.minimo}")
     private Double pesoMinimo;
 
     @Min(value = 0, message = "{categoria.peso.minimo}")
-    @Column(name = "peso_maximo")
     private Double pesoMaximo;
 
-    @Column(name = "edad_maxima", nullable = false)
+    @Column(nullable = false)
     @Min(value = 0, message = "{categoria.edadMaxima.minimo}")
     @Max(value = 100, message = "{categoria.edadMaxima.maximo}")
     private int edadMaxima;
 
-    @Column(name = "edad_minima", nullable = false)
+    @Column(nullable = false)
     @Min(value = 0, message = "{categoria.edadMinima.minimo}")
     @Max(value = 71, message = "{categoria.edadMaxima.maximo}")
     private int edadMinima;

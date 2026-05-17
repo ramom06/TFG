@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "campeonato_categoria")
 public class Campeonato_Categoria {
 
     @EmbeddedId
@@ -17,11 +16,11 @@ public class Campeonato_Categoria {
 
     @ManyToOne
     @MapsId("idCampeonato")
-    @JoinColumn(name = "id_campeonato")
+    @JoinColumn(name = "idCampeonato")
     private Campeonato campeonato;
 
     @ManyToOne
     @MapsId("idCategoria")
-    @JoinColumn(name = "id_categoria")
+    @JoinColumn(name = "idCategoria")
     private Categoria categoria;
 }

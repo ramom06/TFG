@@ -23,9 +23,7 @@ public class CategoriaService {
     }
 
     public Categoria one(Long id) {
-        return categoriaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada"));
+        return categoriaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada"));
     }
 
     @Transactional
@@ -35,19 +33,18 @@ public class CategoriaService {
 
     @Transactional
     public Categoria replace(Long id, Categoria categoria) {
-        return categoriaRepository.findById(id)
-                .map(existing -> {
-                    categoria.setIdCategoria(id);
-                    return categoriaRepository.save(categoria);
-                })
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada"));
+        if (!categoriaRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada");
+        }
+
+        categoria.setIdCategoria(id);
+
+        return categoriaRepository.save(categoria);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!categoriaRepository.existsById(id))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada");
+        if (!categoriaRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada");
         categoriaRepository.deleteById(id);
     }
 }

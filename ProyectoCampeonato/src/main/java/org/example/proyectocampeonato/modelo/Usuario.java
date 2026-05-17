@@ -16,12 +16,10 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_usuario", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
     private Long idUsuario;
 
     @Column(nullable = false)
@@ -43,11 +41,11 @@ public class Usuario {
     @Column(nullable = false)
     private Rol rol;
 
-    @Column(name = "fecha_registro", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Date fechaRegistro;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "fecha_nacimiento", nullable = false)
+    @Column(nullable = false)
     private Date fechaNacimiento;
 
     @Column(nullable = false)

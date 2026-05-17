@@ -14,7 +14,6 @@ import java.util.Set;
 @Entity
 @SuperBuilder
 @JsonIgnoreProperties({"inscripciones"})
-@Table(name = "competidor")
 public class Competidor extends Usuario {
 
     @Column(nullable = false)

@@ -26,15 +26,11 @@ public class UsuarioService {
     }
 
     public Usuario one(Long id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
     }
 
     public Usuario findByNombre(String nombre) {
-        return usuarioRepository.findByNombre(nombre)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario '" + nombre + "' no encontrado"));
+        return usuarioRepository.findByNombre(nombre).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario '" + nombre + "' no encontrado"));
     }
 
     public List<Usuario> findByRol(Usuario.Rol rol) {
@@ -72,18 +68,15 @@ public class UsuarioService {
 
     @Transactional
     public void delete(Long id) {
-        if (!usuarioRepository.existsById(id))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado");
+        if (!usuarioRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado");
         usuarioRepository.deleteById(id);
     }
 
     private void validarNombreUnico(String nombre) {
-        if (usuarioRepository.existsByNombre(nombre))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre '" + nombre + "' ya está en uso");
+        if (usuarioRepository.existsByNombre(nombre)) throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre '" + nombre + "' ya está en uso");
     }
 
     private void validarEmailUnico(String email) {
-        if (usuarioRepository.existsByEmail(email))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + email + "' ya está registrado");
+        if (usuarioRepository.existsByEmail(email)) throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + email + "' ya está registrado");
     }
 }

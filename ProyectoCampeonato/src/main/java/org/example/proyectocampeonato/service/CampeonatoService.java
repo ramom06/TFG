@@ -13,17 +13,14 @@ public class CampeonatoService {
 
     private final CampeonatoRepository campeonatoRepository;
 
-    public CampeonatoService(CampeonatoRepository campeonatoRepository) {
-        this.campeonatoRepository = campeonatoRepository;
-    }
+    public CampeonatoService(CampeonatoRepository campeonatoRepository) {this.campeonatoRepository = campeonatoRepository;}
 
     public List<Campeonato> getAll() {
         return campeonatoRepository.findAll();
     }
 
     public Campeonato one(Long id) {
-        return campeonatoRepository.findById(id)
-                .orElseThrow(() -> new CampeonatoNotFoundException(id));
+        return campeonatoRepository.findById(id).orElseThrow(() -> new CampeonatoNotFoundException(id));
     }
 
     @Transactional
@@ -33,18 +30,17 @@ public class CampeonatoService {
 
     @Transactional
     public Campeonato replace(Long id, Campeonato campeonato) {
-        return campeonatoRepository.findById(id)
-                .map(existing -> {
-                    campeonato.setIdCampeonato(id);
-                    return campeonatoRepository.save(campeonato);
-                })
-                .orElseThrow(() -> new CampeonatoNotFoundException(id));
+        if (!campeonatoRepository.existsById(id)) {
+            throw new CampeonatoNotFoundException(id);
+        }
+
+        campeonato.setIdCampeonato(id);
+        return campeonatoRepository.save(campeonato);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!campeonatoRepository.existsById(id))
-            throw new CampeonatoNotFoundException(id);
+        if (!campeonatoRepository.existsById(id)) throw new CampeonatoNotFoundException(id);
         campeonatoRepository.deleteById(id);
     }
 }

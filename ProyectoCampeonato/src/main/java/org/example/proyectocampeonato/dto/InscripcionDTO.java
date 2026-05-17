@@ -10,17 +10,10 @@ import lombok.*;
 public class InscripcionDTO{
 
     private Long idCampeonato;
-
     private Long idCategoria;
-
     private Long idCompetidor;
-
     private String nombreCampeonato;
-
     private String nombreCategoria;
-
     private String nombreCompetidor;
-
     private String clubCompetidor;
-
 }

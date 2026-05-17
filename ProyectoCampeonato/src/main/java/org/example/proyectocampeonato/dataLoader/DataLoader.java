@@ -29,31 +29,12 @@ public class DataLoader implements CommandLineRunner {
     private final JdbcTemplate jdbcTemplate;
     private final SorteoService sorteoService;
 
-    // Helper para convertir LocalDate a Date
-    private Date toDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
+    private Date toDate(LocalDate localDate) {return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());}
 
     @Override
     public void run(String... args) throws Exception {
-        // Eliminar restos de la entidad Arbitro (ya no existe en el código).
-        // Se ejecuta siempre: la FK arbitro -> usuario impide cualquier operación
-        // sobre usuario mientras la tabla huérfana exista.
-        jdbcTemplate.execute("DROP TABLE IF EXISTS arbitro");
-        jdbcTemplate.update("DELETE FROM usuario WHERE tipo_usuario = 'ARBITRO'");
-
-        // Limpieza de combates con ronda="R1" sembrados por el DataLoader antiguo.
-        // Esos combates rompían el sorteo porque (a) bloqueaban la idempotencia de
-        // SorteoService y (b) el frontend los filtraba. Se ejecuta siempre, es
-        // idempotente: si no quedan combates "R1", el DELETE no hace nada.
-        int orfanos = jdbcTemplate.update("DELETE FROM combate WHERE ronda = 'R1'");
-        if (orfanos > 0) {
-            System.out.println("Eliminados " + orfanos + " combates huérfanos con ronda='R1'.");
-        }
 
         if (campeonatoRepository.count() == 0) {
-            // SQL nativo en orden inverso a las FKs. Evita el SELECT implícito de
-            // deleteAll() de JPA, que falla si quedan discriminators desconocidos.
             jdbcTemplate.update("DELETE FROM inscripcion");
             jdbcTemplate.update("DELETE FROM combate");
             jdbcTemplate.update("DELETE FROM campeonato_categoria");
@@ -66,11 +47,7 @@ public class DataLoader implements CommandLineRunner {
         }
     }
 
-    /**
-     * Para los campeonatos cargados en estado "pasado", genera (de forma determinista
-     * dentro de cada arranque) el sorteo completo: primera ronda + desarrollo hasta el ganador.
-     * Así los campeonatos finalizados siempre tienen combates persistidos.
-     */
+    //Campeonatos finalizados genero sorteo completo
     private void sortearCampeonatosFinalizados() {
         List<Campeonato> pasados = campeonatoRepository.findAll().stream()
                 .filter(c -> "pasado".equals(c.getEstado()))
@@ -79,14 +56,12 @@ public class DataLoader implements CommandLineRunner {
         for (Campeonato c : pasados) {
             sorteoService.forzarSorteoYDesarrollo(c.getIdCampeonato());
         }
-        System.out.println("Sorteo y desarrollo aplicado a " + pasados.size() + " campeonatos finalizados.");
     }
 
     private void cargarDatos() {
-        System.out.println("Iniciando carga de datos del Campeonato de Karate...");
         String encodedPassword = passwordEncoder.encode("password");
 
-        // 2. CREAR CATEGORÍAS
+        // CREAR CATEGORÍAS
         // BENJAMIN
         Categoria catBenjM = Categoria.builder().nombre("Benjamín Masculino").modalidad("kata").genero("M").edadMinima(0).edadMaxima(7).build();
         Categoria catBenjF = Categoria.builder().nombre("Benjamín Femenino").modalidad("kata").genero("F").edadMinima(0).edadMaxima(7).build();
@@ -255,7 +230,8 @@ public class DataLoader implements CommandLineRunner {
         List<Categoria> junMasc = juniors.stream().filter(cat -> cat.getGenero().equals("M")).toList();
         List<Categoria> s21Masc = sub21.stream().filter(cat -> cat.getGenero().equals("M")).toList();
         List<Categoria> senMasc = seniors.stream().filter(cat -> cat.getGenero().equals("M")).toList();
-// CAMPEONATOS - usando toDate() para convertir LocalDate a Date correctamente
+
+        // CAMPEONATOS - usando toDate() para convertir LocalDate a Date correctamente
         Campeonato camp1 = Campeonato.builder().nombre("Campeonato de España Cadete/Junior/Sub-21 2026").fechaInicio(toDate(LocalDate.of(2026, 11, 10))).fechaFin(toDate(LocalDate.of(2026, 11, 12))).ubicacion("Pabellón Multiusos, Madrid").estado("futuro").nivel("Nacional").descripcion("Torneo clave para la clasificación al próximo campeonato de Europa").urlPortada("https://livesportscoring.com/2026/RFEK/RFEK2026_Absoluto/docs/RFEK2026_Absoluto.jpg").build();
         Campeonato camp2 = Campeonato.builder().nombre("Campeonato de España Senior 2026").fechaInicio(toDate(LocalDate.of(2026, 2, 2))).fechaFin(toDate(LocalDate.of(2026, 2, 4))).ubicacion("Pabellón de Carranque, Málaga, Andalucía, España").estado("pasado").nivel("Nacional").descripcion("Torneo clasificatorio para el mundial").urlPortada("https://livesportscoring.com/2026/RFEK/RFEK2026_Absoluto/docs/RFEK2026_Absoluto.jpg").build();
         Campeonato camp3 = Campeonato.builder().nombre("Campeonato de Andalucía alevin/infantil/juvenil 2026").fechaInicio(toDate(LocalDate.of(2026, 3, 1))).fechaFin(toDate(LocalDate.of(2026, 3, 1))).ubicacion("Pabellón de Deportes de Córdoba, Córdoba, Andalucía, España").estado("futuro").nivel("Provincial").descripcion("Torneo clasificatorio para el campeonato de España").urlPortada("https://livesportscoring.com/2026/RFEK/RFEK2026_Absoluto/docs/RFEK2026_Absoluto.jpg").build();
@@ -325,8 +301,7 @@ public class DataLoader implements CommandLineRunner {
         campeonato_categoriaRepository.saveAll(createCampeonatoCategoria(camp21, senFem));
         campeonato_categoriaRepository.saveAll(createCampeonatoCategoria(camp22, masters));
 
-        // 3. CREAR COMPETIDORES
-        // Usuario.rol es obligatorio → asignamos COMPETIDOR
+        //CREAR COMPETIDORES
         Competidor senM1  = Competidor.builder().nombre("Juan").apellidos("Pérez Cano").dni("12345678A").email("juan.perez@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2000, 5, 20))).genero('M').club("Dojo Shoto").federacionAutonomica("Comunidad de Madrid").build();
         Competidor senM2  = Competidor.builder().nombre("Alberto").apellidos("Ruiz Galiano").dni("87654321B").email("alberto.ruiz@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(1998, 11, 2))).genero('M').club("Karate Almería").federacionAutonomica("Andalucía").build();
         Competidor senM3  = Competidor.builder().nombre("Carlos").apellidos("López Martín").dni("11223344C").email("carlos.lopez@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2001, 3, 15))).genero('M').club("Karate Aragón").federacionAutonomica("Aragón").build();
@@ -469,6 +444,7 @@ public class DataLoader implements CommandLineRunner {
         Competidor juvF3 = Competidor.builder().nombre("Noa").apellidos("Rivas Llopis").dni("30303003C").email("noa.rivas@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2013, 7, 18))).genero('F').club("Karate Valencia").federacionAutonomica("Comunitat Valenciana").build();
         Competidor juvF4 = Competidor.builder().nombre("Zoe").apellidos("Andrade Lima").dni("30303004D").email("zoe.andrade@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2012, 3, 5))).genero('F').club("Karate Canarias").federacionAutonomica("Canarias").build();
         Competidor juvF5 = Competidor.builder().nombre("Hana").apellidos("Muñoz Takahashi").dni("30303005E").email("hana.munoz@karate.es").password(encodedPassword).rol(Usuario.Rol.COMPETIDOR).fechaNacimiento(toDate(LocalDate.of(2013, 12, 1))).genero('F').club("Karate Aragón").federacionAutonomica("Aragón").build();
+
         competidorRepository.saveAll(List.of(
                 senM1, senM2, senM3, senM4, senM5, senM6, senM7, senM8, senM9, senM10, senM11, senM12, senM13, senM14, senM15, senM16, senM17, senM18, senM19, senM20, senM21, senM22, senM23, senM24, senF1, senF2, senF3, senF4, senF5, senF6, senF7, senF8, senF9, senF10, senF11, senF12, senF13, senF14, senF15, senF16, senF17, senF18, senF19, senF20, senF21, senF22, senF23, senF24, senF25, senF26,
                 cadM1, cadM2, cadM3, cadM4, cadM5, cadM6, cadM7, cadM8, cadF1, cadF2, cadF3, cadF4, cadF5, cadF6, cadF7, cadF8, cadF9, cadF10, cadF11, cadF12,
@@ -482,7 +458,6 @@ public class DataLoader implements CommandLineRunner {
         // INSCRIPCIONES
         List<Inscripcion> inscripciones = new ArrayList<>();
 
-        // --- CAMP2: Campeonato España Senior ---
         inscripciones.add(ins(camp2, catSenKatM, senM1)); inscripciones.add(ins(camp2, catSenKatM, senM2)); inscripciones.add(ins(camp2, catSenKatM, senM3)); inscripciones.add(ins(camp2, catSenKatM, senM4)); inscripciones.add(ins(camp2, catSenKatM, senM5)); inscripciones.add(ins(camp2, catSenKatM, senM6));
         inscripciones.add(ins(camp2, catSenKatM, senM7));inscripciones.add(ins(camp2, catSenKatF, senF1)); inscripciones.add(ins(camp2, catSenKatF, senF2)); inscripciones.add(ins(camp2, catSenKatF, senF3)); inscripciones.add(ins(camp2, catSenKatF, senF4)); inscripciones.add(ins(camp2, catSenKatF, senF5)); inscripciones.add(ins(camp2, catSenKatF, senF6));
         inscripciones.add(ins(camp2, catSenKumM2, senM8)); inscripciones.add(ins(camp2, catSenKumM2, senM9)); inscripciones.add(ins(camp2, catSenKumM2, senM10)); inscripciones.add(ins(camp2, catSenKumM2, senM11)); inscripciones.add(ins(camp2, catSenKumM2, senM12)); inscripciones.add(ins(camp2, catSenKumM2, senM13));
@@ -491,13 +466,11 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp2, catSenKumF2, senF7)); inscripciones.add(ins(camp2, catSenKumF2, senF8)); inscripciones.add(ins(camp2, catSenKumF2, senF9)); inscripciones.add(ins(camp2, catSenKumF2, senF10)); inscripciones.add(ins(camp2, catSenKumF2, senF11)); inscripciones.add(ins(camp2, catSenKumF2, senF12));
         inscripciones.add(ins(camp2, catSenKumF3, senF13)); inscripciones.add(ins(camp2, catSenKumF3, senF14)); inscripciones.add(ins(camp2, catSenKumF3, senF15)); inscripciones.add(ins(camp2, catSenKumF3, senF16)); inscripciones.add(ins(camp2, catSenKumF3, senF17)); inscripciones.add(ins(camp2, catSenKumF3, senF18));
 
-        // --- CAMP4: Campeonato Andalucía Senior ---
         inscripciones.add(ins(camp4, catSenKatM, senM1)); inscripciones.add(ins(camp4, catSenKatM, senM3)); inscripciones.add(ins(camp4, catSenKatM, senM5)); inscripciones.add(ins(camp4, catSenKatM, senM7)); inscripciones.add(ins(camp4, catSenKatM, senM9)); inscripciones.add(ins(camp4, catSenKatM, senM11)); inscripciones.add(ins(camp4, catSenKatM, senM13));
         inscripciones.add(ins(camp4, catSenKatF, senF1)); inscripciones.add(ins(camp4, catSenKatF, senF3)); inscripciones.add(ins(camp4, catSenKatF, senF5)); inscripciones.add(ins(camp4, catSenKatF, senF7)); inscripciones.add(ins(camp4, catSenKatF, senF9)); inscripciones.add(ins(camp4, catSenKatF, senF11));
         inscripciones.add(ins(camp4, catSenKumM3, senM2)); inscripciones.add(ins(camp4, catSenKumM3, senM4)); inscripciones.add(ins(camp4, catSenKumM3, senM6)); inscripciones.add(ins(camp4, catSenKumM3, senM8));inscripciones.add(ins(camp4, catSenKumM3, senM10)); inscripciones.add(ins(camp4, catSenKumM3, senM12));
         inscripciones.add(ins(camp4, catSenKumF3, senF2)); inscripciones.add(ins(camp4, catSenKumF3, senF4)); inscripciones.add(ins(camp4, catSenKumF3, senF6)); inscripciones.add(ins(camp4, catSenKumF3, senF8)); inscripciones.add(ins(camp4, catSenKumF3, senF10)); inscripciones.add(ins(camp4, catSenKumF3, senF12));
 
-        // --- CAMP15: Liga Nacional Base Masculina ---
         inscripciones.add(ins(camp15, catCadKataM, cadM1)); inscripciones.add(ins(camp15, catCadKataM, cadM2));
         inscripciones.add(ins(camp15, catCadKataM, cadM3)); inscripciones.add(ins(camp15, catCadKataM, cadM4));
         inscripciones.add(ins(camp15, catCadKataM, cadM5)); inscripciones.add(ins(camp15, catCadKataM, cadM6));
@@ -508,7 +481,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp15, catSenKumM3, senM5)); inscripciones.add(ins(camp15, catSenKumM3, senM7));
         inscripciones.add(ins(camp15, catSenKumM3, senM9)); inscripciones.add(ins(camp15, catSenKumM3, senM11));
 
-        // --- CAMP16: Liga Iberdrola Base Femenina ---
         inscripciones.add(ins(camp16, catCadKataF, cadF1)); inscripciones.add(ins(camp16, catCadKataF, cadF2));
         inscripciones.add(ins(camp16, catCadKataF, cadF3)); inscripciones.add(ins(camp16, catCadKataF, cadF4));
         inscripciones.add(ins(camp16, catCadKataF, cadF5)); inscripciones.add(ins(camp16, catCadKataF, cadF6));
@@ -518,7 +490,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp16, catSenKumF2, senF5)); inscripciones.add(ins(camp16, catSenKumF2, senF7));
         inscripciones.add(ins(camp16, catSenKumF2, senF9)); inscripciones.add(ins(camp16, catSenKumF2, senF11));
 
-        // --- CAMP17: Liga Nacional Base Masculina Alevín/Infantil/Juvenil ---
         inscripciones.add(ins(camp17, catAlevKataM, alevM1)); inscripciones.add(ins(camp17, catAlevKataM, alevM2));
         inscripciones.add(ins(camp17, catAlevKataM, alevM3)); inscripciones.add(ins(camp17, catAlevKataM, alevM4));
         inscripciones.add(ins(camp17, catAlevKataM, alevM5));
@@ -532,7 +503,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp17, catJuvKumM2, juvM5)); inscripciones.add(ins(camp17, catJuvKumM2, juvM2));
         inscripciones.add(ins(camp17, catJuvKumM2, juvM4));
 
-        // --- CAMP18: Liga Iberdrola Base Femenina Alevín/Infantil/Juvenil ---
         inscripciones.add(ins(camp18, catAlevKataF, alevF1)); inscripciones.add(ins(camp18, catAlevKataF, alevF2));
         inscripciones.add(ins(camp18, catAlevKataF, alevF3)); inscripciones.add(ins(camp18, catAlevKataF, alevF4));
         inscripciones.add(ins(camp18, catInfKataF, infF1)); inscripciones.add(ins(camp18, catInfKataF, infF2));
@@ -544,7 +514,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp18, catJuvKumF2, juvF1)); inscripciones.add(ins(camp18, catJuvKumF2, juvF2));
         inscripciones.add(ins(camp18, catJuvKumF2, juvF3)); inscripciones.add(ins(camp18, catJuvKumF2, juvF4));
 
-        // --- CAMP3: Campeonato Andalucía Base ---
         inscripciones.add(ins(camp3, catAlevKataM, alevM1)); inscripciones.add(ins(camp3, catAlevKataM, alevM2));
         inscripciones.add(ins(camp3, catAlevKataM, alevM3)); inscripciones.add(ins(camp3, catAlevKataM, alevM4));
         inscripciones.add(ins(camp3, catAlevKataM, alevM5));
@@ -563,7 +532,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp3, catJuvKataF, juvF3)); inscripciones.add(ins(camp3, catJuvKataF, juvF4));
         inscripciones.add(ins(camp3, catJuvKataF, juvF5));
 
-        // --- CAMP6: Liga Nacional Cadete/Junior/Sub21 ---
         inscripciones.add(ins(camp6, catCadKataM, cadM1)); inscripciones.add(ins(camp6, catCadKataM, cadM2));
         inscripciones.add(ins(camp6, catCadKataM, cadM3)); inscripciones.add(ins(camp6, catCadKataM, cadM4));
         inscripciones.add(ins(camp6, catCadKataM, cadM5)); inscripciones.add(ins(camp6, catCadKataM, cadM6));
@@ -586,7 +554,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp6, catSub21KatF, sub21F3)); inscripciones.add(ins(camp6, catSub21KatF, sub21F4));
         inscripciones.add(ins(camp6, catSub21KatF, sub21F5)); inscripciones.add(ins(camp6, catSub21KatF, sub21F6));
 
-        // --- CAMP11: Campeonato España Absoluto ---
         inscripciones.add(ins(camp11, catSenKatM, senM2)); inscripciones.add(ins(camp11, catSenKatM, senM4));
         inscripciones.add(ins(camp11, catSenKatM, senM6)); inscripciones.add(ins(camp11, catSenKatM, senM8));
         inscripciones.add(ins(camp11, catSenKatM, senM10)); inscripciones.add(ins(camp11, catSenKatM, senM12));
@@ -601,7 +568,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp11, catSenKumF3, senF15)); inscripciones.add(ins(camp11, catSenKumF3, senF16));
         inscripciones.add(ins(camp11, catSenKumF3, senF17)); inscripciones.add(ins(camp11, catSenKumF3, senF18));
 
-        // --- CAMP21: Liga Iberdrola Junior/Sub21 ---
         inscripciones.add(ins(camp21, catJunKatM, junM1)); inscripciones.add(ins(camp21, catJunKatM, junM2));
         inscripciones.add(ins(camp21, catJunKatM, junM3)); inscripciones.add(ins(camp21, catJunKatM, junM4));
         inscripciones.add(ins(camp21, catJunKatM, junM5)); inscripciones.add(ins(camp21, catJunKatM, junM6));
@@ -615,7 +581,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp21, catSub21KumM2, sub21M1)); inscripciones.add(ins(camp21, catSub21KumM2, sub21M3));
         inscripciones.add(ins(camp21, catSub21KumM2, sub21M5));
 
-        // --- CAMP22: Liga Iberdrola Junior/Sub21 Femenina ---
         inscripciones.add(ins(camp22, catJunKatF, junF1)); inscripciones.add(ins(camp22, catJunKatF, junF2));
         inscripciones.add(ins(camp22, catJunKatF, junF3)); inscripciones.add(ins(camp22, catJunKatF, junF4));
         inscripciones.add(ins(camp22, catJunKatF, junF5)); inscripciones.add(ins(camp22, catJunKatF, junF6));
@@ -627,7 +592,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp22, catSub21KumF2, sub21F1)); inscripciones.add(ins(camp22, catSub21KumF2, sub21F2));
         inscripciones.add(ins(camp22, catSub21KumF2, sub21F4)); inscripciones.add(ins(camp22, catSub21KumF2, sub21F6));
 
-        // --- CAMP7: Campeonato España Master ---
         inscripciones.add(ins(camp7, catSenKatM, senM1)); inscripciones.add(ins(camp7, catSenKatM, senM5));
         inscripciones.add(ins(camp7, catSenKatM, senM9)); inscripciones.add(ins(camp7, catSenKatM, senM13));
         inscripciones.add(ins(camp7, catSenKatM, senM17)); inscripciones.add(ins(camp7, catSenKatM, senM21));
@@ -641,7 +605,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp7, catSenKumF4, senF10)); inscripciones.add(ins(camp7, catSenKumF4, senF14));
         inscripciones.add(ins(camp7, catSenKumF4, senF18));
 
-        // --- CAMP8: Campeonato España Universitario ---
         inscripciones.add(ins(camp8, catSub21KatM, sub21M1)); inscripciones.add(ins(camp8, catSub21KatM, sub21M2));
         inscripciones.add(ins(camp8, catSub21KatM, sub21M3)); inscripciones.add(ins(camp8, catSub21KatM, sub21M4));
         inscripciones.add(ins(camp8, catSub21KatM, sub21M5)); inscripciones.add(ins(camp8, catSub21KatM, sub21M6));
@@ -654,7 +617,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp8, catSenKatF, senF3)); inscripciones.add(ins(camp8, catSenKatF, senF7));
         inscripciones.add(ins(camp8, catSenKatF, senF11)); inscripciones.add(ins(camp8, catSenKatF, senF15));
 
-        // --- CAMP9: Campeonato España Infantil ---
         inscripciones.add(ins(camp9, catInfKataM, infM1)); inscripciones.add(ins(camp9, catInfKataM, infM2));
         inscripciones.add(ins(camp9, catInfKataM, infM3)); inscripciones.add(ins(camp9, catInfKataM, infM4));
         inscripciones.add(ins(camp9, catInfKataM, infM5)); inscripciones.add(ins(camp9, catInfKataM, infM6));
@@ -666,7 +628,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp9, catInfKumF2, infF1)); inscripciones.add(ins(camp9, catInfKumF2, infF2));
         inscripciones.add(ins(camp9, catInfKumF2, infF3)); inscripciones.add(ins(camp9, catInfKumF2, infF4));
 
-        // --- CAMP5: Liga Iberdrola Cadete/Junior/Sub21 ---
         inscripciones.add(ins(camp5, catSub21KatM, sub21M1)); inscripciones.add(ins(camp5, catSub21KatM, sub21M2));
         inscripciones.add(ins(camp5, catSub21KatM, sub21M3)); inscripciones.add(ins(camp5, catSub21KatM, sub21M4));
         inscripciones.add(ins(camp5, catSub21KatM, sub21M5)); inscripciones.add(ins(camp5, catSub21KatM, sub21M6));
@@ -680,7 +641,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp5, catSenKatF, senF4)); inscripciones.add(ins(camp5, catSenKatF, senF8));
         inscripciones.add(ins(camp5, catSenKatF, senF12)); inscripciones.add(ins(camp5, catSenKatF, senF16));
 
-        // --- CAMP10: Campeonato España Absoluto ---
         inscripciones.add(ins(camp10, catSenKatM, senM1)); inscripciones.add(ins(camp10, catSenKatM, senM5));
         inscripciones.add(ins(camp10, catSenKatM, senM9)); inscripciones.add(ins(camp10, catSenKatM, senM13));
         inscripciones.add(ins(camp10, catSenKatM, senM17)); inscripciones.add(ins(camp10, catSenKatM, senM21));
@@ -703,7 +663,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp10, catJuvKataF, juvF1)); inscripciones.add(ins(camp10, catJuvKataF, juvF3));
         inscripciones.add(ins(camp10, catJuvKataF, juvF5));
 
-        // --- CAMP1: Campeonato España Cadete/Junior/Sub21 ---
         inscripciones.add(ins(camp1, catCadKataM, cadM1)); inscripciones.add(ins(camp1, catCadKataM, cadM2));
         inscripciones.add(ins(camp1, catCadKataM, cadM3)); inscripciones.add(ins(camp1, catCadKataM, cadM4));
         inscripciones.add(ins(camp1, catCadKataM, cadM5)); inscripciones.add(ins(camp1, catCadKataM, cadM6));
@@ -737,18 +696,12 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp14, catCadKataF, cadF2)); inscripciones.add(ins(camp14, catCadKataF, cadF4));
         inscripciones.add(ins(camp14, catCadKataF, cadF6)); inscripciones.add(ins(camp14, catCadKataF, cadF1));
         inscripciones.add(ins(camp14, catCadKataF, cadF3));
-// --- CAMP14: Liga Iberdrola Absoluta/Cadete - 1ª Ronda 2026 ---
-// Cadete Femenino Kata (ya tiene 5, añadimos 2 más para tener 7)
         inscripciones.add(ins(camp14, catCadKataF, cadF1)); inscripciones.add(ins(camp14, catCadKataF, cadF2));
         inscripciones.add(ins(camp14, catCadKataF, cadF3)); inscripciones.add(ins(camp14, catCadKataF, cadF4));
         inscripciones.add(ins(camp14, catCadKataF, cadF6)); inscripciones.add(ins(camp14, catCadKataF, cadF7));
         inscripciones.add(ins(camp14, catCadKataF, cadF8));
-
-// Cadete Femenino Kumite <47kg
         inscripciones.add(ins(camp14, catCadKumF1, cadF1)); inscripciones.add(ins(camp14, catCadKumF1, cadF3));
         inscripciones.add(ins(camp14, catCadKumF1, cadF9)); inscripciones.add(ins(camp14, catCadKumF1, cadF10));
-
-// Cadete Femenino Kumite <54kg
         inscripciones.add(ins(camp14, catCadKumF2, cadF2)); inscripciones.add(ins(camp14, catCadKumF2, cadF4));
         inscripciones.add(ins(camp14, catCadKumF2, cadF11)); inscripciones.add(ins(camp14, catCadKumF2, cadF12)); inscripciones.add(ins(camp14, catCadKumF3, cadF5)); inscripciones.add(ins(camp14, catCadKumF3, cadF6));
         inscripciones.add(ins(camp14, catCadKumF3, cadF7)); inscripciones.add(ins(camp14, catCadKumF3, cadF8)); inscripciones.add(ins(camp14, catCadKumF4, cadF9)); inscripciones.add(ins(camp14, catCadKumF4, cadF10)); inscripciones.add(ins(camp14, catCadKumF4, cadF11)); inscripciones.add(ins(camp14, catCadKumF4, cadF12));
@@ -758,7 +711,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp14, catSenKumF4, senF11)); inscripciones.add(ins(camp14, catSenKumF4, senF12)); inscripciones.add(ins(camp14, catSenKumF4, senF19)); inscripciones.add(ins(camp14, catSenKumF4, senF20)); inscripciones.add(ins(camp14, catSenKumF5, senF13)); inscripciones.add(ins(camp14, catSenKumF5, senF14));
         inscripciones.add(ins(camp14, catSenKumF5, senF21)); inscripciones.add(ins(camp14, catSenKumF5, senF22));
 
-        // --- CAMP13: Liga Master ---
         inscripciones.add(ins(camp13, catSenKatM, senM4)); inscripciones.add(ins(camp13, catSenKatM, senM8));
         inscripciones.add(ins(camp13, catSenKatM, senM12)); inscripciones.add(ins(camp13, catSenKatM, senM16));
         inscripciones.add(ins(camp13, catSenKatM, senM20)); inscripciones.add(ins(camp13, catSenKatM, senM24));
@@ -769,12 +721,6 @@ public class DataLoader implements CommandLineRunner {
         inscripciones.add(ins(camp13, catSenKumM5, senM17)); inscripciones.add(ins(camp13, catSenKumM5, senM21));
 
         inscripcionRepository.saveAll(inscripciones);
-
-        // Combates: ya NO se siembran aquí. Los nombres de ronda "R1" eran
-        // incompatibles con SorteoService (idempotencia bloqueaba el sorteo real)
-        // y con el frontend (filtro ORDEN_RONDAS). Los combates ahora se crean
-        // en sortearCampeonatosFinalizados() para "pasado" y al pulsar sortear
-        // desde el admin para los demás.
 
         Usuario admin = Usuario.builder()
                 .nombre("Admin")
@@ -788,17 +734,16 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         usuarioRepository.save(admin);
 
-        System.out.println("Carga de datos de Karate finalizada con éxito.");
     }
 
-    // Crea las relaciones Campeonato <-> Categoria (sin fechaInicio/fechaFin, que no existen en el modelo)
+    // Crea relaciones Campeonato Categoria
     private List<Campeonato_Categoria> createCampeonatoCategoria(Campeonato campeonato, List<Categoria> categorias) {
+
         List<Campeonato_Categoria> relaciones = new ArrayList<>();
+
         for (Categoria categoria : categorias) {
-            Campeonato_Categoria_Id id = new Campeonato_Categoria_Id(
-                    campeonato.getIdCampeonato(),
-                    categoria.getIdCategoria()
-            );
+            Campeonato_Categoria_Id id = new Campeonato_Categoria_Id(campeonato.getIdCampeonato(), categoria.getIdCategoria());
+
             relaciones.add(Campeonato_Categoria.builder()
                     .idCampeonatoCategoria(id)
                     .campeonato(campeonato)
@@ -808,14 +753,10 @@ public class DataLoader implements CommandLineRunner {
         return relaciones;
     }
 
-    // Helper para crear inscripciones
+    // Crear inscripciones
     private Inscripcion ins(Campeonato campeonato, Categoria categoria, Competidor competidor) {
         return Inscripcion.builder()
-                .idInscripcion(new Inscripcion_Id(
-                        campeonato.getIdCampeonato(),
-                        categoria.getIdCategoria(),
-                        competidor.getIdUsuario()
-                ))
+                .idInscripcion(new Inscripcion_Id(campeonato.getIdCampeonato(), categoria.getIdCategoria(), competidor.getIdUsuario()))
                 .campeonato(campeonato)
                 .categoria(categoria)
                 .competidor(competidor)

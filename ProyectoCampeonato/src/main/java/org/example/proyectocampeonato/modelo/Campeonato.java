@@ -15,21 +15,19 @@ import java.util.Set;
 @Entity
 @Builder
 @JsonIgnoreProperties({"campeonatoCategorias"})
-@Table(name = "campeonato")
 public class Campeonato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_campeonato")
     private Long idCampeonato;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column(name = "fecha_inicio", nullable = false)
+    @Column(nullable = false)
     private Date fechaInicio;
 
-    @Column(name = "fecha_fin", nullable = false)
+    @Column(nullable = false)
     private Date fechaFin;
 
     @Column(nullable = false)
@@ -39,12 +37,12 @@ public class Campeonato {
     private String estado;
 
     @Column(nullable = false)
-    private String nivel; //Provincial,Regional, Nacional
+    private String nivel;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "urlPortada", nullable = false)
+    @Column(nullable = false)
     private String urlPortada;
 
     @OneToMany(mappedBy = "campeonato", cascade = CascadeType.ALL, orphanRemoval = true)
