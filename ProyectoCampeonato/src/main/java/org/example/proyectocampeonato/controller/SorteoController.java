@@ -29,7 +29,7 @@ public class SorteoController {
     // Permitido tras la fecha de fin del campeonato.
     @PostMapping("/{idCampeonato}/desarrollar")
     public ResponseEntity<Campeonato> desarrollarSorteo(@PathVariable Long idCampeonato) {
-        return ResponseEntity.ok(sorteoService.desarrollarSorteo(idCampeonato));
+         return ResponseEntity.ok(sorteoService.desarrollarSorteo(idCampeonato));
     }
 
     // Versión sin validación de fechas (para el admin). Genera solo la primera ronda.

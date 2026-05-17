@@ -9,9 +9,16 @@ export interface Usuario {
   apellidos: string;
   dni: string;
   email: string;
-  password?: string;          // solo al crear/editar, nunca viene del backend
+  password?: string;
   rol: Rol;
   genero: 'M' | 'F';
   fechaNacimiento: string;
   fechaRegistro?: string;
+}
+
+export interface UsuarioAuth {
+  id: number;
+  nombre: string;
+  email: string;
+  rol: string;
 }

@@ -54,10 +54,7 @@ private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
     const response = await fetch(`${this.sorteosUrl}/${id}/cerrar-inscripciones`, {
       method: 'POST',
     });
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(this.extraerMensaje(txt) ?? 'Error al cerrar inscripciones');
-    }
+    if (!response.ok) throw new Error('Error al cerrar inscripciones');
     return await response.json();
   }
 
@@ -65,38 +62,25 @@ private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
     const response = await fetch(`${this.sorteosUrl}/${id}/desarrollar`, {
       method: 'POST',
     });
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(this.extraerMensaje(txt) ?? 'Error al desarrollar el sorteo');
-    }
+    if (!response.ok) throw new Error('Error al desarrollar el sorteo');
     return await response.json();
   }
 
-  // Versión admin: sin validación de fecha. Solo primera ronda.
+  // Versión admin, Solo primera ronda.
   async forzarPrimeraRonda(id: number): Promise<Campeonato> {
     const response = await fetch(`${this.sorteosUrl}/${id}/forzar-primera-ronda`, {
       method: 'POST',
     });
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(this.extraerMensaje(txt) ?? 'Error al generar la primera ronda');
-    }
+    if (!response.ok) throw new Error('Error al generar la primera ronda');
     return await response.json();
   }
 
-  // Versión admin: sin validación de fecha. Sorteo completo hasta el ganador.
+  // Versión admin. Sorteo completo hasta el ganador.
   async forzarSorteoCompleto(id: number): Promise<Campeonato> {
     const response = await fetch(`${this.sorteosUrl}/${id}/forzar-completo`, {
       method: 'POST',
     });
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(this.extraerMensaje(txt) ?? 'Error al generar el sorteo completo');
-    }
+    if (!response.ok) throw new Error('Error al generar el sorteo completo');
     return await response.json();
-  }
-
-  private extraerMensaje(txt: string): string | null {
-    try { return JSON.parse(txt)?.message ?? null; } catch { return null; }
   }
 }

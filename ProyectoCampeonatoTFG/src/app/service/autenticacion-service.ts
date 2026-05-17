@@ -1,14 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-
-
-export interface UsuarioAuth {
-  id: number;
-  nombre: string;
-  email: string;
-  rol: string;
-}
+import {UsuarioAuth} from '../interfaces/usuario';
 
 @Injectable({ providedIn: 'root' })
 export class AutenticacionService {
@@ -17,12 +10,15 @@ export class AutenticacionService {
 
   private readonly SESSION_KEY = 'admin_session';
 
+  //Va a sesion del navegador si hay la guarda si no null
   currentUser = signal<UsuarioAuth | null>(this.loadSession());
 
   constructor(private router: Router) {}
 
   //login con DNI + contraseña */
   async login(dni: string, password: string): Promise<void> {
+
+    //Le envia al login del backend los datos en forma de json
     const response = await fetch(`${this.apiUrl}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,6 +29,7 @@ export class AutenticacionService {
     if (response.status === 403) throw new Error('No tienes permisos de administrador');
     if (!response.ok)            throw new Error('No se puede conectar con el servidor');
 
+    //Guarda los datos de la respuesta como modelo UsuarioAuth
     const data: UsuarioAuth = await response.json();
     this.saveSession(data);
     this.currentUser.set(data);

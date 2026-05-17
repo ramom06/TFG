@@ -1,19 +1,16 @@
 import { Injectable, signal } from '@angular/core';
-import { CompetidorSesion } from '../interfaces/competidor-session';
+import { CompetidorSesion } from '../interfaces/competidor';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 
-//
 export class CompetidorAuthService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/usuarios`;
-  private readonly KEY      = 'competidor_session';
+  private readonly KEY= 'competidor_session';
 
-  //Mantiene sesion
   currentCompetidor = signal<CompetidorSesion | null>(this.loadSession());
 
-  // Login con DNI + password
   async login(dni: string, password: string): Promise<CompetidorSesion> {
     let res: Response;
 
@@ -48,11 +45,6 @@ export class CompetidorAuthService {
     return sesion;
   }
 
-  logout(): void {
-    sessionStorage.removeItem(this.KEY);
-    this.currentCompetidor.set(null);
-  }
-
   isLoggedIn(): boolean {
     return this.currentCompetidor() !== null;
   }
@@ -62,11 +54,7 @@ export class CompetidorAuthService {
   }
 
   private loadSession(): CompetidorSesion | null {
-    const s = sessionStorage.getItem(this.KEY);
-    try {
-      return s ? JSON.parse(s) : null;
-    } catch {
-      return null;
-    }
+    const stored = sessionStorage.getItem(this.KEY);
+    return stored ? JSON.parse(stored) : null;
   }
 }

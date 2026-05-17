@@ -13,22 +13,19 @@ export class UsuarioService {
     return res.json();
   }
 
-  async getByRol(rol: string): Promise<Usuario[]> {
-    const res = await fetch(`${this.apiUrl}/rol/${rol}`);
-    if (!res.ok) throw new Error('Error al cargar usuarios por rol');
-    return res.json();
-  }
-
   async create(usuario: Partial<Usuario>): Promise<Usuario> {
+
     const res = await fetch(this.apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(usuario),
     });
+
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.message ?? 'Error al crear el usuario');
     }
+
     return res.json();
   }
 

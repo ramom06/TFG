@@ -6,7 +6,6 @@ import {CampeonatoListComponent} from './campeonato-list/campeonato-list';
   selector: 'app-root',
   imports: [ RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('ProyectoCampeonatoTFG');

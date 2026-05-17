@@ -1,5 +1,7 @@
 import {Genero} from './campeonato_categoria';
 
+export type Modalidad = 'Kumite' | "Kata";
+
 export interface Categoria {
   idCategoria: number,
   nombre: string,
@@ -11,4 +13,3 @@ export interface Categoria {
   edadMaxima: number
 }
 
-export type Modalidad = 'Kumite' | "Kata";

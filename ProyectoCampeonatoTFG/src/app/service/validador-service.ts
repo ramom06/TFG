@@ -1,10 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-
-export interface ReglaPassword {
-  id: string;
-  texto: string;
-  cumple: (p: string) => boolean;
-}
+import {ReglaPassword} from '../interfaces/regla-password';
 
 @Injectable({
   providedIn: 'root'
@@ -15,16 +10,15 @@ export class ValidadorService {
   private readonly LETRAS_DNI = 'TRWAGMYFPDXBNJZSQVHLCKE';
 
   readonly REGLAS_PASSWORD: ReglaPassword[] = [
-    { id: 'len',   texto: 'Mínimo 8 caracteres',           cumple: p => p.length >= 8 },
-    { id: 'upper', texto: 'Al menos una letra mayúscula',  cumple: p => /[A-Z]/.test(p) },
-    { id: 'lower', texto: 'Al menos una letra minúscula',  cumple: p => /[a-z]/.test(p) },
-    { id: 'digit', texto: 'Al menos un número',            cumple: p => /\d/.test(p) },
+    { id: 'Longitud',   texto: 'Mínimo 8 caracteres',cumple: p => p.length >= 8 },
+    { id: 'Mayúscula', texto: 'Al menos una letra mayúscula',cumple: p => /[A-Z]/.test(p) },
+    { id: 'Minúscula', texto: 'Al menos una letra minúscula',cumple: p => /[a-z]/.test(p) },
+    { id: 'Número', texto: 'Al menos un número',cumple: p => /\d/.test(p) },
   ];
 
   validarDNI(dni: string): { valido: boolean; mensaje: string | null } {
     const limpio = dni.trim().toUpperCase();
 
-    //Comprueba longitud
     if (limpio.length !== 9) {
       return { valido: false, mensaje: 'Debe tener 9 caracteres (8 números + letra)' };
     }
@@ -36,6 +30,7 @@ export class ValidadorService {
     if (!/^\d{8}$/.test(numeros)) {
       return { valido: false, mensaje: 'Los primeros 8 caracteres deben ser números' };
     }
+
     //Divide entre 23 y toma la letra
     const letraEsperada = this.LETRAS_DNI[parseInt(numeros, 10) % 23];
     if (letra !== letraEsperada) {
@@ -46,13 +41,14 @@ export class ValidadorService {
   }
 
   getReglasEstado(password: string) {
-    return this.REGLAS_PASSWORD.map(r => ({
-      ...r,
-      ok: r.cumple(password)
-    }));
+    const resultado = [];
+
+    for (const regla of this.REGLAS_PASSWORD) {
+      resultado.push({texto: regla.texto, ok: regla.cumple(password)});
+    }
+
+    return resultado;
   }
 
-  isPasswordValida(password: string): boolean {
-    return this.REGLAS_PASSWORD.every(r => r.cumple(password));
-  }
+  isPasswordValida(password: string): boolean {return this.REGLAS_PASSWORD.every(r => r.cumple(password));}
 }

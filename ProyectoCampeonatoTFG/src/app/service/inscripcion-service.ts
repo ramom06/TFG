@@ -9,7 +9,6 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 
-//Esta clase extrae inscripcion de la categoria
 export class InscripcionService implements InscripcionProvider{
 
 private readonly apiUrl = `${environment.apiUrl}/api/inscripciones`;

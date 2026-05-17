@@ -1,5 +1,7 @@
 import {Modalidad} from './categoria';
 
+export type Genero = 'M' | 'F';
+
 export interface Campeonato_categoria {
     idCampeonato: number,
     idCategoria: number,
@@ -11,4 +13,3 @@ export interface Campeonato_categoria {
     genero: Genero
 }
 
-export type Genero = 'M' | 'F';

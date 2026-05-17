@@ -10,3 +10,5 @@ export interface Combate {
   competidorRojo: Competidor | null;
   competidorAzul: Competidor | null;
 }
+
+
