@@ -19,6 +19,7 @@ public class Campeonato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idCampeonato")
     private Long idCampeonato;
 
     @Column(nullable = false)

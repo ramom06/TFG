@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class Combate {
 
     @EmbeddedId
+    @Column(name = "idCombate")
     private Combate_Id idCombate;
 
     @Column(nullable = false)
