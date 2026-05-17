@@ -116,8 +116,9 @@ export class SorteoComponent implements OnInit {
     const esBye = !c.competidorAzul && c.competidorRojo;
     return {
       idCombate: {
-        idCampeonato: c.idCombate?.idCampeonato ?? 0,
-        idCategoria:  c.idCombate?.idCategoria  ?? 0,
+        idCampeonato:  c.idCombate?.idCampeonato  ?? 0,
+        idCategoria:   c.idCombate?.idCategoria   ?? 0,
+        numeroCombate: c.idCombate?.numeroCombate ?? 0,
       },
       ronda:          c.ronda          ?? '',
       competidorRojo: c.competidorRojo ?? null,

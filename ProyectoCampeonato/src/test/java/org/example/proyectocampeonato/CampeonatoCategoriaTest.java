@@ -1,5 +1,7 @@
 package org.example.proyectocampeonato;
 
+import org.example.proyectocampeonato.excepcion.CampeonatoCategoriaNotFoundException;
+import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
@@ -96,7 +98,7 @@ class CampeonatoCategoriaTest {
         when(campeonatoRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.asignarCategoria(99L, 2L))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(CampeonatoNotFoundException.class);
     }
 
     @Test
@@ -126,7 +128,7 @@ class CampeonatoCategoriaTest {
         when(repository.existsById(any())).thenReturn(false);
 
         assertThatThrownBy(() -> service.eliminarCategoria(1L, 99L))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(CampeonatoCategoriaNotFoundException.class);
         verify(repository, never()).deleteById(any());
     }
 }

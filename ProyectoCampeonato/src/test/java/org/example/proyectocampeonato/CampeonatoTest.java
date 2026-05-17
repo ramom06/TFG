@@ -80,7 +80,7 @@ class CampeonatoTest {
 
     @Test
     void replace_idInexistente_lanzaExcepcion() {
-        when(campeonatoRepository.findById(99L)).thenReturn(Optional.empty());
+        when(campeonatoRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> campeonatoService.replace(99L, campeonato))
                 .isInstanceOf(CampeonatoNotFoundException.class);

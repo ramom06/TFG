@@ -1,11 +1,10 @@
 package org.example.proyectocampeonato.service;
 
+import org.example.proyectocampeonato.excepcion.CategoriaNotFoundException;
 import org.example.proyectocampeonato.modelo.Categoria;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,7 +22,8 @@ public class CategoriaService {
     }
 
     public Categoria one(Long id) {
-        return categoriaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada"));
+        return categoriaRepository.findById(id)
+                .orElseThrow(() -> new CategoriaNotFoundException(id));
     }
 
     @Transactional
@@ -34,17 +34,17 @@ public class CategoriaService {
     @Transactional
     public Categoria replace(Long id, Categoria categoria) {
         if (!categoriaRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada");
+            throw new CategoriaNotFoundException(id);
         }
-
         categoria.setIdCategoria(id);
-
         return categoriaRepository.save(categoria);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!categoriaRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + id + " no encontrada");
+        if (!categoriaRepository.existsById(id)) {
+            throw new CategoriaNotFoundException(id);
+        }
         categoriaRepository.deleteById(id);
     }
 }

@@ -54,7 +54,7 @@ public class DataLoader implements CommandLineRunner {
                 .toList();
 
         for (Campeonato c : pasados) {
-            sorteoService.forzarSorteoYDesarrollo(c.getIdCampeonato());
+            sorteoService.sortearCompleto(c.getIdCampeonato());
         }
     }
 

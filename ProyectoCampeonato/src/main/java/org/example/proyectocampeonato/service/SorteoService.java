@@ -6,13 +6,9 @@ import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CombateRepository;
 import org.example.proyectocampeonato.repository.InscripcionRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -25,45 +21,58 @@ public class SorteoService {
     public static final String COMBATE_PENDIENTE  = "pendiente";
     public static final String COMBATE_FINALIZADO = "finalizado";
 
-    private static final int DIAS_CIERRE_INSCRIPCIONES = 3;
-
     private final CampeonatoRepository  campeonatoRepository;
     private final InscripcionRepository inscripcionRepository;
     private final CombateRepository     combateRepository;
 
     private final Random random = new Random();
 
+    // ── Sortear solo la primera ronda ────────────────────────────────────────
+
+    /**
+     * Sortea la primera ronda de todas las categorías del campeonato.
+     * Idempotente: si una categoría ya tiene combates, no se vuelve a sortear.
+     * Cambia el estado del campeonato a "inscripciones_cerradas".
+     */
     @Transactional
-    public Campeonato cerrarInscripcionesYSortear(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+    public Campeonato sortearPrimeraRonda(Long idCampeonato) {
+        Campeonato c = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
-        // si ya está cerrado o finalizado, devolver igual
-        if (ESTADO_INSCRIPCIONES_OK.equals(c.getEstado()) || ESTADO_FINALIZADO.equals(c.getEstado())) {
-            return c;
-        }
-
-        //Solo desde (fechaInicio - 3 días) en adelante
-        LocalDate hoy        = LocalDate.now();
-        LocalDate inicio     = toLocalDate(c.getFechaInicio());
-        LocalDate fechaLimite = inicio.minusDays(DIAS_CIERRE_INSCRIPCIONES);
-
-        if (hoy.isBefore(fechaLimite)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las inscripciones solo pueden cerrarse a partir del " + fechaLimite + " (3 días antes del inicio del campeonato)");
-        }
-
-        // Sortear primera ronda para cada categoría inscrita en el campeonato
         for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
-            Long idCategoria = cc.getCategoria().getIdCategoria();
-            sortearPrimeraRondaCategoria(idCampeonato, idCategoria);
+            sortearPrimeraRondaCategoria(idCampeonato, cc.getCategoria().getIdCategoria());
         }
 
-        c.setEstado(ESTADO_INSCRIPCIONES_OK);
+        // No degradamos el estado si ya estaba en "pasado"
+        if (!ESTADO_FINALIZADO.equals(c.getEstado())) {
+            c.setEstado(ESTADO_INSCRIPCIONES_OK);
+        }
         return campeonatoRepository.save(c);
     }
 
+    // ── Sorteo completo: primera ronda + desarrollo hasta el ganador ─────────
+
+    @Transactional
+    public Campeonato sortearCompleto(Long idCampeonato) {
+        Campeonato c = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+
+        for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
+            Long idCategoria = cc.getCategoria().getIdCategoria();
+            sortearPrimeraRondaCategoria(idCampeonato, idCategoria);
+            // Flush para que desarrollarSorteoCategoria vea los combates recién creados
+            combateRepository.flush();
+            desarrollarSorteoCategoria(idCampeonato, idCategoria);
+        }
+
+        c.setEstado(ESTADO_FINALIZADO);
+        return campeonatoRepository.save(c);
+    }
+
+    // ── Implementación interna ───────────────────────────────────────────────
+
     private void sortearPrimeraRondaCategoria(Long idCampeonato, Long idCategoria) {
         // si ya hay combates, no se vuelve a sortear
-
         List<Combate> existentes = combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
         if (!existentes.isEmpty()) return;
 
@@ -119,99 +128,19 @@ public class SorteoService {
         }
     }
 
-    // ── Sorteo forzado manual (para admin, ignora validaciones de fecha) ───
-
-    /**
-     * Sortea SOLO la primera ronda, sin validar la fecha. Idempotente:
-     * si una categoría ya tiene combates, no se vuelve a sortear.
-     * Cambia el estado del campeonato a "inscripciones_cerradas".
-     */
-    @Transactional
-    public Campeonato forzarPrimeraRonda(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
-
-        for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
-            sortearPrimeraRondaCategoria(idCampeonato, cc.getCategoria().getIdCategoria());
-        }
-
-        // No degradamos el estado si ya estaba en "pasado"
-        if (!ESTADO_FINALIZADO.equals(c.getEstado())) {
-            c.setEstado(ESTADO_INSCRIPCIONES_OK);
-        }
-        return campeonatoRepository.save(c);
-    }
-
-    // ── Sorteo forzado (para seeding desde DataLoader, ignora validaciones) ─
-
-    @Transactional
-    public Campeonato forzarSorteoYDesarrollo(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
-
-        for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
-            Long idCategoria = cc.getCategoria().getIdCategoria();
-            sortearPrimeraRondaCategoria(idCampeonato, idCategoria);
-            // Flush para que desarrollarSorteoCategoria vea los combates recién creados
-            combateRepository.flush();
-            desarrollarSorteoCategoria(idCampeonato, idCategoria);
-        }
-
-        c.setEstado(ESTADO_FINALIZADO);
-        return campeonatoRepository.save(c);
-    }
-
-    // ── Desarrollo del sorteo completo (tras fechaFin) ───────────────────────
-
-    @Transactional
-    public Campeonato desarrollarSorteo(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
-
-        // Idempotencia: si ya está finalizado, no se vuelve a desarrollar
-        if (ESTADO_FINALIZADO.equals(c.getEstado())) {
-            return c;
-        }
-
-        LocalDate hoy = LocalDate.now();
-        LocalDate fin = toLocalDate(c.getFechaFin());
-        if (hoy.isBefore(fin)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El sorteo solo puede desarrollarse a partir del " + fin +
-                    " (fin del campeonato)");
-        }
-
-        for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
-            Long idCategoria = cc.getCategoria().getIdCategoria();
-            desarrollarSorteoCategoria(idCampeonato, idCategoria);
-        }
-
-        c.setEstado(ESTADO_FINALIZADO);
-        return campeonatoRepository.save(c);
-    }
-
     private void desarrollarSorteoCategoria(Long idCampeonato, Long idCategoria) {
         List<Combate> todos = combateRepository
                 .findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
         if (todos.isEmpty()) return; // categoría sin inscritos, nada que hacer
 
-        // Tomar la última ronda creada (la que tiene los combates más recientes,
-        // identificados por tener el número más alto). De ahí avanzamos hasta el final.
         int maxNumero = todos.stream()
                 .mapToInt(c -> c.getIdCombate().getNumeroCombate())
                 .max().orElse(0);
 
-        // Determinar la ronda actual: combates cuya última creación está en curso.
-        // Estrategia: agrupar por nombre de ronda y quedarse con el grupo
-        // que contenga combates pendientes; si no hay pendientes, el grupo con menos combates.
         Map<String, List<Combate>> porRonda = new HashMap<>();
         for (Combate cm : todos) {
             porRonda.computeIfAbsent(cm.getRonda(), k -> new ArrayList<>()).add(cm);
         }
-
-        // Si solo queda 1 combate (final) y está pendiente, lo resolvemos.
-        // Si está finalizado, ya está todo hecho.
-        // Si quedan más rondas pendientes, las construimos paso a paso.
 
         List<Combate> rondaActual = rondaMasReciente(porRonda);
         rondaActual.sort(Comparator.comparingInt(c -> c.getIdCombate().getNumeroCombate()));
@@ -266,7 +195,6 @@ public class SorteoService {
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private List<Combate> rondaMasReciente(Map<String, List<Combate>> porRonda) {
-        // La ronda más reciente es la que contiene el combate con el número más alto.
         return porRonda.values().stream()
                 .max(Comparator.comparingInt(list -> list.stream()
                         .mapToInt(c -> c.getIdCombate().getNumeroCombate())
@@ -316,9 +244,5 @@ public class SorteoService {
             case 32 -> "dieciseisavos";
             default -> "ronda_" + tamano;
         };
-    }
-
-    private LocalDate toLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

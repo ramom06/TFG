@@ -1,5 +1,4 @@
-import {Genero} from './campeonato_categoria';
-
+export type Genero = 'M' | 'F';
 export type Modalidad = 'Kumite' | "Kata";
 
 export interface Categoria {

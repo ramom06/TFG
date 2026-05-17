@@ -5,7 +5,6 @@ import { CampeonatoService } from '../service/campeonato-service';
 import { CategoriaService } from '../service/categoria-service';
 import { InscripcionService } from '../service/inscripcion-service';
 import { CombateService } from '../service/combate-service';
-import { AutenticacionService } from '../service/autenticacion-service';
 import { InscripcionComponent } from '../inscripcion/inscripcion';
 import { Campeonato } from '../interfaces/campeonato';
 import { Categoria } from '../interfaces/categoria';
@@ -25,7 +24,6 @@ export class CampeonatoDetalle implements OnInit {
   private CatServ  = inject(CategoriaService);
   private InscServ = inject(InscripcionService);
   private CombServ = inject(CombateService);
-  private auth     = inject(AutenticacionService);
 
   campeonato            = signal<Campeonato | null>(null);
   categorias            = signal<Categoria[]>([]);
@@ -37,11 +35,6 @@ export class CampeonatoDetalle implements OnInit {
   // Controla si el modal de inscripción está abierto
   inscripcionAbierta    = signal(false);
 
-  // Estado de acciones admin
-  procesando      = signal(false);
-  mensajeAccion   = signal<string | null>(null);
-  errorAccion     = signal<string | null>(null);
-
   masculino = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'M')));
   femenino  = computed(() => this.agruparPorModalidad(this.categorias().filter(c => c.genero === 'F')));
   modalidadesMasculino = computed(() => Object.keys(this.masculino()));
@@ -52,37 +45,6 @@ export class CampeonatoDetalle implements OnInit {
     const estado = this.campeonato()?.estado;
     return estado !== 'inscripciones_cerradas' && estado !== 'pasado';
   });
-
-  // ── Permisos / ventanas de acción ──────────────────────────────────────────
-
-  esAdmin = computed(() => this.auth.isAdmin());
-
-  // Cierre permitido desde 3 días antes del inicio hasta antes de que pase la fechaFin
-  puedeCerrarInscripciones = computed(() => {
-    const c = this.campeonato();
-    if (!c) return false;
-    if (c.estado === 'inscripciones_cerradas' || c.estado === 'pasado') return false;
-    const hoy = this.hoy();
-    const inicio = this.fecha(c.fechaInicio);
-    const limite = new Date(inicio); limite.setDate(limite.getDate() - 3);
-    return hoy >= limite;
-  });
-
-  // Desarrollo del sorteo permitido a partir de la fecha de fin
-  puedeDesarrollarSorteo = computed(() => {
-    const c = this.campeonato();
-    if (!c) return false;
-    if (c.estado === 'pasado') return false;
-    return this.hoy() >= this.fecha(c.fechaFin);
-  });
-
-  private hoy(): Date {
-    const d = new Date(); d.setHours(0, 0, 0, 0); return d;
-  }
-
-  private fecha(s: string): Date {
-    const d = new Date(s); d.setHours(0, 0, 0, 0); return d;
-  }
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -127,42 +89,6 @@ export class CampeonatoDetalle implements OnInit {
 
   abrirInscripcion()  { this.inscripcionAbierta.set(true); }
   cerrarInscripcion() { this.inscripcionAbierta.set(false); }
-
-  // ── Acciones admin ────────────────────────────────────────────────────────
-
-  async cerrarInscripciones() {
-    const c = this.campeonato();
-    if (!c || this.procesando()) return;
-    this.procesando.set(true);
-    this.mensajeAccion.set(null);
-    this.errorAccion.set(null);
-    try {
-      const actualizado = await this.CampServ.cerrarInscripciones(c.idCampeonato);
-      this.campeonato.set(actualizado);
-      this.mensajeAccion.set('Inscripciones cerradas y primera ronda sorteada.');
-    } catch (e: any) {
-      this.errorAccion.set(e.message ?? 'Error al cerrar inscripciones');
-    } finally {
-      this.procesando.set(false);
-    }
-  }
-
-  async desarrollarSorteo() {
-    const c = this.campeonato();
-    if (!c || this.procesando()) return;
-    this.procesando.set(true);
-    this.mensajeAccion.set(null);
-    this.errorAccion.set(null);
-    try {
-      const actualizado = await this.CampServ.desarrollarSorteo(c.idCampeonato);
-      this.campeonato.set(actualizado);
-      this.mensajeAccion.set('Sorteo desarrollado hasta el ganador.');
-    } catch (e: any) {
-      this.errorAccion.set(e.message ?? 'Error al desarrollar el sorteo');
-    } finally {
-      this.procesando.set(false);
-    }
-  }
 
   onInscritoOk() {
     this.inscripcionAbierta.set(false);

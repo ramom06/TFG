@@ -1,5 +1,8 @@
 package org.example.proyectocampeonato.service;
 
+import org.example.proyectocampeonato.excepcion.CampeonatoCategoriaNotFoundException;
+import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
+import org.example.proyectocampeonato.excepcion.CategoriaNotFoundException;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
@@ -36,14 +39,17 @@ public class CampeonatoCategoriaService {
 
     @Transactional
     public Campeonato_Categoria asignarCategoria(Long idCampeonato, Long idCategoria) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Campeonato con id " + idCampeonato + " no encontrado"));
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
-        Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
+        Categoria categoria = categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
 
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
 
         if (repository.existsById(ccId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La categoría ya está asignada a ese campeonato");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "La categoría ya está asignada a ese campeonato");
         }
 
         Campeonato_Categoria cc = new Campeonato_Categoria();
@@ -59,7 +65,7 @@ public class CampeonatoCategoriaService {
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
 
         if (!repository.existsById(ccId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la categoría " + idCategoria + " en el campeonato " + idCampeonato);
+            throw new CampeonatoCategoriaNotFoundException(ccId);
         }
         repository.deleteById(ccId);
     }

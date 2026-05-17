@@ -18,29 +18,17 @@ public class SorteoController {
         this.sorteoService = sorteoService;
     }
 
-    // Cierra inscripciones y genera el sorteo de primera ronda.
-    // Solo permitido 3 días antes del inicio del campeonato.
-    @PostMapping("/{idCampeonato}/cerrar-inscripciones")
-    public ResponseEntity<Campeonato> cerrarInscripciones(@PathVariable Long idCampeonato) {
-        return ResponseEntity.ok(sorteoService.cerrarInscripcionesYSortear(idCampeonato));
+    // Sortea solo la primera ronda del campeonato.
+    @PostMapping("/{idCampeonato}/sortear-primera-ronda")
+    public ResponseEntity<Campeonato> sortearPrimeraRonda(@PathVariable Long idCampeonato) {
+        log.info("Sorteo de primera ronda del campeonato {}", idCampeonato);
+        return ResponseEntity.ok(sorteoService.sortearPrimeraRonda(idCampeonato));
     }
 
-    // Hace el sorteo completo hasta el ganador.
-    // Permitido tras la fecha de fin del campeonato.
-    @PostMapping("/{idCampeonato}/desarrollar")
-    public ResponseEntity<Campeonato> desarrollarSorteo(@PathVariable Long idCampeonato) {
-         return ResponseEntity.ok(sorteoService.desarrollarSorteo(idCampeonato));
-    }
-
-    // Versión sin validación de fechas (para el admin). Genera solo la primera ronda.
-    @PostMapping("/{idCampeonato}/forzar-primera-ronda")
-    public ResponseEntity<Campeonato> forzarPrimeraRonda(@PathVariable Long idCampeonato) {
-        return ResponseEntity.ok(sorteoService.forzarPrimeraRonda(idCampeonato));
-    }
-
-    // Versión sin validación de fechas (para el admin). Genera todo: primera ronda + desarrollo.
-    @PostMapping("/{idCampeonato}/forzar-completo")
-    public ResponseEntity<Campeonato> forzarSorteoCompleto(@PathVariable Long idCampeonato) {
-        return ResponseEntity.ok(sorteoService.forzarSorteoYDesarrollo(idCampeonato));
+    // Sortea el campeonato completo: primera ronda + desarrollo hasta el ganador.
+    @PostMapping("/{idCampeonato}/sortear-completo")
+    public ResponseEntity<Campeonato> sortearCompleto(@PathVariable Long idCampeonato) {
+        log.info("Sorteo completo del campeonato {}", idCampeonato);
+        return ResponseEntity.ok(sorteoService.sortearCompleto(idCampeonato));
     }
 }

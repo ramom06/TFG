@@ -188,22 +188,22 @@
                   </td>
                   <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2 flex-wrap">
-                      <!-- Generar primera ronda -->
-                      <button (click)="forzarPrimeraRonda(c)"
+                      <!-- Sortear primera ronda -->
+                      <button (click)="sortearPrimeraRonda(c)"
                               [disabled]="accionEnCursoId() !== null"
                               class="p-2 rounded-lg text-[#4b5563] hover:text-amber-400 hover:bg-amber-400/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                              title="Generar primera ronda">
+                              title="Sortear primera ronda">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
                           <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                           <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
                         </svg>
                       </button>
-                      <!-- Generar sorteo completo -->
-                      <button (click)="forzarSorteoCompleto(c)"
+                      <!-- Sortear completo -->
+                      <button (click)="sortearCompleto(c)"
                               [disabled]="accionEnCursoId() !== null"
                               class="p-2 rounded-lg text-[#4b5563] hover:text-emerald-400 hover:bg-emerald-400/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                              title="Generar sorteo completo (hasta el ganador)">
+                              title="Sortear completo (hasta el ganador)">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
                           <path d="M6 9l6 6 6-6"/><path d="M6 4l6 6 6-6"/><path d="M6 14l6 6 6-6"/>

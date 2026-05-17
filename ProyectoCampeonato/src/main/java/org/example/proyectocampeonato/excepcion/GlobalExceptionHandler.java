@@ -29,7 +29,36 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(CategoriaNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCategoriaNotFound(CategoriaNotFoundException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
 
+    @ExceptionHandler(CombateNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCombateNotFound(CombateNotFoundException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(InscripcionNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleInscripcionNotFound(InscripcionNotFoundException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(CampeonatoCategoriaNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCampeonatoCategoriaNotFound(CampeonatoCategoriaNotFoundException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    /**
+     * Errores con código HTTP explícito (ResponseStatusException lanzados desde los services,
+     * por ejemplo CONFLICT al inscribirse en una modalidad ya tomada).
+     * Conserva el status original y devuelve el cuerpo en formato uniforme.
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatus(ResponseStatusException ex) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        return error(status, ex.getReason());
+    }
 
     /**
      * Constraint de BD violada (DNI/email duplicado que se nos escapó antes de validar).

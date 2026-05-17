@@ -50,34 +50,18 @@ private readonly sorteosUrl   = `${environment.apiUrl}/api/sorteos`;
     if (!response.ok) throw new Error('Error al eliminar el campeonato');
   }
 
-  async cerrarInscripciones(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.sorteosUrl}/${id}/cerrar-inscripciones`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error('Error al cerrar inscripciones');
-    return await response.json();
-  }
-
-  async desarrollarSorteo(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.sorteosUrl}/${id}/desarrollar`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error('Error al desarrollar el sorteo');
-    return await response.json();
-  }
-
-  // Versión admin, Solo primera ronda.
-  async forzarPrimeraRonda(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.sorteosUrl}/${id}/forzar-primera-ronda`, {
+  // Sortea solo la primera ronda del campeonato.
+  async sortearPrimeraRonda(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.sorteosUrl}/${id}/sortear-primera-ronda`, {
       method: 'POST',
     });
     if (!response.ok) throw new Error('Error al generar la primera ronda');
     return await response.json();
   }
 
-  // Versión admin. Sorteo completo hasta el ganador.
-  async forzarSorteoCompleto(id: number): Promise<Campeonato> {
-    const response = await fetch(`${this.sorteosUrl}/${id}/forzar-completo`, {
+  // Sortea el campeonato completo hasta el ganador.
+  async sortearCompleto(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.sorteosUrl}/${id}/sortear-completo`, {
       method: 'POST',
     });
     if (!response.ok) throw new Error('Error al generar el sorteo completo');

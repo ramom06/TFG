@@ -4,6 +4,7 @@ import org.example.proyectocampeonato.excepcion.CompetidorNotFoundException;
 import org.example.proyectocampeonato.modelo.Competidor;
 import org.example.proyectocampeonato.modelo.Usuario;
 import org.example.proyectocampeonato.repository.CompetidorRepository;
+import org.example.proyectocampeonato.repository.UsuarioRepository;
 import org.example.proyectocampeonato.service.CompetidorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class CompetidorTest {
 
     @Mock
     private CompetidorRepository competidorRepository;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;

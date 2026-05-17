@@ -29,7 +29,10 @@
       "Bash(where python3 *)",
       "Bash(unzip -p DocumentacionCampeonatoLive_v2.docx word/document.xml)",
       "Bash(sed '/^[[:space:]]*$/d')",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(./mvnw test *)",
+      "Bash(git stash *)",
+      "Bash(./ProyectoCampeonato/mvnw -f ProyectoCampeonato/pom.xml -pl . test -Dtest=CompetidorTest -q)"
     ]
   }
 }

@@ -1,6 +1,9 @@
 package org.example.proyectocampeonato.service;
 
 import org.example.proyectocampeonato.excepcion.CampeonatoNotFoundException;
+import org.example.proyectocampeonato.excepcion.CategoriaNotFoundException;
+import org.example.proyectocampeonato.excepcion.CompetidorNotFoundException;
+import org.example.proyectocampeonato.excepcion.InscripcionNotFoundException;
 import org.example.proyectocampeonato.modelo.*;
 import org.example.proyectocampeonato.repository.CampeonatoRepository;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
@@ -34,7 +37,8 @@ public class InscripcionService {
 
     @Transactional
     public Inscripcion save(Long idCampeonato, Long idCategoria, Long idCompetidor) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
         String estado = campeonato.getEstado();
 
@@ -42,9 +46,11 @@ public class InscripcionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Las inscripciones de este campeonato ya están cerradas");
         }
 
-        Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría con id " + idCategoria + " no encontrada"));
+        Categoria categoria = categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
 
-        Competidor competidor = competidorRepository.findById(idCompetidor).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competidor con id " + idCompetidor + " no encontrado"));
+        Competidor competidor = competidorRepository.findById(idCompetidor)
+                .orElseThrow(() -> new CompetidorNotFoundException(idCompetidor));
 
         Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
 
@@ -76,7 +82,9 @@ public class InscripcionService {
     @Transactional
     public void delete(Long idCampeonato, Long idCategoria, Long idCompetidor) {
         Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
-        if (!inscripcionRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Inscripción no encontrada");
+        if (!inscripcionRepository.existsById(id)) {
+            throw new InscripcionNotFoundException(id);
+        }
         inscripcionRepository.deleteById(id);
     }
 }

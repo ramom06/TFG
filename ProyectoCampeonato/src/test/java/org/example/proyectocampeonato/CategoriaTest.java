@@ -1,5 +1,6 @@
 package org.example.proyectocampeonato;
 
+import org.example.proyectocampeonato.excepcion.CategoriaNotFoundException;
 import org.example.proyectocampeonato.modelo.Categoria;
 import org.example.proyectocampeonato.repository.CategoriaRepository;
 import org.example.proyectocampeonato.service.CategoriaService;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +79,7 @@ class CategoriaTest {
         when(categoriaRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> categoriaService.one(99L))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(CategoriaNotFoundException.class);
     }
 
     // ── save ──────────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ class CategoriaTest {
                 .pesoMaximo(84.0)
                 .build();
 
-        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
+        when(categoriaRepository.existsById(1L)).thenReturn(true);
         when(categoriaRepository.save(actualizada)).thenReturn(actualizada);
 
         Categoria resultado = categoriaService.replace(1L, actualizada);
@@ -119,10 +119,10 @@ class CategoriaTest {
 
     @Test
     void replace_idInexistente_lanzaExcepcion() {
-        when(categoriaRepository.findById(99L)).thenReturn(Optional.empty());
+        when(categoriaRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> categoriaService.replace(99L, categoria))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(CategoriaNotFoundException.class);
     }
 
     @Test
@@ -139,7 +139,7 @@ class CategoriaTest {
         when(categoriaRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> categoriaService.delete(99L))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(CategoriaNotFoundException.class);
         verify(categoriaRepository, never()).deleteById(any());
     }
 }

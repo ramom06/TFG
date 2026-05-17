@@ -354,15 +354,15 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
   // los botones de su fila mientras se procesa.
   accionEnCursoId = signal<number | null>(null);
 
-  async forzarPrimeraRonda(c: Campeonato): Promise<void> {
+  async sortearPrimeraRonda(c: Campeonato): Promise<void> {
     if (this.accionEnCursoId() !== null) return;
-    if (!confirm(`Generar primera ronda para "${c.nombre}"?\nLas categorías que ya tengan combates no se modificarán.`)) return;
+    if (!confirm(`Sortear primera ronda para "${c.nombre}"?\nLas categorías que ya tengan combates no se modificarán.`)) return;
     this.accionEnCursoId.set(c.idCampeonato);
     this.error.set(null);
     try {
-      const actualizado = await this.svc.forzarPrimeraRonda(c.idCampeonato);
+      const actualizado = await this.svc.sortearPrimeraRonda(c.idCampeonato);
       this.actualizarEnLista(actualizado);
-      this.mostrarExito(`Primera ronda generada para "${c.nombre}"`);
+      this.mostrarExito(`Primera ronda sorteada para "${c.nombre}"`);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error al generar la primera ronda');
     } finally {
@@ -370,13 +370,13 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     }
   }
 
-  async forzarSorteoCompleto(c: Campeonato): Promise<void> {
+  async sortearCompleto(c: Campeonato): Promise<void> {
     if (this.accionEnCursoId() !== null) return;
-    if (!confirm(`Generar sorteo completo (hasta el ganador) para "${c.nombre}"?`)) return;
+    if (!confirm(`Sortear el campeonato completo (hasta el ganador) "${c.nombre}"?`)) return;
     this.accionEnCursoId.set(c.idCampeonato);
     this.error.set(null);
     try {
-      const actualizado = await this.svc.forzarSorteoCompleto(c.idCampeonato);
+      const actualizado = await this.svc.sortearCompleto(c.idCampeonato);
       this.actualizarEnLista(actualizado);
       this.mostrarExito(`Sorteo completo generado para "${c.nombre}"`);
     } catch (e: any) {
