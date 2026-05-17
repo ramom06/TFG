@@ -243,7 +243,7 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
   }
 
   private async sincronizarCategorias(idCampeonato: number): Promise<void> {
-    const apiBase = `http://localhost:8080/api/campeonatos/${idCampeonato}/categorias`;
+    const apiBase = `${environment.apiUrl}/api/campeonatos/${idCampeonato}/categorias`;
 
     // Categorías actuales del campeonato en BD
     let actuales: number[] = [];
