@@ -209,9 +209,32 @@ export class InscripcionComponent implements OnInit {
 
   toggleCategoria(id: number) {
     if (this.yaInscritas().has(id)) return;
+
+    // Solo se permite 1 categoría por modalidad: al seleccionar una,
+    // se descartan las demás del mismo grupo (kata/kumite) del Set.
+    const cat = this.categorias().find(c => c.idCategoria === id);
+    if (!cat) return;
+    const modalidad = cat.modalidad?.toLowerCase();
+
     const s = new Set(this.seleccionadas());
-    s.has(id) ? s.delete(id) : s.add(id);
+    if (s.has(id)) {
+      s.delete(id);
+    } else {
+      for (const otroId of s) {
+        const otra = this.categorias().find(c => c.idCategoria === otroId);
+        if (otra?.modalidad?.toLowerCase() === modalidad) s.delete(otroId);
+      }
+      s.add(id);
+    }
     this.seleccionadas.set(s);
+  }
+
+  /** True si el competidor ya tiene una inscripción de esta modalidad en el campeonato */
+  yaInscritoEnModalidad(modalidad: string): boolean {
+    const m = modalidad.toLowerCase();
+    return this.categorias()
+      .filter(c => this.yaInscritas().has(c.idCategoria))
+      .some(c => c.modalidad?.toLowerCase() === m);
   }
 
   estaSeleccionada(id: number) { return this.seleccionadas().has(id); }

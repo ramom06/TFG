@@ -15,7 +15,8 @@
       "Bash(Remove-Item \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonato\\\\src\\\\main\\\\java\\\\org\\\\example\\\\proyectocampeonato\\\\service\\\\ArbitroService.java\")",
       "Bash(Remove-Item \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonato\\\\src\\\\main\\\\java\\\\org\\\\example\\\\proyectocampeonato\\\\controller\\\\ArbitroController.java\")",
       "Bash(Remove-Item \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonato\\\\src\\\\test\\\\java\\\\org\\\\example\\\\proyectocampeonato\\\\ArbitroTest.java\")",
-      "Bash(claude config *)"
+      "Bash(claude config *)",
+      "WebSearch"
     ]
   }
 }
