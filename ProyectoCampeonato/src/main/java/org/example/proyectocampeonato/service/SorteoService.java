@@ -27,13 +27,7 @@ public class SorteoService {
 
     private final Random random = new Random();
 
-    // ── Sortear solo la primera ronda ────────────────────────────────────────
-
-    /**
-     * Sortea la primera ronda de todas las categorías del campeonato.
-     * Idempotente: si una categoría ya tiene combates, no se vuelve a sortear.
-     * Cambia el estado del campeonato a "inscripciones_cerradas".
-     */
+    //Sortea la primera ronda de las categorias y cambia estado inscripciones_cerradas
     @Transactional
     public Campeonato sortearPrimeraRonda(Long idCampeonato) {
         Campeonato c = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
@@ -42,25 +36,24 @@ public class SorteoService {
             sortearPrimeraRondaCategoria(idCampeonato, cc.getCategoria().getIdCategoria());
         }
 
-        // No degradamos el estado si ya estaba en "pasado"
-        if (!ESTADO_FINALIZADO.equals(c.getEstado())) {
-            c.setEstado(ESTADO_INSCRIPCIONES_OK);
-        }
+        if (!ESTADO_FINALIZADO.equals(c.getEstado())) c.setEstado(ESTADO_INSCRIPCIONES_OK);
+
         return campeonatoRepository.save(c);
     }
 
-    // ── Sorteo completo: primera ronda + desarrollo hasta el ganador ─────────
-
+    // Sorteo completo
     @Transactional
     public Campeonato sortearCompleto(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato c = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
         for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
             Long idCategoria = cc.getCategoria().getIdCategoria();
+
             sortearPrimeraRondaCategoria(idCampeonato, idCategoria);
-            // Flush para que desarrollarSorteoCategoria vea los combates recién creados
+
+            // desarrollarSorteoCategoria vea los combates recién creados
             combateRepository.flush();
+
             desarrollarSorteoCategoria(idCampeonato, idCategoria);
         }
 
@@ -68,9 +61,8 @@ public class SorteoService {
         return campeonatoRepository.save(c);
     }
 
-    // ── Implementación interna ───────────────────────────────────────────────
-
     private void sortearPrimeraRondaCategoria(Long idCampeonato, Long idCategoria) {
+
         // si ya hay combates, no se vuelve a sortear
         List<Combate> existentes = combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
         if (!existentes.isEmpty()) return;
@@ -82,7 +74,7 @@ public class SorteoService {
 
         if (competidores.isEmpty()) return;
 
-        // 1 competidor: ganador directo
+        // 1 competidor ganador directo
         if (competidores.size() == 1) {
             combateRepository.save(Combate.builder()
                     .idCombate(new Combate_Id(idCampeonato, idCategoria, 1))
@@ -96,16 +88,23 @@ public class SorteoService {
             return;
         }
 
-        // >= 2 competidores: armar cuadro de sorteo con byes
+        // += 2 competidores: armar cuadro de sorteo con byes
+
+        //Coge los competidores y busca la potencia de 2 superior más cercana
         int tamanoSorteo = nextPowerOf2(competidores.size());
+
+        //Diferencia entre numero competiores y la potencia
         int numByes      = tamanoSorteo - competidores.size();
 
+        //Crea la lista y mezcla el sorteo
         List<Competidor> participantesOrdenados = new ArrayList<>(competidores);
         for (int i = 0; i < numByes; i++) participantesOrdenados.add(null);
         Collections.shuffle(participantesOrdenados, random);
 
         String ronda = nombreRonda(tamanoSorteo);
         int numero   = 1;
+
+        //Hacemos el emparejamiento
         for (int i = 0; i < participantesOrdenados.size(); i += 2) {
             Competidor rojo = participantesOrdenados.get(i);
             Competidor azul = participantesOrdenados.get(i + 1);
@@ -128,14 +127,15 @@ public class SorteoService {
     }
 
     private void desarrollarSorteoCategoria(Long idCampeonato, Long idCategoria) {
-        List<Combate> todos = combateRepository
-                .findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
-        if (todos.isEmpty()) return; // categoría sin inscritos, nada que hacer
+        List<Combate> todos = combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
+        if (todos.isEmpty()) return;
 
+        //Número de combates más alto
         int maxNumero = todos.stream()
                 .mapToInt(c -> c.getIdCombate().getNumeroCombate())
                 .max().orElse(0);
 
+        //Mapa para agrupar los combates por nombre según ronda
         Map<String, List<Combate>> porRonda = new HashMap<>();
         for (Combate cm : todos) {
             porRonda.computeIfAbsent(cm.getRonda(), k -> new ArrayList<>()).add(cm);
@@ -191,8 +191,6 @@ public class SorteoService {
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
     private List<Combate> rondaMasReciente(Map<String, List<Combate>> porRonda) {
         return porRonda.values().stream()
                 .max(Comparator.comparingInt(list -> list.stream()
@@ -202,14 +200,17 @@ public class SorteoService {
     }
 
     private void resolverAleatorio(Combate c) {
-        // Bye: ya tiene ganador (el rojo), solo se confirma estado
+
+        // Bye ganador el rojo
         if (c.getCompetidorAzul() == null || c.getCompetidorRojo() == null) {
             c.setEstado(COMBATE_FINALIZADO);
             return;
         }
+
         boolean rojoGana    = random.nextBoolean();
-        int puntosGanador   = 3 + random.nextInt(8);            // 3..10
-        int puntosPerdedor  = random.nextInt(puntosGanador);    // 0..ganador-1
+        int puntosGanador   = 3 + random.nextInt(8);
+        int puntosPerdedor  = random.nextInt(puntosGanador);
+
         if (rojoGana) {
             c.setPuntuacionRojo(puntosGanador);
             c.setPuntuacionAzul(puntosPerdedor);
@@ -224,13 +225,16 @@ public class SorteoService {
         if (c.getCompetidorAzul() == null) return c.getCompetidorRojo();
         if (c.getCompetidorRojo() == null) return c.getCompetidorAzul();
         return (c.getPuntuacionRojo() >= c.getPuntuacionAzul())
-                ? c.getCompetidorRojo()
-                : c.getCompetidorAzul();
+                ? c.getCompetidorRojo() : c.getCompetidorAzul();
     }
 
     private int nextPowerOf2(int n) {
+        // 2 elevado a 0.
         int p = 1;
-        while (p < n) p *= 2;
+        
+        while (p < n) {
+            p = p * 2;
+        }
         return p;
     }
 
