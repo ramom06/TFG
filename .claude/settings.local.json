@@ -16,7 +16,15 @@
       "Bash(Remove-Item \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonato\\\\src\\\\main\\\\java\\\\org\\\\example\\\\proyectocampeonato\\\\controller\\\\ArbitroController.java\")",
       "Bash(Remove-Item \"C:\\\\Users\\\\rmart\\\\Documents\\\\GitHub\\\\TFG\\\\ProyectoCampeonato\\\\src\\\\test\\\\java\\\\org\\\\example\\\\proyectocampeonato\\\\ArbitroTest.java\")",
       "Bash(claude config *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(awk 'NR==766,NR==913' \"C:/Users/rmart/Documents/GitHub/TFG/ProyectoCampeonato/src/main/java/org/example/proyectocampeonato/dataLoader/DataLoader.java\")",
+      "Bash(awk 'NR < 766 || NR > 913' C:/Users/rmart/Documents/GitHub/TFG/ProyectoCampeonato/src/main/java/org/example/proyectocampeonato/dataLoader/DataLoader.java)",
+      "Bash(./mvnw -q -o compile)",
+      "Bash(./mvnw -q compile)",
+      "Bash(./mvnw compile *)",
+      "Bash(./mvnw clean *)",
+      "Bash(npx -y tsc --noEmit -p tsconfig.json)",
+      "Bash(npx tsc *)"
     ]
   }
 }
