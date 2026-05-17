@@ -22,25 +22,17 @@ public class CombateService {
         return combateRepository.findAll();
     }
 
-    public List<Combate> getByCampeonatoCategoria(Long idCampeonato, Long idCategoria) {
-        return combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);
-    }
+    public List<Combate> getByCampeonatoCategoria(Long idCampeonato, Long idCategoria) {return combateRepository.findByIdIdCampeonatoAndIdIdCategoria(idCampeonato, idCategoria);}
 
     public List<Combate> getByCompetidor(Long idCompetidor) {
         return combateRepository.findByCompetidor(idCompetidor);
     }
 
-    public Combate one(Combate_Id id) {
-        return combateRepository.findById(id)
-                .orElseThrow(() -> new CombateNotFoundException(id));
-    }
+    public Combate one(Combate_Id id) {return combateRepository.findById(id).orElseThrow(() -> new CombateNotFoundException(id));}
 
     @Transactional
     public Combate save(Combate combate) {
-        if (combate.getIdCombate() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El combate debe tener un id (id_campeonato + id_categoria + numeroCombate)");
-        }
+        if (combate.getIdCombate() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El combate debe tener un id (id_campeonato + id_categoria + numeroCombate)");
         return combateRepository.save(combate);
     }
 

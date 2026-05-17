@@ -36,8 +36,7 @@ public class SorteoService {
      */
     @Transactional
     public Campeonato sortearPrimeraRonda(Long idCampeonato) {
-        Campeonato c = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato c = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
         for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
             sortearPrimeraRondaCategoria(idCampeonato, cc.getCategoria().getIdCategoria());

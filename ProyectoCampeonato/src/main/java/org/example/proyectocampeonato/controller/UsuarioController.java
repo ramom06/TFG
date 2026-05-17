@@ -75,65 +75,46 @@ public class UsuarioController {
         String dni      = body.get("dni");
         String password = body.get("password");
 
-        var usuarioOpt = usuarioRepository.findByDni(dni);
-        if (usuarioOpt.isEmpty())
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Credenciales incorrectas"));
-
-        Usuario usuario = usuarioOpt.get();
-
-        if (!passwordEncoder.matches(password, usuario.getPassword()))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Credenciales incorrectas"));
-
-        if (usuario.getRol() != Usuario.Rol.ADMIN)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "No tienes permisos de administrador"));
-
-        return ResponseEntity.ok(Map.of(
-                "id",     usuario.getIdUsuario(),
-                "nombre", usuario.getNombre(),
-                "email",  usuario.getEmail(),
-                "rol",    usuario.getRol().name()
-        ));
+        return usuarioRepository.findByDni(dni)
+                //Valida contraseña
+                .filter(usuario -> passwordEncoder.matches(password, usuario.getPassword()))
+                .filter(usuario -> usuario.getRol() == Usuario.Rol.ADMIN)
+                //Creamos respuesta exitosa
+                .map(usuario -> ResponseEntity.ok((Object) Map.of(
+                        "id",     usuario.getIdUsuario(),
+                        "nombre", usuario.getNombre(),
+                        "email",  usuario.getEmail(),
+                        "rol",    usuario.getRol().name()
+                )))
+                //Si no existe o no es admin
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Credenciales incorrectas o acceso denegado")));
     }
 
-    /**
-     * Login para competidores.
-     * Devuelve id, nombre, apellidos, email, rol y genero.
-     * El campo 'id' (no 'id_usuario') es el que usa el frontend para identificar al competidor.
-     */
+    //Login competidores
     @PostMapping("/login-competidor")
     public ResponseEntity<?> loginCompetidor(@RequestBody Map<String, String> body) {
         String dni      = body.get("dni");
         String password = body.get("password");
 
-        var usuarioOpt = usuarioRepository.findByDni(dni);
-        if (usuarioOpt.isEmpty())
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Credenciales incorrectas"));
-
-        Usuario usuario = usuarioOpt.get();
-
-        if (!passwordEncoder.matches(password, usuario.getPassword()))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Credenciales incorrectas"));
-
-        if (usuario.getRol() != Usuario.Rol.COMPETIDOR)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "Esta cuenta no es de competidor"));
-
-        return ResponseEntity.ok(Map.of(
-                "id",             usuario.getIdUsuario(),
-                "id_usuario",     usuario.getIdUsuario(),
-                "nombre",         usuario.getNombre(),
-                "apellidos",      usuario.getApellidos() != null ? usuario.getApellidos() : "",
-                "email",          usuario.getEmail(),
-                "rol",            usuario.getRol().name(),
-                "genero",         String.valueOf(usuario.getGenero()),
-                "fechaNacimiento", usuario.getFechaNacimiento() != null
-                        ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(usuario.getFechaNacimiento())
-                        : ""
-        ));
+        return usuarioRepository.findByDni(dni)
+                //Valida contraseña
+                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
+                .filter(u -> u.getRol() == Usuario.Rol.COMPETIDOR)
+                //Creamos respuesta exitosa
+                .map(usuario -> ResponseEntity.ok((Object) Map.of(
+                        "id",              usuario.getIdUsuario(),
+                        "id_usuario",      usuario.getIdUsuario(),
+                        "nombre",          usuario.getNombre(),
+                        "apellidos",       usuario.getApellidos() != null ? usuario.getApellidos() : "",
+                        "email",           usuario.getEmail(),
+                        "rol",             usuario.getRol().name(),
+                        "genero",          String.valueOf(usuario.getGenero()),
+                        "fechaNacimiento", usuario.getFechaNacimiento() != null
+                                ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(usuario.getFechaNacimiento())
+                                : ""
+                )))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Credenciales incorrectas o acceso no autorizado")));
     }
 }

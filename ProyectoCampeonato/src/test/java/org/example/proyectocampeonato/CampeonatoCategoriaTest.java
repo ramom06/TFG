@@ -60,8 +60,6 @@ class CampeonatoCategoriaTest {
         cc.setCategoria(categoria);
     }
 
-    // ── getCategoriasPorCampeonato ────────────────────────────────────────────
-
     @Test
     void getCategoriasPorCampeonato_devuelveCategorias() {
         when(repository.findCategoriasByCampeonatoId(1L)).thenReturn(List.of(categoria));
@@ -111,8 +109,6 @@ class CampeonatoCategoriaTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("ya está asignada");
     }
-
-    // ── eliminarCategoria ─────────────────────────────────────────────────────
 
     @Test
     void eliminarCategoria_existente_eliminaCorrectamente() {

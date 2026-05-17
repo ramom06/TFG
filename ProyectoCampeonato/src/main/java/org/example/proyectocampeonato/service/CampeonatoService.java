@@ -19,9 +19,7 @@ public class CampeonatoService {
         return campeonatoRepository.findAll();
     }
 
-    public Campeonato one(Long id) {
-        return campeonatoRepository.findById(id).orElseThrow(() -> new CampeonatoNotFoundException(id));
-    }
+    public Campeonato one(Long id) {return campeonatoRepository.findById(id).orElseThrow(() -> new CampeonatoNotFoundException(id));}
 
     @Transactional
     public Campeonato save(Campeonato campeonato) {
@@ -30,10 +28,7 @@ public class CampeonatoService {
 
     @Transactional
     public Campeonato replace(Long id, Campeonato campeonato) {
-        if (!campeonatoRepository.existsById(id)) {
-            throw new CampeonatoNotFoundException(id);
-        }
-
+        if (!campeonatoRepository.existsById(id)) throw new CampeonatoNotFoundException(id);
         campeonato.setIdCampeonato(id);
         return campeonatoRepository.save(campeonato);
     }

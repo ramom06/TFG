@@ -79,8 +79,6 @@ class InscripcionTest {
         competidor.setApellidos("Sánchez");
     }
 
-    // ── getters ──────────────────────────────────────────────────────────────
-
     @Test
     void getByCompetidor_devuelveSusInscripciones() {
         when(inscripcionRepository.findByCompetidor(100L)).thenReturn(List.of());
@@ -93,8 +91,6 @@ class InscripcionTest {
         when(inscripcionRepository.findByCampeonatoAndCategoria(1L, 10L)).thenReturn(List.of());
         assertThat(inscripcionService.getByCampeonatoAndCategoria(1L, 10L)).isEmpty();
     }
-
-    // ── save (camino feliz) ──────────────────────────────────────────────────
 
     @Test
     void save_inscripcionValida_persisteYDevuelve() {
@@ -111,8 +107,6 @@ class InscripcionTest {
         assertThat(resultado.getCompetidor()).isEqualTo(competidor);
         verify(inscripcionRepository, times(1)).save(any(Inscripcion.class));
     }
-
-    // ── save (validaciones de negocio) ───────────────────────────────────────
 
     @Test
     void save_campeonatoInexistente_lanzaCampeonatoNotFound() {
@@ -246,8 +240,6 @@ class InscripcionTest {
 
         assertThat(resultado.getCategoria().getModalidad()).isEqualTo("kumite");
     }
-
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_inscripcionExistente_eliminaCorrectamente() {

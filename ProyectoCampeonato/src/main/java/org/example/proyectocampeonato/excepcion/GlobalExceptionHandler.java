@@ -13,7 +13,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /** Errores de negocio ya tipados */
     @ExceptionHandler(CampeonatoNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleCampeonatoNotFound(CampeonatoNotFoundException ex) {
         return error(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -49,33 +48,15 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    /**
-     * Errores con código HTTP explícito (ResponseStatusException lanzados desde los services,
-     * por ejemplo CONFLICT al inscribirse en una modalidad ya tomada).
-     * Conserva el status original y devuelve el cuerpo en formato uniforme.
-     */
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatus(ResponseStatusException ex) {
         HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
         return error(status, ex.getReason());
     }
 
-    /**
-     * Constraint de BD violada (DNI/email duplicado que se nos escapó antes de validar).
-     * Devuelve 409 en vez de 500.
-     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
         String msg = "Ya existe un registro con esos datos (DNI o email duplicado)";
-
-        // Intentar ser más específicos mirando el mensaje de la causa
-        String cause = ex.getMostSpecificCause().getMessage().toLowerCase();
-        if (cause.contains("dni")) {
-            msg = "Ya existe un usuario con ese DNI";
-        } else if (cause.contains("email")) {
-            msg = "Ya existe un usuario con ese email";
-        }
-
         return error(HttpStatus.CONFLICT, msg);
     }
 
@@ -85,7 +66,7 @@ public class GlobalExceptionHandler {
                 "Error interno del servidor: " + ex.getMessage());
     }
 
-    // ── helper ────────────────────────────────────────────────────────────────
+    //Construye el JSON
     private ResponseEntity<Map<String, Object>> error(HttpStatus status, String message) {
         return ResponseEntity.status(status).body(Map.of(
                 "timestamp", LocalDateTime.now().toString(),

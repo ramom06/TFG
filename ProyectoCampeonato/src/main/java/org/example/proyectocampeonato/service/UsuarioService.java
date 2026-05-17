@@ -25,13 +25,9 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Usuario one(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
-    }
+    public Usuario one(Long id) {return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));}
 
-    public Usuario findByNombre(String nombre) {
-        return usuarioRepository.findByNombre(nombre).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario '" + nombre + "' no encontrado"));
-    }
+    public Usuario findByNombre(String nombre) {return usuarioRepository.findByNombre(nombre).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario '" + nombre + "' no encontrado"));}
 
     public List<Usuario> findByRol(Usuario.Rol rol) {
         return usuarioRepository.findByRol(rol);
@@ -49,12 +45,13 @@ public class UsuarioService {
     public Usuario replace(Long id, Usuario usuario) {
         return usuarioRepository.findById(id)
                 .map(existing -> {
-                    if (!existing.getNombre().equals(usuario.getNombre()))
-                        validarNombreUnico(usuario.getNombre());
-                    if (!existing.getEmail().equals(usuario.getEmail()))
-                        validarEmailUnico(usuario.getEmail());
+
+                    if (!existing.getNombre().equals(usuario.getNombre())) validarNombreUnico(usuario.getNombre());
+                    if (!existing.getEmail().equals(usuario.getEmail())) validarEmailUnico(usuario.getEmail());
+
                     usuario.setIdUsuario(id);
                     usuario.setFechaRegistro(existing.getFechaRegistro());
+
                     if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
                         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
                     } else {
@@ -62,8 +59,7 @@ public class UsuarioService {
                     }
                     return usuarioRepository.save(usuario);
                 })
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario con id " + id + " no encontrado"));
     }
 
     @Transactional

@@ -29,9 +29,6 @@ class CompetidorTest {
     private CompetidorRepository competidorRepository;
 
     @Mock
-    private UsuarioRepository usuarioRepository;
-
-    @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks

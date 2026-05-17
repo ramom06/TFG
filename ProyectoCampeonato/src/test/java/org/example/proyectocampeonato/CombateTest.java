@@ -58,8 +58,6 @@ class CombateTest {
                 .build();
     }
 
-    // ── getAll ────────────────────────────────────────────────────────────────
-
     @Test
     void getAll_devuelveListaDeCombates() {
         when(combateRepository.findAll()).thenReturn(List.of(combate));
@@ -78,8 +76,6 @@ class CombateTest {
         assertThat(combateService.getAll()).isEmpty();
     }
 
-    // ── getByCampeonatoCategoria ─────────────────────────────────────────────
-
     @Test
     void getByCampeonatoCategoria_devuelveLosCombatesDeEsaCategoria() {
         when(combateRepository.findByIdIdCampeonatoAndIdIdCategoria(1L, 1L))
@@ -91,8 +87,6 @@ class CombateTest {
         assertThat(resultado.get(0).getCompetidorRojo()).isEqualTo(rojo);
     }
 
-    // ── getByCompetidor ──────────────────────────────────────────────────────
-
     @Test
     void getByCompetidor_devuelveCombatesDondeAparece() {
         when(combateRepository.findByCompetidor(10L)).thenReturn(List.of(combate));
@@ -102,8 +96,6 @@ class CombateTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getCompetidorRojo().getIdUsuario()).isEqualTo(10L);
     }
-
-    // ── one ──────────────────────────────────────────────────────────────────
 
     @Test
     void one_idExistente_devuelveCombate() {
@@ -123,8 +115,6 @@ class CombateTest {
         assertThatThrownBy(() -> combateService.one(inexistente))
                 .isInstanceOf(CombateNotFoundException.class);
     }
-
-    // ── save ─────────────────────────────────────────────────────────────────
 
     @Test
     void save_combateValido_guardaYDevuelve() {
@@ -152,8 +142,6 @@ class CombateTest {
 
         verify(combateRepository, never()).save(any());
     }
-
-    // ── replace ──────────────────────────────────────────────────────────────
 
     @Test
     void replace_idExistente_actualiza() {
@@ -186,8 +174,6 @@ class CombateTest {
 
         verify(combateRepository, never()).save(any());
     }
-
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_idExistente_eliminaCorrectamente() {

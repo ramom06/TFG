@@ -41,8 +41,6 @@ class CategoriaTest {
         categoria.setIdCategoria(1L);
     }
 
-    // ── getAll ────────────────────────────────────────────────────────────────
-
     @Test
     void getAll_devuelveListaDeCategorias() {
         when(categoriaRepository.findAll()).thenReturn(List.of(categoria));
@@ -60,8 +58,6 @@ class CategoriaTest {
 
         assertThat(categoriaService.getAll()).isEmpty();
     }
-
-    // ── one ───────────────────────────────────────────────────────────────────
 
     @Test
     void one_idExistente_devuelveCategoria() {
@@ -82,8 +78,6 @@ class CategoriaTest {
                 .isInstanceOf(CategoriaNotFoundException.class);
     }
 
-    // ── save ──────────────────────────────────────────────────────────────────
-
     @Test
     void save_categoriaValida_guardaYDevuelve() {
         when(categoriaRepository.save(categoria)).thenReturn(categoria);
@@ -94,8 +88,6 @@ class CategoriaTest {
         assertThat(resultado.getPesoMaximo()).isEqualTo(75.0);
         verify(categoriaRepository, times(1)).save(categoria);
     }
-
-    // ── replace ───────────────────────────────────────────────────────────────
 
     @Test
     void replace_idExistente_actualizaYDevuelve() {

@@ -37,8 +37,7 @@ public class InscripcionService {
 
     @Transactional
     public Inscripcion save(Long idCampeonato, Long idCategoria, Long idCompetidor) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
         String estado = campeonato.getEstado();
 
@@ -46,28 +45,37 @@ public class InscripcionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Las inscripciones de este campeonato ya están cerradas");
         }
 
-        Categoria categoria = categoriaRepository.findById(idCategoria)
-                .orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
+        Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
 
-        Competidor competidor = competidorRepository.findById(idCompetidor)
-                .orElseThrow(() -> new CompetidorNotFoundException(idCompetidor));
+        Competidor competidor = competidorRepository.findById(idCompetidor).orElseThrow(() -> new CompetidorNotFoundException(idCompetidor));
 
         Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
 
-        if (inscripcionRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El competidor ya está inscrito en esa categoría del campeonato");
-        }
+        if (inscripcionRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.CONFLICT, "El competidor ya está inscrito en esa categoría del campeonato");
 
-        // Un competidor solo puede inscribirse a 1 categoría por modalidad en cada campeonato
         String modalidadNueva = categoria.getModalidad();
 
-        boolean yaInscritoEnModalidad = inscripcionRepository.findByCompetidor(idCompetidor).stream()
-                .filter(i -> i.getCampeonato().getIdCampeonato().equals(idCampeonato))
-                .anyMatch(i -> modalidadNueva.equalsIgnoreCase(i.getCategoria().getModalidad()));
+        List<Inscripcion> inscripcionesDelCompetidor = inscripcionRepository.findByCompetidor(idCompetidor);
 
-        if (yaInscritoEnModalidad) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El competidor ya está inscrito en otra categoría de " + modalidadNueva + " en este campeonato");
+        boolean yaInscritoEnModalidad = false;
+
+        for (Inscripcion inscripcion : inscripcionesDelCompetidor) {
+
+            Long idCampeonatoInscripcion = inscripcion.getCampeonato().getIdCampeonato();
+
+            if (idCampeonatoInscripcion.equals(idCampeonato)) {
+
+                String modalidadActual = inscripcion.getCategoria().getModalidad();
+
+                if (modalidadNueva.equalsIgnoreCase(modalidadActual)) {
+                    yaInscritoEnModalidad = true;
+                    break;
+                }
+            }
         }
+
+        if (yaInscritoEnModalidad) throw new ResponseStatusException(HttpStatus.CONFLICT, "El competidor ya está inscrito en otra categoría de " + modalidadNueva + " en este campeonato");
+
 
         Inscripcion inscripcion = Inscripcion.builder()
                 .idInscripcion(id)
@@ -82,9 +90,7 @@ public class InscripcionService {
     @Transactional
     public void delete(Long idCampeonato, Long idCategoria, Long idCompetidor) {
         Inscripcion_Id id = new Inscripcion_Id(idCampeonato, idCategoria, idCompetidor);
-        if (!inscripcionRepository.existsById(id)) {
-            throw new InscripcionNotFoundException(id);
-        }
+        if (!inscripcionRepository.existsById(id)) throw new InscripcionNotFoundException(id);
         inscripcionRepository.deleteById(id);
     }
 }

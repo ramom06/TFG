@@ -21,9 +21,7 @@ public class CampeonatoCategoriaService {
     private final CampeonatoRepository campeonatoRepository;
     private final CategoriaRepository categoriaRepository;
 
-    public CampeonatoCategoriaService(Campeonato_CategoriaRepository repository,
-                                      CampeonatoRepository campeonatoRepository,
-                                      CategoriaRepository categoriaRepository) {
+    public CampeonatoCategoriaService(Campeonato_CategoriaRepository repository, CampeonatoRepository campeonatoRepository, CategoriaRepository categoriaRepository) {
         this.repository = repository;
         this.campeonatoRepository = campeonatoRepository;
         this.categoriaRepository = categoriaRepository;
@@ -33,24 +31,17 @@ public class CampeonatoCategoriaService {
         return repository.findAll();
     }
 
-    public List<Categoria> getCategoriasPorCampeonato(Long idCampeonato) {
-        return repository.findCategoriasByCampeonatoId(idCampeonato);
-    }
+    public List<Categoria> getCategoriasPorCampeonato(Long idCampeonato) {return repository.findCategoriasByCampeonatoId(idCampeonato);}
 
     @Transactional
     public Campeonato_Categoria asignarCategoria(Long idCampeonato, Long idCategoria) {
-        Campeonato campeonato = campeonatoRepository.findById(idCampeonato)
-                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+        Campeonato campeonato = campeonatoRepository.findById(idCampeonato).orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
 
-        Categoria categoria = categoriaRepository.findById(idCategoria)
-                .orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
+        Categoria categoria = categoriaRepository.findById(idCategoria).orElseThrow(() -> new CategoriaNotFoundException(idCategoria));
 
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
 
-        if (repository.existsById(ccId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "La categoría ya está asignada a ese campeonato");
-        }
+        if (repository.existsById(ccId)) throw new ResponseStatusException(HttpStatus.CONFLICT, "La categoría ya está asignada a ese campeonato");
 
         Campeonato_Categoria cc = new Campeonato_Categoria();
         cc.setIdCampeonatoCategoria(ccId);
@@ -64,9 +55,8 @@ public class CampeonatoCategoriaService {
     public void eliminarCategoria(Long idCampeonato, Long idCategoria) {
         Campeonato_Categoria_Id ccId = new Campeonato_Categoria_Id(idCampeonato, idCategoria);
 
-        if (!repository.existsById(ccId)) {
-            throw new CampeonatoCategoriaNotFoundException(ccId);
-        }
+        if (!repository.existsById(ccId)) throw new CampeonatoCategoriaNotFoundException(ccId);
+
         repository.deleteById(ccId);
     }
 }

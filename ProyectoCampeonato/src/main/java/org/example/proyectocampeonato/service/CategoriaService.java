@@ -21,10 +21,7 @@ public class CategoriaService {
         return categoriaRepository.findAll();
     }
 
-    public Categoria one(Long id) {
-        return categoriaRepository.findById(id)
-                .orElseThrow(() -> new CategoriaNotFoundException(id));
-    }
+    public Categoria one(Long id) {return categoriaRepository.findById(id).orElseThrow(() -> new CategoriaNotFoundException(id));}
 
     @Transactional
     public Categoria save(Categoria categoria) {
@@ -33,18 +30,14 @@ public class CategoriaService {
 
     @Transactional
     public Categoria replace(Long id, Categoria categoria) {
-        if (!categoriaRepository.existsById(id)) {
-            throw new CategoriaNotFoundException(id);
-        }
+        if (!categoriaRepository.existsById(id)) throw new CategoriaNotFoundException(id);
         categoria.setIdCategoria(id);
         return categoriaRepository.save(categoria);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!categoriaRepository.existsById(id)) {
-            throw new CategoriaNotFoundException(id);
-        }
+        if (!categoriaRepository.existsById(id)) throw new CategoriaNotFoundException(id);
         categoriaRepository.deleteById(id);
     }
 }

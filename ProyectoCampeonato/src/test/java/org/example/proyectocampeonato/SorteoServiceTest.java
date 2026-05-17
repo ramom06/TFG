@@ -81,8 +81,6 @@ class SorteoServiceTest {
                 .build();
     }
 
-    // ── Validaciones generales ───────────────────────────────────────────────
-
     @Test
     void sortearPrimeraRonda_campeonatoInexistente_lanzaCampeonatoNotFound() {
         when(campeonatoRepository.findById(99L)).thenReturn(Optional.empty());
@@ -116,7 +114,6 @@ class SorteoServiceTest {
         assertThat(resultado.getEstado()).isEqualTo("pasado");
     }
 
-    // ── Casos de número de competidores ──────────────────────────────────────
 
     @Test
     void sortearPrimeraRonda_categoriaSinInscritos_noCreaCombates() {
@@ -238,8 +235,6 @@ class SorteoServiceTest {
         assertThat(ids).hasSize(8);
     }
 
-    // ── Idempotencia ─────────────────────────────────────────────────────────
-
     @Test
     void sortearPrimeraRonda_idempotente_categoriaConCombatesExistentesNoSeReSortea() {
         // Si findByIdIdCampeonatoAndIdIdCategoria devuelve algo, no se debe re-sortear
@@ -262,8 +257,6 @@ class SorteoServiceTest {
         // No se debe persistir ningún combate nuevo
         verify(combateRepository, never()).save(any(Combate.class));
     }
-
-    // ── sortearCompleto: desarrollo del bracket entero ───────────────────────
 
     @Test
     void sortearCompleto_marcaEstadoComoPasado() {

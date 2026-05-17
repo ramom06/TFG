@@ -34,7 +34,6 @@ public class Combate {
     @JoinColumn(name = "idCompetidor_azul", nullable = true)
     private Competidor competidorAzul;
 
-    // Relación con Campeonato_Categoria
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "idCampeonato", insertable = false, updatable = false),

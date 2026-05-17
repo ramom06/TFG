@@ -30,19 +30,13 @@ public class CompetidorService {
         return competidorRepository.findAll();
     }
 
-    public Competidor one(Long id) {
-        return competidorRepository.findById(id).orElseThrow(() -> new CompetidorNotFoundException(id));
-    }
+    public Competidor one(Long id) {return competidorRepository.findById(id).orElseThrow(() -> new CompetidorNotFoundException(id));}
 
     @Transactional
     public Competidor save(Competidor competidor) {
-        if (usuarioRepository.existsByDni(competidor.getDni())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con el DNI " + competidor.getDni());
-        }
-        if (usuarioRepository.existsByEmail(competidor.getEmail())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "El email '" + competidor.getEmail() + "' ya está registrado");
-        }
+        if (usuarioRepository.existsByDni(competidor.getDni())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con el DNI " + competidor.getDni());
+
+        if (usuarioRepository.existsByEmail(competidor.getEmail())) throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + competidor.getEmail() + "' ya está registrado");
 
         competidor.setRol(Usuario.Rol.COMPETIDOR);
         competidor.setPassword(passwordEncoder.encode(competidor.getPassword()));
@@ -54,13 +48,9 @@ public class CompetidorService {
 
         Competidor existing = competidorRepository.findById(id).orElseThrow(() -> new CompetidorNotFoundException(id));
 
-        if (!existing.getDni().equals(competidor.getDni()) && usuarioRepository.existsByDni(competidor.getDni())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con el DNI " + competidor.getDni());
-        }
+        if (!existing.getDni().equals(competidor.getDni()) && usuarioRepository.existsByDni(competidor.getDni())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con el DNI " + competidor.getDni());
 
-        if (!existing.getEmail().equals(competidor.getEmail()) && usuarioRepository.existsByEmail(competidor.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + competidor.getEmail() + "' ya está registrado");
-        }
+        if (!existing.getEmail().equals(competidor.getEmail()) && usuarioRepository.existsByEmail(competidor.getEmail())) throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + competidor.getEmail() + "' ya está registrado");
 
         competidor.setIdUsuario(id);
         competidor.setRol(Usuario.Rol.COMPETIDOR);
