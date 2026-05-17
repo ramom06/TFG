@@ -72,4 +72,20 @@ public class CampeonatoController {
         log.info("Desarrollando bracket completo del campeonato {}", id);
         return ResponseEntity.ok(sorteoService.desarrollarBracket(id));
     }
+
+    // POST /api/campeonatos/{id}/forzar-primera-ronda
+    // Versión sin validación de fechas (para el admin). Genera solo la primera ronda.
+    @PostMapping("/{id}/forzar-primera-ronda")
+    public ResponseEntity<Campeonato> forzarPrimeraRonda(@PathVariable Long id) {
+        log.info("Forzando sorteo de primera ronda del campeonato {}", id);
+        return ResponseEntity.ok(sorteoService.forzarPrimeraRonda(id));
+    }
+
+    // POST /api/campeonatos/{id}/forzar-sorteo-completo
+    // Versión sin validación de fechas (para el admin). Genera todo: primera ronda + bracket.
+    @PostMapping("/{id}/forzar-sorteo-completo")
+    public ResponseEntity<Campeonato> forzarSorteoCompleto(@PathVariable Long id) {
+        log.info("Forzando sorteo completo del campeonato {}", id);
+        return ResponseEntity.ok(sorteoService.forzarSorteoYDesarrollo(id));
+    }
 }

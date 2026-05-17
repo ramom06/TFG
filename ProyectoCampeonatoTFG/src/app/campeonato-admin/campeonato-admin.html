@@ -171,18 +171,44 @@
                     <span class="text-[#8b95a3] text-[12px] line-clamp-1">{{ c.ubicacion }}</span>
                   </td>
                   <td class="px-4 py-4 text-center">
-                    <span [ngClass]="badgeClass(c.estado)"
+                    <span [ngClass]="badgeClass(estadoCalculado(c))"
                           class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px]
                                  font-bold uppercase tracking-[0.1em] backdrop-blur-sm border">
                       <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                      {{ estadoLabel(c.estado) }}
+                      {{ estadoLabel(estadoCalculado(c)) }}
                     </span>
+                    @if (sorteoHecho(c)) {
+                      <span class="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-[#e01c2e]/80">
+                        Sorteado
+                      </span>
+                    }
                   </td>
                   <td class="px-4 py-4 text-center hidden sm:table-cell">
                     <span class="text-[11px] font-semibold uppercase tracking-wide text-[#8b95a3]">{{ c.nivel }}</span>
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-2">
+                    <div class="flex items-center justify-end gap-2 flex-wrap">
+                      <!-- Generar primera ronda -->
+                      <button (click)="forzarPrimeraRonda(c)"
+                              [disabled]="accionEnCursoId() !== null"
+                              class="p-2 rounded-lg text-[#4b5563] hover:text-amber-400 hover:bg-amber-400/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Generar primera ronda">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                      </button>
+                      <!-- Generar sorteo completo -->
+                      <button (click)="forzarSorteoCompleto(c)"
+                              [disabled]="accionEnCursoId() !== null"
+                              class="p-2 rounded-lg text-[#4b5563] hover:text-emerald-400 hover:bg-emerald-400/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Generar sorteo completo (hasta el ganador)">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 9l6 6 6-6"/><path d="M6 4l6 6 6-6"/><path d="M6 14l6 6 6-6"/>
+                        </svg>
+                      </button>
                       <a [routerLink]="['/campeonato', c.idCampeonato]"
                          class="p-2 rounded-lg text-[#4b5563] hover:text-[#8b95a3] hover:bg-white/[0.05] transition-all" title="Ver">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -313,6 +339,7 @@
                              focus:border-[#e01c2e] focus:shadow-[0_0_0_3px_rgba(224,28,46,0.18)]">
                 <option value="futuro">Próximo</option>
                 <option value="activo">En curso</option>
+                <option value="inscripciones_cerradas">Inscripciones cerradas</option>
                 <option value="pasado">Finalizado</option>
               </select>
             </div>

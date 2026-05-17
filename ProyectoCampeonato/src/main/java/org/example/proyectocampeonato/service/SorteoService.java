@@ -127,6 +127,29 @@ public class SorteoService {
         }
     }
 
+    // ── Sorteo forzado manual (para admin, ignora validaciones de fecha) ───
+
+    /**
+     * Sortea SOLO la primera ronda, sin validar la fecha. Idempotente:
+     * si una categoría ya tiene combates, no se vuelve a sortear.
+     * Cambia el estado del campeonato a "inscripciones_cerradas".
+     */
+    @Transactional
+    public Campeonato forzarPrimeraRonda(Long idCampeonato) {
+        Campeonato c = campeonatoRepository.findById(idCampeonato)
+                .orElseThrow(() -> new CampeonatoNotFoundException(idCampeonato));
+
+        for (Campeonato_Categoria cc : c.getCampeonatoCategorias()) {
+            sortearPrimeraRondaCategoria(idCampeonato, cc.getCategoria().getIdCategoria());
+        }
+
+        // No degradamos el estado si ya estaba en "pasado"
+        if (!ESTADO_FINALIZADO.equals(c.getEstado())) {
+            c.setEstado(ESTADO_INSCRIPCIONES_OK);
+        }
+        return campeonatoRepository.save(c);
+    }
+
     // ── Sorteo forzado (para seeding desde DataLoader, ignora validaciones) ─
 
     @Transactional

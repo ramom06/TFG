@@ -5,7 +5,7 @@ import { RouterLink, Router } from '@angular/router';
 import { CampeonatoService } from '../service/campeonato-service';
 import { CategoriaService } from '../service/categoria-service';
 import {AutenticacionService} from '../service/autenticacion-service';
-import { Campeonato, Estado, Nivel } from '../interfaces/campeonato';
+import { Campeonato, Estado, EstadoVisual, Nivel } from '../interfaces/campeonato';
 import { Categoria } from '../interfaces/categoria';
 import { environment } from '../../environments/environment';
 
@@ -315,22 +315,81 @@ const response = await fetch(`${environment.apiUrl}/api/categorias`);
     return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  badgeClass(estado: Estado): string {
+  // Estado visual calculado por fechas reales (no por el campo del backend, que
+  // puede estar desactualizado). Es lo que se muestra en el badge.
+  estadoCalculado(c: Campeonato): EstadoVisual {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const inicio = new Date(c.fechaInicio); inicio.setHours(0, 0, 0, 0);
+    const fin    = new Date(c.fechaFin);    fin.setHours(0, 0, 0, 0);
+    if (fin < hoy)    return 'pasado';
+    if (inicio > hoy) return 'futuro';
+    return 'activo';
+  }
+
+  badgeClass(estado: EstadoVisual): string {
     return {
-      futuro:                  'badge-futuro',
-      activo:                  'badge-activo',
-      inscripciones_cerradas:  'badge-activo',
-      pasado:                  'badge-pasado',
+      futuro: 'badge-futuro',
+      activo: 'badge-activo',
+      pasado: 'badge-pasado',
     }[estado];
   }
 
-  estadoLabel(estado: Estado): string {
+  estadoLabel(estado: EstadoVisual): string {
     return {
-      futuro:                  'Próximo',
-      activo:                  'En curso',
-      inscripciones_cerradas:  'Inscripciones cerradas',
-      pasado:                  'Finalizado',
+      futuro: 'Próximo',
+      activo: 'En curso',
+      pasado: 'Finalizado',
     }[estado];
+  }
+
+  // Devuelve true si el backend marca el campeonato como ya sorteado.
+  // Lo usamos para etiquetar visualmente que la primera ronda está hecha.
+  sorteoHecho(c: Campeonato): boolean {
+    return c.estado === 'inscripciones_cerradas' || c.estado === 'pasado';
+  }
+
+  // ── Acciones de sorteo (forzadas, sin validación de fecha) ──────────────
+
+  // ID del campeonato sobre el que hay una acción en curso, para deshabilitar
+  // los botones de su fila mientras se procesa.
+  accionEnCursoId = signal<number | null>(null);
+
+  async forzarPrimeraRonda(c: Campeonato): Promise<void> {
+    if (this.accionEnCursoId() !== null) return;
+    if (!confirm(`Generar primera ronda para "${c.nombre}"?\nLas categorías que ya tengan combates no se modificarán.`)) return;
+    this.accionEnCursoId.set(c.idCampeonato);
+    this.error.set(null);
+    try {
+      const actualizado = await this.svc.forzarPrimeraRonda(c.idCampeonato);
+      this.actualizarEnLista(actualizado);
+      this.mostrarExito(`Primera ronda generada para "${c.nombre}"`);
+    } catch (e: any) {
+      this.error.set(e.message ?? 'Error al generar la primera ronda');
+    } finally {
+      this.accionEnCursoId.set(null);
+    }
+  }
+
+  async forzarSorteoCompleto(c: Campeonato): Promise<void> {
+    if (this.accionEnCursoId() !== null) return;
+    if (!confirm(`Generar sorteo completo (hasta el ganador) para "${c.nombre}"?`)) return;
+    this.accionEnCursoId.set(c.idCampeonato);
+    this.error.set(null);
+    try {
+      const actualizado = await this.svc.forzarSorteoCompleto(c.idCampeonato);
+      this.actualizarEnLista(actualizado);
+      this.mostrarExito(`Sorteo completo generado para "${c.nombre}"`);
+    } catch (e: any) {
+      this.error.set(e.message ?? 'Error al generar el sorteo completo');
+    } finally {
+      this.accionEnCursoId.set(null);
+    }
+  }
+
+  private actualizarEnLista(c: Campeonato): void {
+    this.campeonatos.update(list =>
+      list.map(x => x.idCampeonato === c.idCampeonato ? c : x)
+    );
   }
 
   get f() { return this.form.controls; }

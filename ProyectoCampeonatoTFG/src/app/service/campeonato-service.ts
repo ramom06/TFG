@@ -71,6 +71,30 @@ private readonly apiUrl = `${environment.apiUrl}/api/campeonatos`;
     return await response.json();
   }
 
+  // Versión admin: sin validación de fecha. Solo primera ronda.
+  async forzarPrimeraRonda(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.apiUrl}/${id}/forzar-primera-ronda`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(this.extraerMensaje(txt) ?? 'Error al generar la primera ronda');
+    }
+    return await response.json();
+  }
+
+  // Versión admin: sin validación de fecha. Bracket completo hasta el ganador.
+  async forzarSorteoCompleto(id: number): Promise<Campeonato> {
+    const response = await fetch(`${this.apiUrl}/${id}/forzar-sorteo-completo`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(this.extraerMensaje(txt) ?? 'Error al generar el sorteo completo');
+    }
+    return await response.json();
+  }
+
   private extraerMensaje(txt: string): string | null {
     try { return JSON.parse(txt)?.message ?? null; } catch { return null; }
   }
