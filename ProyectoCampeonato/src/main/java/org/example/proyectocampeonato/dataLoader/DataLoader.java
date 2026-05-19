@@ -36,12 +36,12 @@ public class DataLoader implements CommandLineRunner {
 
         if (campeonatoRepository.count() == 0) {
             jdbcTemplate.update("DELETE FROM inscripcion");
-            jdbcTemplate.update("DELETE FROM combate");
-            jdbcTemplate.update("DELETE FROM campeonato_categoria");
-            jdbcTemplate.update("DELETE FROM competidor");
-            jdbcTemplate.update("DELETE FROM usuario");
-            jdbcTemplate.update("DELETE FROM categoria");
-            jdbcTemplate.update("DELETE FROM campeonato");
+            jdbcTemplate.update("DELETE FROM Combate");
+            jdbcTemplate.update("DELETE FROM Campeonato_Categoria");
+            jdbcTemplate.update("DELETE FROM Competidor");
+            jdbcTemplate.update("DELETE FROM Usuario");
+            jdbcTemplate.update("DELETE FROM Categoria");
+            jdbcTemplate.update("DELETE FROM Campeonato");
             cargarDatos();
             sortearCampeonatosFinalizados();
         }
